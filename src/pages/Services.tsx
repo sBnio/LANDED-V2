@@ -8,6 +8,7 @@ import {
   Smartphone, 
   Home, 
   MapPin, 
+  Landmark,
   ExternalLink, 
   ArrowRight,
   Info,
@@ -85,8 +86,6 @@ const CATEGORIES = [
   { id: "SIM Cards", icon: Smartphone },
   { id: "Housing", icon: Home },
 ];
-
-import { Landmark } from "lucide-react";
 
 export function Services() {
   const [activeCategory, setActiveCategory] = useState("All");

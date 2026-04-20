@@ -62,102 +62,132 @@ export function Community() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 md:pb-12">
+    <div className="min-h-screen bg-slate-50 pb-24 md:pb-12 text-slate-900">
       <div className="bg-[#0A1628] text-white pt-16 pb-20 px-6 overflow-hidden relative">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-600/20 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-600/10 rounded-full blur-[140px] translate-x-1/3 -translate-y-1/2" />
         <div className="max-w-6xl mx-auto relative z-10">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-            <div className="max-w-2xl">
-              <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4 uppercase">STUDENT HUB</h1>
-              <p className="text-blue-100/70 text-lg md:text-xl font-medium leading-relaxed">
-                Connect with thousands of international students already navigating life in the Emirates.
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-10">
+            <div className="max-w-3xl">
+              <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4 uppercase italic leading-[0.8] drop-shadow-sm">STUDENT <span className="text-blue-500">HUB</span></h1>
+              <p className="text-blue-100/70 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
+                The unofficial network of 12,000+ international students in the UAE.
               </p>
             </div>
             <div className="flex gap-4">
               <Button 
                 onClick={() => setIsModalOpen(true)}
-                className="rounded-2xl h-16 px-8 bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-900/50"
+                className="rounded-2xl h-16 px-10 bg-white text-[#0A1628] hover:bg-blue-50 font-black uppercase tracking-widest text-xs shadow-2xl transition-all hover:-translate-y-1 active:translate-y-0"
               >
-                <Plus className="w-5 h-5 mr-2" /> Ask Question
+                <Plus className="w-5 h-5 mr-3 stroke-[3px]" /> Ask a Question
               </Button>
             </div>
           </div>
 
-          <div className="flex gap-4 mt-12 overflow-x-auto pb-4 scrollbar-hide">
-            {(["Forum", "Study Buddy"] as const).map(tab => (
-               <button 
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={cn(
-                    "px-8 h-14 rounded-2xl font-black text-xs uppercase tracking-widest transition-all",
-                    activeTab === tab ? "bg-white text-navy-900" : "bg-white/10 text-white/60 hover:bg-white/20"
-                  )}
-               >
-                  {tab}
-               </button>
-            ))}
+          <div className="flex justify-start md:justify-center">
+            <div className="inline-flex p-1.5 bg-white/5 backdrop-blur-xl rounded-[28px] mt-16 border border-white/10 shadow-2xl">
+              {(["Forum", "Study Buddy"] as const).map(tab => (
+                 <button 
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={cn(
+                      "px-10 h-14 rounded-[22px] font-black text-xs uppercase tracking-[0.15em] transition-all duration-500 relative overflow-hidden group",
+                      activeTab === tab 
+                        ? "bg-white text-[#0A1628] shadow-white/10 translate-y-0" 
+                        : "text-white/40 hover:text-white/90"
+                    )}
+                 >
+                    <span className="relative z-10">{tab}</span>
+                    {activeTab !== tab && (
+                      <div className="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors" />
+                    )}
+                 </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 -mt-10">
-        <div className="grid lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2 space-y-6">
+      <div className="max-w-6xl mx-auto px-6 mt-12 mb-12">
+        <div className="grid lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2 space-y-8">
             {activeTab === "Forum" ? (
                <div className="space-y-6">
                   {FORUM_POSTS.map(post => (
-                    <Card key={post.id} className="bg-white border-slate-200 rounded-[32px] p-8 shadow-sm hover:shadow-md transition-all group border-l-[6px] border-l-blue-600">
+                    <Card key={post.id} className="bg-white border-slate-100 rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_45px_rgb(0,0,0,0.08)] transition-all group overflow-hidden border-t-2 border-t-transparent hover:border-t-blue-500/30">
                        <div className="flex items-center gap-4 mb-6">
-                          <img src={post.avatar} className="w-12 h-12 rounded-full border-2 border-slate-100" />
-                          <div>
-                            <p className="font-black text-slate-900 text-sm">{post.author}</p>
-                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold uppercase tracking-widest">
-                               <GraduationCap className="w-3 h-3" /> {post.university}
-                            </span>
+                          <img src={post.avatar} className="w-12 h-12 rounded-2xl border-2 border-slate-50 object-cover shadow-sm" />
+                          <div className="flex-1">
+                            <h4 className="font-black text-slate-900 text-sm tracking-tight">{post.author}</h4>
+                             <div className="flex items-center gap-2 mt-1">
+                                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-blue-50 text-blue-600 text-[9px] font-black uppercase tracking-widest border border-blue-100">
+                                   <GraduationCap className="w-3 h-3" /> {post.university}
+                                </span>
+                                <span className="text-[10px] font-bold text-slate-400">• 2h ago</span>
+                             </div>
                           </div>
-                          <span className="ml-auto text-xs font-bold text-slate-400">2h ago</span>
+                          <div className="flex gap-2">
+                             <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><Bookmark className="w-4.5 h-4.5" /></button>
+                             <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><Share2 className="w-4.5 h-4.5" /></button>
+                          </div>
                        </div>
-                       <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight group-hover:text-blue-600 transition-colors leading-tight">
+                       
+                       <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
                           {post.title}
                        </h3>
-                       <p className="text-slate-600 font-medium leading-relaxed mb-6">
+                       <p className="text-slate-500 font-medium text-base leading-relaxed mb-6">
                           {post.content}
                        </p>
+                       
                        <div className="flex flex-wrap gap-2 mb-8">
                           {post.tags.map(tag => (
-                            <span key={tag} className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-widest border border-blue-100 rounded-lg">
-                               {tag}
+                            <span key={tag} className="px-3 py-1.5 bg-slate-50 text-slate-500 text-[10px] font-bold uppercase tracking-widest border border-slate-100 rounded-xl">
+                               #{tag}
                             </span>
                           ))}
                        </div>
-                       <div className="flex items-center gap-6 pt-6 border-t border-slate-100">
-                          <button className="flex items-center gap-2 text-slate-400 hover:text-red-500 transition-colors font-bold text-sm">
-                             <Heart className="w-5 h-5" /> {post.likes}
+                       
+                       <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
+                          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all font-black text-xs uppercase tracking-widest">
+                             <Heart className="w-4 h-4" /> {post.likes}
                           </button>
-                          <button className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-colors font-bold text-sm">
-                             <MessageSquare className="w-5 h-5" /> {post.replies}
+                          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 text-slate-400 hover:text-blue-600 hover:bg-blue-50 transition-all font-black text-xs uppercase tracking-widest">
+                             <MessageSquare className="w-4 h-4" /> {post.replies}
                           </button>
-                          <div className="ml-auto flex gap-4">
-                             <button className="text-slate-300 hover:text-slate-600 transition-colors"><Bookmark className="w-5 h-5" /></button>
-                             <button className="text-slate-300 hover:text-slate-600 transition-colors"><Share2 className="w-5 h-5" /></button>
+                          <div className="ml-auto flex -space-x-2">
+                             {[1, 2, 3].map(i => (
+                               <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
+                                  <img src={`https://picsum.photos/seed/user${i}/50/50`} alt="" />
+                               </div>
+                             ))}
+                             <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-900 flex items-center justify-center text-[8px] font-bold text-white shadow-sm">+9</div>
                           </div>
                        </div>
                     </Card>
                   ))}
                </div>
             ) : (
-               <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-6">
                   {STUDY_BUDDIES.map(buddy => (
-                    <Card key={buddy.id} className="bg-white border-slate-200 rounded-[32px] p-8 text-center hover:border-blue-300 transition-all shadow-sm">
-                       <img src={buddy.avatar} className="w-24 h-24 rounded-full mx-auto mb-6 border-4 border-slate-50" />
-                       <h3 className="text-2xl font-black text-slate-900 mb-1">{buddy.name}</h3>
-                       <p className="text-blue-600 font-black text-[10px] uppercase tracking-widest mb-4">{buddy.uni}</p>
-                       <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
-                          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Studying</p>
-                          <p className="text-sm font-bold text-slate-900">{buddy.major}</p>
+                    <Card key={buddy.id} className="bg-white border-slate-100 rounded-[32px] p-8 text-center hover:shadow-xl hover:scale-[1.02] transition-all shadow-sm group">
+                       <div className="relative inline-block mb-6">
+                          <img src={buddy.avatar} className="w-20 h-20 rounded-3xl mx-auto border-4 border-slate-50 object-cover shadow-md" />
+                          <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
+                             <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                          </div>
                        </div>
-                       <Button className="w-full h-12 rounded-xl bg-slate-900 hover:bg-blue-600 text-white font-black tracking-widest uppercase text-xs">
-                          CONNECT
+                       <h3 className="text-2xl font-black text-slate-900 mb-1 leading-tight tracking-tight">{buddy.name}</h3>
+                       <p className="text-blue-600 font-black text-[10px] uppercase tracking-widest mb-6">{buddy.uni}</p>
+                       
+                       <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                             <Briefcase className="w-3.5 h-3.5 text-slate-400" />
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Majoring in</p>
+                          </div>
+                          <p className="text-sm font-bold text-slate-800">{buddy.major}</p>
+                       </div>
+                       
+                       <Button className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-blue-600 text-white font-black tracking-widest uppercase text-xs transition-all shadow-lg shadow-slate-200">
+                          SEND INVITE
                        </Button>
                     </Card>
                   ))}
@@ -166,25 +196,32 @@ export function Community() {
           </div>
 
           <aside className="space-y-8">
-            <div className="bg-white rounded-[32px] p-8 border border-slate-200 shadow-sm">
-               <h3 className="text-xs font-black text-slate-900 mb-6 uppercase tracking-widest">Trending Tags</h3>
-               <div className="flex flex-wrap gap-2">
+            <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm overflow-hidden relative group">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-100/50 transition-colors" />
+               <h3 className="text-[11px] font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative z-10 flex items-center gap-2">
+                  <Search className="w-4 h-4" /> Trending Topics
+               </h3>
+               <div className="flex flex-wrap gap-2 relative z-10">
                   {["Visa Process", "Abu Dhabi", "Rental Agreements", "Grocery Hacks", "Metro Tips", "Study Spaces"].map(tag => (
-                    <button key={tag} className="px-4 py-2 bg-slate-50 hover:bg-blue-50 border border-slate-100 hover:border-blue-200 rounded-xl text-xs font-bold text-slate-600 hover:text-blue-600 transition-all">
+                    <button key={tag} className="px-4 py-2 bg-slate-50 hover:bg-white border border-slate-100 hover:border-blue-500/30 rounded-xl text-[11px] font-bold text-slate-600 hover:text-blue-600 shadow-sm hover:shadow-md transition-all">
                        {tag}
                     </button>
                   ))}
                </div>
             </div>
 
-            <div className="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-[32px] p-8 text-white shadow-xl">
-               <h3 className="font-black text-white mb-4 uppercase tracking-widest text-xs">Join Uni WhatsApp</h3>
-               <p className="text-blue-100 text-sm leading-relaxed font-medium mb-8">
-                 Verified university groups are open! Connect with Batch 2026 students immediately.
-               </p>
-               <Button className="w-full h-14 bg-white text-navy-900 hover:bg-blue-50 font-black rounded-2xl flex items-center justify-center gap-2 tracking-widest text-xs uppercase">
-                 BROWSE GROUPS <ArrowRight className="w-4 h-4" />
-               </Button>
+            <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-[32px] p-8 text-white shadow-2xl relative overflow-hidden group">
+               <div className="absolute bottom-0 right-0 w-48 h-48 bg-white/5 rounded-full blur-3xl group-hover:scale-125 transition-transform duration-1000" />
+               <div className="relative z-10">
+                  <h3 className="font-black text-white/90 mb-4 uppercase tracking-[0.2em] text-[11px]">University Connect</h3>
+                  <h4 className="text-3xl font-black mb-4 leading-tight">Join Your Uni WhatsApp Group</h4>
+                  <p className="text-white/70 text-sm leading-relaxed font-medium mb-8">
+                    Don't start your journey alone. Get expert tips from seniors and coordinate move-ins.
+                  </p>
+                  <Button className="w-full h-16 bg-white text-blue-900 hover:bg-blue-50 font-black rounded-2xl flex items-center justify-center gap-3 tracking-widest text-[11px] uppercase shadow-xl transition-all hover:-translate-y-1 active:translate-y-0">
+                    FIND MY BATCH <ArrowRight className="w-5 h-5" />
+                  </Button>
+               </div>
             </div>
           </aside>
         </div>

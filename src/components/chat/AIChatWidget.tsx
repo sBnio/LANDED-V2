@@ -42,11 +42,13 @@ export function AIChatWidget() {
       <button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 w-16 h-16 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all z-50 hover:scale-110",
-          isOpen ? "scale-0 opacity-0" : "scale-100 opacity-100"
+          "fixed bottom-8 right-8 w-20 h-20 bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#4F46E5] text-white rounded-full flex items-center justify-center transition-all z-50 hover:scale-110 active:scale-95 shadow-[0_20px_50px_rgba(37,99,235,0.6)] group border border-white/20",
+          isOpen ? "scale-0 opacity-0" : "scale-100 opacity-100 animate-in zoom-in-50 duration-500"
         )}
       >
-        <Sparkles className="w-8 h-8 fill-white/20" />
+        <div className="absolute inset-0 rounded-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 opacity-20 blur-md group-hover:opacity-40 transition-opacity animate-pulse" />
+        <Sparkles className="w-10 h-10 fill-white relative z-10 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)]" />
       </button>
 
       <div
