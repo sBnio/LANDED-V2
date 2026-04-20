@@ -1,9 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { stepsData } from "@/data/steps";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
 import {
   ChevronDown,
   ChevronUp,
@@ -11,98 +10,47 @@ import {
   AlertCircle,
   FileText,
   CreditCard,
-  Home,
-  Sparkles,
-  MessageSquare,
-  Plane,
-  IdCard,
   Building,
   Landmark,
   Smartphone,
   GraduationCap,
   Car,
   Stethoscope,
-  Check
+  Check,
+  Calendar,
+  MapPin,
+  Sparkles,
+  ArrowRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { EmiratesIDForm } from "@/components/autofill/EmiratesIDForm";
 import { BankMatchmaker } from "@/components/banking/BankMatchmaker";
 import { CostEstimator } from "@/components/cost/CostEstimator";
-import { AppointmentPDF } from "@/components/pdf/AppointmentPDF";
-import { DocumentChecker } from "@/components/documents/DocumentChecker";
-import { SlotFinder } from "@/components/appointments/SlotFinder";
 
 const CATEGORIES = [
-  {
-    id: "visa",
-    title: "Visa & Entry",
-    icon: Plane,
-    stepIds: [1],
-  },
-  {
-    id: "eid",
-    title: "Emirates ID",
-    icon: IdCard,
-    stepIds: [2],
-  },
-  {
-    id: "housing",
-    title: "Housing",
-    icon: Building,
-    stepIds: [6],
-  },
-  {
-    id: "banking",
-    title: "Banking",
-    icon: Landmark,
-    stepIds: [4],
-  },
-  {
-    id: "sim",
-    title: "SIM Card",
-    icon: Smartphone,
-    stepIds: [3],
-  },
-  {
-    id: "uni",
-    title: "University Admin",
-    icon: GraduationCap,
-    stepIds: [9],
-  },
-  {
-    id: "transport",
-    title: "Getting Around",
-    icon: Car,
-    stepIds: [7],
-  },
-  {
-    id: "health",
-    title: "Health & Insurance",
-    icon: Stethoscope,
-    stepIds: [5],
-  },
+  { id: "visa", title: "Visa & ID", icon: FileText, stepIds: [1, 2] },
+  { id: "housing", title: "Housing", icon: Building, stepIds: [6] },
+  { id: "banking", title: "Banking", icon: Landmark, stepIds: [4] },
+  { id: "telecom", title: "Telecom", icon: Smartphone, stepIds: [3] },
+  { id: "uni", title: "University", icon: GraduationCap, stepIds: [9] },
+  { id: "health", title: "Health", icon: Stethoscope, stepIds: [5] },
 ];
 
 export function Dashboard() {
   const { state, toggleStep } = useOnboarding();
   const [expandedStep, setExpandedStep] = useState<number | null>(null);
   const [showEmiratesIDForm, setShowEmiratesIDForm] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>([
-    "visa",
-    "eid",
-  ]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["visa", "housing"]);
 
   const completedCount = state.completedSteps.length;
-  
-  // Calculate age to determine if medical test is needed
+  const totalSteps = stepsData.length;
+  const progressPercent = Math.round((completedCount / totalSteps) * 100);
+
+  // Age calculation
   const age = useMemo(() => {
-    if (!state.dateOfBirth) return 18; // Default to adult if not provided
-    
-    // Parse YYYY-MM-DD manually to avoid timezone issues
+    if (!state.dateOfBirth) return 20;
     const [year, month, day] = state.dateOfBirth.split("-").map(Number);
-    if (!year || !month || !day) return 18;
-    
     const birthDate = new Date(year, month - 1, day);
     const today = new Date();
     let calculatedAge = today.getFullYear() - birthDate.getFullYear();
@@ -113,94 +61,126 @@ export function Dashboard() {
     return calculatedAge;
   }, [state.dateOfBirth]);
 
-  // Filter steps based on age
-  const filteredStepsData = useMemo(() => {
-    if (age < 18) {
-      return stepsData.filter(step => step.id !== 1);
+  // Handle auto-completion for medical test and housing
+  useEffect(() => {
+    if (age < 18 && !state.completedSteps.includes(1)) {
+       toggleStep(1);
     }
-    return stepsData;
-  }, [age]);
-
-  const totalSteps = stepsData.length;
-  const progressPercent = Math.round((completedCount / totalSteps) * 100);
+    if (state.hasAccommodation === 'Yes' && !state.completedSteps.includes(6)) {
+       toggleStep(6);
+    }
+  }, [age, state.hasAccommodation, state.completedSteps, toggleStep]);
 
   const handleToggleStep = (id: number) => {
     const isCompleting = !state.completedSteps.includes(id);
     toggleStep(id);
-
     if (isCompleting) {
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
-        colors: ["#0A1628", "#10B981", "#F59E0B"],
+        colors: ["#2563EB", "#16A34A", "#D97706"],
       });
     }
   };
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories((prev) =>
-      prev.includes(categoryId)
-        ? prev.filter((id) => id !== categoryId)
-        : [...prev, categoryId]
+      prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId]
     );
   };
 
-  return (
-    <div className="min-h-screen bg-slate-50 pb-24 md:pb-12">
-      {/* Header Section */}
-      <div className="bg-white border-b border-slate-200 pt-10 pb-12 px-6 md:px-10">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-3xl font-bold text-navy-900 mb-2 font-heading tracking-tight">
-            Welcome back, {state.name || "Student"} 👋
-          </h1>
-          <p className="text-slate-500 text-lg mb-8">
-            You're {progressPercent}% through your UAE setup. Here's what's next.
-          </p>
+  const daysUntilArrival = useMemo(() => {
+    if (!state.arrivalDate) return null;
+    const arrival = new Date(state.arrivalDate);
+    const today = new Date();
+    const diffTime = arrival.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }, [state.arrivalDate]);
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Tasks Done</p>
-              <p className="text-2xl font-bold text-navy-900">{completedCount}</p>
-            </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">In Progress</p>
-              <p className="text-2xl font-bold text-amber-600">{totalSteps - completedCount}</p>
-            </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                {state.visaStatus === "I haven't arrived yet" ? "Days Until" : "Days Since"}
+  const urgentTasks = useMemo(() => {
+    return stepsData.filter(s => 
+      !state.completedSteps.includes(s.id) && 
+      (s.priority === "URGENT" || s.id === 2 || s.id === 1)
+    ).slice(0, 2);
+  }, [state.completedSteps]);
+
+  return (
+    <div className="min-h-screen bg-slate-50 pb-24 md:pb-12 font-sans">
+      {/* Dynamic Header */}
+      <div className="bg-white border-b border-slate-200">
+        <div className="max-w-4xl mx-auto px-6 py-12 md:py-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
+            <div>
+              <div className="flex items-center gap-2 mb-2 text-blue-600 font-bold text-sm uppercase tracking-widest">
+                <MapPin className="w-4 h-4" /> {state.emirate || "UAE"} • {state.university || "Student"}
+              </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
+                Hey {state.name.split(' ')[0] || "User"} 👋
+              </h1>
+              <p className="text-slate-500 text-lg mt-2">
+                Your journey to {state.emirate} is {progressPercent}% complete.
               </p>
-              <p className="text-2xl font-bold text-blue-600">14</p>
             </div>
-            <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
-              <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">Active Streak</p>
-              <p className="text-2xl font-bold text-emerald-600 flex items-center gap-1">
-                3 <span className="text-sm">🔥</span>
-              </p>
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 flex items-center gap-4 shadow-sm">
+               <div className="text-right">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Status</p>
+                  <p className="text-xl font-bold text-slate-900 leading-none">Ready to Land</p>
+               </div>
+               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                  <Check className="w-7 h-7" />
+               </div>
             </div>
           </div>
 
-          <div className="bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-            <div className="flex justify-between items-end mb-4">
+          {/* Arriving Soon Banner */}
+          {daysUntilArrival !== null && daysUntilArrival > 0 && daysUntilArrival < 30 && (
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white mb-10 shadow-xl relative overflow-hidden group">
+              <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <Calendar className="w-5 h-5 text-blue-200" />
+                  <span className="font-bold text-blue-100 uppercase tracking-widest text-sm">Arriving Soon</span>
+                </div>
+                <h2 className="text-3xl font-bold mb-4">You're landing in {daysUntilArrival} days! ✈️</h2>
+                <div className="flex flex-col md:flex-row items-center gap-6">
+                  <div className="flex-1">
+                    <p className="text-blue-100 text-lg leading-relaxed">
+                      Time to wrap up your top priorities. We recommend focusing on your 
+                      <span className="font-bold text-white"> Emirates ID paperwork</span> this week.
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                     {urgentTasks.map(t => (
+                       <div key={t.id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/20 min-w-[120px]">
+                          <p className="text-[10px] font-bold text-blue-200 uppercase mb-1">Priority</p>
+                          <p className="text-sm font-bold truncate">{t.title}</p>
+                       </div>
+                     ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Progress Section */}
+          <div className="bg-white border border-slate-200 shadow-sm rounded-3xl p-8">
+            <div className="flex justify-between items-end mb-6">
               <div>
-                <p className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                  Overall Progress
-                </p>
-                <p className="text-2xl font-bold text-navy-900">
-                  {completedCount} of {totalSteps} tasks done
-                </p>
-                <p className="text-sm text-slate-500 mt-1 flex items-center gap-1">
-                  <Clock className="w-4 h-4" /> Est. time remaining: 12 days
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Onboarding Progress</p>
+                <p className="text-3xl font-black text-slate-900">
+                  {completedCount} / {totalSteps} <span className="text-slate-300">tasks</span>
                 </p>
               </div>
-              <p className="text-amber-500 font-bold text-2xl">
-                {progressPercent}%
-              </p>
+              <div className="text-right">
+                <p className="text-4xl font-black text-blue-600 leading-none">{progressPercent}%</p>
+                <p className="text-xs font-bold text-slate-400 mt-1">Completion</p>
+              </div>
             </div>
-            <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+            <div className="w-full h-4 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-amber-500 transition-all duration-1000 ease-out"
+                className="h-full bg-blue-600 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(37,99,235,0.4)]"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -208,304 +188,169 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Main Content - Categories */}
-      <div className="max-w-4xl mx-auto px-6 md:px-10 py-12 space-y-8">
-        <div className="mb-8">
-          <CostEstimator />
-        </div>
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
+        <CostEstimator />
 
         {CATEGORIES.map((category) => {
-          const categorySteps = stepsData.filter((s) =>
-            category.stepIds.includes(s.id)
-          );
-          const categoryCompleted = categorySteps.filter((s) =>
-            state.completedSteps.includes(s.id)
-          ).length;
-          const categoryTotal = categorySteps.length;
-          if (categoryTotal === 0) return null; // Hide category if no steps
-          const categoryPercent = Math.round(
-            (categoryCompleted / categoryTotal) * 100
-          );
+          const categorySteps = stepsData.filter((s) => category.stepIds.includes(s.id));
+          const completedInCategory = categorySteps.filter((s) => state.completedSteps.includes(s.id));
+          const totalInCategory = categorySteps.length;
           const isExpanded = expandedCategories.includes(category.id);
 
+          // Grouping logic: Completed ABOVE incompleted (per Request 4)
+          const sortedSteps = [...categorySteps].sort((a, b) => {
+             const aComp = state.completedSteps.includes(a.id);
+             const bComp = state.completedSteps.includes(b.id);
+             if (aComp && !bComp) return -1;
+             if (!aComp && bComp) return 1;
+             return 0;
+          });
+
           return (
-            <div key={category.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              {/* Category Header */}
+            <div key={category.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <button
                 onClick={() => toggleCategory(category.id)}
-                className="w-full flex items-center justify-between p-6 bg-white hover:bg-slate-50 transition-colors text-left"
+                className="w-full flex items-center justify-between p-8 bg-white hover:bg-slate-50 transition-colors text-left"
               >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-navy-900">
-                    <category.icon className="h-6 w-6" />
+                <div className="flex items-center gap-5">
+                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                    <category.icon className="h-7 w-7" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-navy-900 font-heading">
-                      {category.title}
-                    </h2>
+                    <h2 className="text-2xl font-black text-slate-900 tracking-tight uppercase">{category.title}</h2>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-sm font-medium text-slate-500">
-                        {categoryCompleted}/{categoryTotal} done
+                      <span className="text-sm font-bold text-slate-500">
+                        {completedInCategory.length} of {totalInCategory} done
                       </span>
-                      <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-emerald-500 transition-all duration-500"
-                          style={{ width: `${categoryPercent}%` }}
+                          className="h-full bg-blue-600 transition-all duration-500"
+                          style={{ width: `${(completedInCategory.length / totalInCategory) * 100}%` }}
                         />
                       </div>
                     </div>
                   </div>
                 </div>
                 <div className="text-slate-400">
-                  {isExpanded ? (
-                    <ChevronUp className="h-6 w-6" />
-                  ) : (
-                    <ChevronDown className="h-6 w-6" />
-                  )}
+                  {isExpanded ? <ChevronUp className="h-7 w-7" /> : <ChevronDown className="h-7 w-7" />}
                 </div>
               </button>
 
-              {/* Category Tasks */}
               {isExpanded && (
-                <div className="border-t border-slate-100 divide-y divide-slate-100">
-                  {[...categorySteps]
-                    .sort((a, b) => {
-                      const aCompleted = state.completedSteps.includes(a.id);
-                      const bCompleted = state.completedSteps.includes(b.id);
-                      if (aCompleted && !bCompleted) return 1;
-                      if (!aCompleted && bCompleted) return -1;
-                      return 0;
-                    })
-                    .map((step) => {
-                      const isCompleted = state.completedSteps.includes(step.id);
+                <div className="border-t border-slate-100 divide-y divide-slate-50">
+                  {sortedSteps.map((step) => {
+                    const isCompleted = state.completedSteps.includes(step.id);
                     const isStepExpanded = expandedStep === step.id;
-                    const depsMet = step.dependsOn.every((depId) =>
-                      state.completedSteps.includes(depId)
-                    );
+                    const depsMet = step.dependsOn.every((depId) => state.completedSteps.includes(depId));
                     const isLocked = !depsMet && !isCompleted;
+                    
+                    // Specific logic for medical test & housing auto-complete labels
+                    const autoCompletedLabel = 
+                      (step.id === 1 && age < 18) ? "Exempt (Age < 18)" :
+                      (step.id === 6 && state.hasAccommodation === 'Yes') ? "Housing Sorted" : null;
 
                     return (
-                      <div
-                        key={step.id}
-                        className={cn(
-                          "p-6 transition-colors",
-                          isCompleted ? "bg-slate-50/50" : "bg-white",
-                          isLocked ? "opacity-75" : ""
-                        )}
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="pt-1.5">
-                            <div className={cn(
-                              "w-3 h-3 rounded-full mt-1",
-                              isCompleted ? "bg-emerald-500" : isStepExpanded ? "bg-amber-500" : "bg-slate-300"
-                            )} />
-                          </div>
-                          
-                          <div className="flex-1 min-w-0">
-                            <div
-                              className="cursor-pointer group"
-                              onClick={() =>
-                                setExpandedStep(isStepExpanded ? null : step.id)
-                              }
-                            >
-                              <div className="flex items-center justify-between gap-4">
-                                <div>
-                                  <h3
-                                    className={cn(
-                                      "text-lg font-bold transition-colors",
-                                      isCompleted
-                                        ? "text-slate-400 line-through decoration-slate-300"
-                                        : "text-navy-900 group-hover:text-amber-600"
-                                    )}
-                                  >
-                                    {step.title}
-                                  </h3>
-                                  <p className="text-sm text-slate-500 mt-1 line-clamp-1">
-                                    {step.id === 1 && age < 18 ? (
-                                      <span className="text-emerald-600 font-medium flex items-center gap-1">
-                                        <Sparkles className="w-3.5 h-3.5" /> Not required (Under 18). Auto-completed.
-                                      </span>
-                                    ) : step.id === 6 && state.hasHousing ? (
-                                      <span className="text-emerald-600 font-medium flex items-center gap-1">
-                                        <Check className="w-3.5 h-3.5" /> Housing already sorted. Auto-completed.
-                                      </span>
-                                    ) : (
-                                      step.shortDescription
-                                    )}
-                                  </p>
-                                  <div className="flex flex-wrap items-center gap-2 mt-3">
-                                    {step.priority === "URGENT" && !isCompleted && (
-                                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-red-100 text-red-700 uppercase tracking-wider">
-                                        URGENT
+                      <div key={step.id} className={cn("p-8 transition-all", isCompleted ? "bg-slate-50/40" : "bg-white")}>
+                        <div className="flex items-start gap-6">
+                           <div 
+                              onClick={() => !autoCompletedLabel && handleToggleStep(step.id)}
+                              className={cn(
+                                "shrink-0 w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer mt-1",
+                                isCompleted ? "bg-green-600 border-green-600 text-white" : "border-slate-200 hover:border-blue-400"
+                              )}
+                           >
+                              {isCompleted && <Check className="w-4 h-4 stroke-[3px]" />}
+                           </div>
+
+                           <div className="flex-1 min-w-0">
+                              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
+                                 <div>
+                                    <h3 
+                                      className={cn(
+                                        "text-xl font-bold tracking-tight transition-all",
+                                        isCompleted ? "text-slate-400 line-through" : "text-slate-900"
+                                      )}
+                                    >
+                                      {step.title}
+                                    </h3>
+                                    {autoCompletedLabel && (
+                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider mt-1 border border-green-100">
+                                        <Sparkles className="w-3 h-3" /> {autoCompletedLabel}
                                       </span>
                                     )}
-                                    {step.priority === "This week" && !isCompleted && (
-                                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
-                                        This week
-                                      </span>
-                                    )}
-                                    {step.priority === "Optional" && !isCompleted && (
-                                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 uppercase tracking-wider">
-                                        Optional
-                                      </span>
-                                    )}
-                                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-600 uppercase tracking-wider">
-                                      <Clock className="h-3 w-3" />
-                                      {step.timeEstimate}
+                                 </div>
+                                 <div className="flex items-center gap-3">
+                                    <span className="text-xs font-bold text-slate-400 flex items-center gap-1 uppercase tracking-tighter">
+                                       <Clock className="w-3.5 h-3.5" /> {step.timeEstimate}
                                     </span>
-                                    {isLocked && (
-                                      <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-700 uppercase tracking-wider">
-                                        <AlertCircle className="h-3 w-3" />
-                                        Locked
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                                <div className="shrink-0">
-                                  <button className="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-semibold text-sm hover:bg-slate-200 transition-colors">
-                                    {isStepExpanded ? "Close" : "Start Task"}
-                                  </button>
-                                </div>
+                                    <button 
+                                      onClick={() => setExpandedStep(isStepExpanded ? null : step.id)}
+                                      className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-400 hover:text-slate-900"
+                                    >
+                                      {isStepExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                                    </button>
+                                 </div>
                               </div>
-                            </div>
 
-                            {/* Expanded Step Details */}
-                            {isStepExpanded && (
-                              <div className="mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-2 fade-in duration-200">
-                                {step.id === 1 && age < 18 && (
-                                  <div className="mb-6 bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-start gap-3">
-                                    <div className="mt-0.5 bg-emerald-100 p-1.5 rounded-full text-emerald-600 shrink-0">
-                                      <Sparkles className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold text-emerald-900 text-sm">Automatically Completed</h4>
-                                      <p className="text-sm text-emerald-800 mt-1">
-                                        Because you are under 18, the UAE government does not require you to take a medical fitness test for your Emirates ID. We've marked this step as complete for you!
-                                      </p>
-                                    </div>
-                                  </div>
-                                )}
-                                {step.id === 6 && state.hasHousing && (
-                                  <div className="mb-6 bg-emerald-50 border border-emerald-200 p-4 rounded-xl flex items-start gap-3">
-                                    <div className="mt-0.5 bg-emerald-100 p-1.5 rounded-full text-emerald-600 shrink-0">
-                                      <Check className="w-4 h-4" />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold text-emerald-900 text-sm">Housing Sorted</h4>
-                                      <p className="text-sm text-emerald-800 mt-1">
-                                        You mentioned during onboarding that you already have your accommodation sorted. Great job! You can still review the resources below if needed.
-                                      </p>
-                                    </div>
-                                  </div>
-                                )}
-                                <p className="text-slate-600 mb-6 leading-relaxed whitespace-pre-line">
-                                  {step.details.what}
-                                </p>
+                              <p className="text-slate-600 leading-relaxed mb-4">
+                                 {step.shortDescription}
+                              </p>
 
-                                {step.details.documentsNeeded.length > 0 && (
-                                  <div className="mb-6 bg-slate-50 rounded-xl p-4 border border-slate-100">
-                                    <h4 className="font-semibold text-navy-900 mb-3 text-sm uppercase tracking-wider flex items-center gap-2">
-                                      <FileText className="w-4 h-4 text-slate-400" />
-                                      What you'll need
+                              {isStepExpanded && (
+                                <div className="mt-8 pt-8 border-t border-slate-100 animate-in slide-in-from-top-4 fade-in duration-300">
+                                  <div className="mb-8 p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
+                                    <h4 className="font-black text-blue-900 text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                                       <Sparkles className="w-4 h-4 text-blue-600" />
+                                       Why it matters
                                     </h4>
-                                    <ul className="space-y-2">
-                                      {step.details.documentsNeeded.map((doc, i) => (
-                                        <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                                          <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
-                                          {doc}
-                                        </li>
-                                      ))}
-                                    </ul>
+                                    <p className="text-slate-700 leading-relaxed font-medium">
+                                       {step.whyItMatters || "This is a critical part of your legal onboarding in the UAE."}
+                                    </p>
                                   </div>
-                                )}
 
-                                {step.details.where && (
-                                  <div className="mb-6">
-                                    <h4 className="font-semibold text-navy-900 mb-2 text-sm uppercase tracking-wider">
-                                      Where to go
-                                    </h4>
-                                    <p className="text-sm text-slate-600 whitespace-pre-line">{step.details.where}</p>
-                                  </div>
-                                )}
-
-                                {step.details.process && step.details.process.length > 0 && (
-                                  <div className="mb-6">
-                                    <h4 className="font-semibold text-navy-900 mb-3 text-sm uppercase tracking-wider">
-                                      The Process
-                                    </h4>
-                                    <div className="space-y-3">
-                                      {step.details.process.map((p, i) => (
-                                        <div key={i} className="flex gap-3 text-sm text-slate-600 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-                                          <Checkbox className="mt-0.5 h-4 w-4 rounded data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500" />
-                                          <span className="flex-1">{p.replace(/^\d+\.\s*/, '')}</span>
-                                        </div>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )}
-
-                                {step.details.proTips && step.details.proTips.length > 0 && (
-                                  <div className="mb-6 bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-xl">
-                                    <h4 className="font-semibold text-amber-900 mb-2 text-sm uppercase tracking-wider flex items-center gap-2">
-                                      <Sparkles className="w-4 h-4" />
-                                      Helpful Tip
-                                    </h4>
-                                    <p className="text-sm text-amber-800">{step.details.proTips[0]}</p>
-                                  </div>
-                                )}
-
-                                {step.id === 1 && (
-                                  <div className="mb-6">
-                                    <DocumentChecker docType="passport_photo" onSuccess={() => {
-                                      if (!isCompleted) handleToggleStep(step.id);
-                                    }} />
-                                  </div>
-                                )}
-
-                                {step.id === 2 && (
-                                  <div className="mb-6 space-y-6">
-                                    <SlotFinder />
-                                    <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex items-center justify-between">
-                                      <div>
-                                        <h4 className="font-semibold text-blue-900 mb-1 text-sm flex items-center gap-2">
-                                          <Sparkles className="w-4 h-4 text-amber-500" />
-                                          Autofill Available
+                                  <div className="grid md:grid-cols-2 gap-8 mb-8">
+                                     <div>
+                                        <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                           <FileText className="w-4 h-4 text-slate-400" /> Documents Checklist
                                         </h4>
-                                        <p className="text-xs text-blue-800">We can pre-fill the ICA form using your saved details.</p>
-                                      </div>
-                                      <button 
-                                        onClick={() => setShowEmiratesIDForm(true)}
-                                        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-lg transition-colors shrink-0"
+                                        <ul className="space-y-3">
+                                          {step.details.documentsNeeded.map((doc, i) => (
+                                            <li key={i} className="flex gap-3 text-sm text-slate-600 font-medium">
+                                              <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                              {doc}
+                                            </li>
+                                          ))}
+                                        </ul>
+                                     </div>
+                                     <div>
+                                        <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4">How to complete this</h4>
+                                        <div className="space-y-4">
+                                          {step.details.process.map((p, i) => (
+                                            <div key={i} className="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                               <span className="text-blue-600 font-black text-lg">{i + 1}</span>
+                                               <p className="text-sm text-slate-700 leading-relaxed font-medium">{p.replace(/^\d+\.\s*/, '')}</p>
+                                            </div>
+                                          ))}
+                                        </div>
+                                     </div>
+                                  </div>
+
+                                  <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-100">
+                                     <button 
+                                        className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+                                        onClick={() => handleToggleStep(step.id)}
                                       >
-                                        Autofill Form
-                                      </button>
-                                    </div>
+                                        {isCompleted ? "MARK INCOMPLETE" : "MARK AS DONE"}
+                                        {!isCompleted && <ArrowRight className="w-5 h-5" />}
+                                     </button>
+                                     <button className="flex-1 h-14 bg-white border border-slate-200 text-slate-600 font-black rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2">
+                                        CHAT WITH AI ASSISTANT
+                                     </button>
                                   </div>
-                                )}
-
-                                {step.id === 4 && (
-                                  <div className="mb-6">
-                                    <BankMatchmaker />
-                                  </div>
-                                )}
-
-                                <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4 border-t border-slate-100">
-                                  {/* Show PDF button for tasks requiring in-person visits */}
-                                  {[2, 3, 9].includes(step.id) ? (
-                                    <AppointmentPDF taskTitle={step.title} taskDetails={step.details} />
-                                  ) : (
-                                    <div />
-                                  )}
-                                  <button 
-                                    onClick={() => handleToggleStep(step.id)}
-                                    className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold text-sm transition-colors shadow-sm"
-                                  >
-                                    {isCompleted ? "Mark Incomplete" : "Mark Complete"}
-                                  </button>
                                 </div>
-                              </div>
-                            )}
-                          </div>
+                              )}
+                           </div>
                         </div>
                       </div>
                     );
@@ -516,10 +361,6 @@ export function Dashboard() {
           );
         })}
       </div>
-
-      {showEmiratesIDForm && (
-        <EmiratesIDForm onClose={() => setShowEmiratesIDForm(false)} />
-      )}
     </div>
   );
 }

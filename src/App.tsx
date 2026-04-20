@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -7,16 +7,27 @@ import {
   useLocation,
 } from "react-router-dom";
 import { OnboardingProvider, useOnboarding } from "@/context/OnboardingContext";
-import { Landing } from "@/pages/Landing";
-import { Onboarding } from "@/pages/Onboarding";
-import { Dashboard } from "@/pages/Dashboard";
-import { Documents } from "@/pages/Documents";
-import { Services } from "@/pages/Services";
-import { Community } from "@/pages/Community";
-import { ChatMobile } from "@/pages/ChatMobile";
-import { BottomNav } from "@/components/layout/BottomNav";
+import { Loader2 } from "lucide-react";
 
+const Landing = lazy(() => import("@/pages/Landing").then(m => ({ default: m.Landing })));
+const Onboarding = lazy(() => import("@/pages/Onboarding").then(m => ({ default: m.Onboarding })));
+const Dashboard = lazy(() => import("@/pages/Dashboard").then(m => ({ default: m.Dashboard })));
+const Documents = lazy(() => import("@/pages/Documents").then(m => ({ default: m.Documents })));
+const Services = lazy(() => import("@/pages/Services").then(m => ({ default: m.Services })));
+const Community = lazy(() => import("@/pages/Community").then(m => ({ default: m.Community })));
+const ChatMobile = lazy(() => import("@/pages/ChatMobile").then(m => ({ default: m.ChatMobile })));
+
+import { BottomNav } from "@/components/layout/BottomNav";
 import { Sidebar } from "@/components/layout/Sidebar";
+import { AIChatWidget } from "@/components/chat/AIChatWidget";
+
+function PageLoader() {
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-slate-50">
+      <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+    </div>
+  );
+}
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { state } = useOnboarding();
@@ -26,8 +37,6 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-import { AIChatWidget } from "@/components/chat/AIChatWidget";
-
 function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isLandingOrOnboarding =
@@ -36,8 +45,10 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
   if (isLandingOrOnboarding) {
     return (
-      <div className="min-h-screen bg-slate-50 flex flex-col font-sans text-slate-900">
-        <main className="flex-1 w-full">{children}</main>
+      <div className="min-h-screen bg-white flex flex-col font-sans text-slate-900">
+        <main className="flex-1 w-full">
+          <Suspense fallback={<PageLoader />}>{children}</Suspense>
+        </main>
       </div>
     );
   }
@@ -47,12 +58,13 @@ function AppLayout({ children }: { children: React.ReactNode }) {
       <Sidebar />
 
       <div className="flex-1 flex flex-col min-w-0">
-        <main className="flex-1 w-full pb-16 md:pb-0">{children}</main>
+        <main className="flex-1 w-full pb-16 md:pb-0">
+          <Suspense fallback={<PageLoader />}>{children}</Suspense>
+        </main>
       </div>
 
       <BottomNav />
 
-      {/* Hide widget on mobile chat page, but show on desktop or other pages */}
       <div className={isChatMobile ? "hidden md:block" : "block"}>
         <AIChatWidget />
       </div>

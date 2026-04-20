@@ -7,7 +7,14 @@ export interface UserState {
   arrivalDate: string;
   visaStatus: string;
   dateOfBirth: string;
-  hasHousing: boolean | null;
+  emirate: string;
+  hasAccommodation: 'Yes' | 'No' | 'Still looking' | null;
+  hasSIMCard: boolean;
+  hasEmiratesID: 'applied' | 'not yet';
+  hasBankAccount: boolean;
+  visaType: string;
+  sponsoringStay: string;
+  languagePreference: string;
   helpNeeded: string[];
   completedSteps: number[];
   completedDocuments: string[];
@@ -23,7 +30,14 @@ const defaultState: UserState = {
   arrivalDate: "",
   visaStatus: "",
   dateOfBirth: "",
-  hasHousing: null,
+  emirate: "",
+  hasAccommodation: null,
+  hasSIMCard: false,
+  hasEmiratesID: 'not yet',
+  hasBankAccount: false,
+  visaType: "",
+  sponsoringStay: "",
+  languagePreference: "English",
   helpNeeded: [],
   completedSteps: [],
   completedDocuments: [],

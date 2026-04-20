@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, Send, Loader2 } from "lucide-react";
+import { MessageCircle, Send, X, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useOnboarding } from "@/context/OnboardingContext";
-import { GoogleGenAI } from "@google/genai";
+import { useLandedChat } from "@/hooks/useLandedChat";
+import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
 export function ChatMobile() {
   const [input, setInput] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const { state, updateState } = useOnboarding();
+  const { state } = useOnboarding();
+  const { chatHistory, isTyping, sendMessage, clearHistory } = useLandedChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -18,138 +19,60 @@ export function ChatMobile() {
 
   useEffect(() => {
     scrollToBottom();
-  }, [state.chatHistory]);
+  }, [chatHistory]);
 
-  const handleSend = async (text: string) => {
-    if (!text.trim()) return;
-
-    const userMessage = { role: "user" as const, content: text };
-    const newHistory = [...state.chatHistory, userMessage];
-    updateState({ chatHistory: newHistory });
+  const handleSend = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!input.trim() || isTyping) return;
+    const text = input;
     setInput("");
-    setIsLoading(true);
-
-    try {
-      const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-
-      const systemInstruction = `
-You are LANDED's AI assistant — a friendly, knowledgeable guide for international students arriving in the UAE for university.
-
-YOUR KNOWLEDGE AREAS:
-- Emirates ID application process, documents, costs, timelines, and common issues
-- UAE student visa process and requirements
-- SIM card options (Du and e&/Etisalat) — prepaid vs postpaid, costs, what you need
-- Bank account opening (Emirates NBD, ADCB, Mashreq, Liv) — requirements, student accounts
-- Medical fitness test — locations, process, costs
-- Health insurance — university-provided vs private options
-- Accommodation — university housing, Dubizzle, Property Finder, typical costs, areas
-- Transportation — NOL card, metro, buses, Careem/Uber
-- Essential apps — UAE Pass, ICP Smart, Al Hosn
-- General life in UAE — culture tips, weather, costs, safety
-
-YOUR PERSONALITY:
-- Friendly, clear, concise
-- Give specific actionable answers, not vague generalities
-- Use bullet points and numbered steps for clarity
-- Include specific costs in AED when relevant
-- Mention common mistakes students make
-- If you're not sure about something specific (like exact current prices or processing times), say "this may vary — I'd recommend verifying the latest info with [specific source]"
-- Keep answers focused. Don't write essays. Students want quick, clear answers.
-- You can use emojis sparingly for readability
-
-IMPORTANT RULES:
-- Never give legal advice. For visa/legal issues, direct them to their university's international student office or ICP directly.
-- Never make up specific phone numbers, addresses, or URLs you're not sure about
-- Always be encouraging — moving to a new country is stressful. Be the reassuring friend who's been through it.
-- If asked about things outside UAE student life, politely redirect: "I'm specialized in helping students settle in the UAE! For that question, I'd recommend [alternative resource]."
-`;
-
-      const contextPrompt = newHistory
-        .map(
-          (m) => `${m.role === "user" ? "Student" : "Assistant"}: ${m.content}`,
-        )
-        .join("\n\n");
-
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Here is the conversation history:\n${contextPrompt}\n\nAssistant:`,
-        config: {
-          systemInstruction,
-          temperature: 0.7,
-        },
-      });
-
-      const assistantMessage = {
-        role: "assistant" as const,
-        content: response.text || "I'm sorry, I couldn't process that.",
-      };
-      updateState({ chatHistory: [...newHistory, assistantMessage] });
-    } catch (error) {
-      console.error("Chat error:", error);
-      updateState({
-        chatHistory: [
-          ...newHistory,
-          {
-            role: "assistant",
-            content:
-              "I'm having trouble connecting. Try again in a moment, or check our step-by-step guides on the main dashboard.",
-          },
-        ],
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    await sendMessage(text);
   };
 
   const quickAsks = [
     "Emirates ID timeline?",
-    "SIM card without Emirates ID?",
-    "Best student bank account?",
-    "How to check visa status?",
+    "SIM without ID?",
+    "Best bank for me?",
+    "Housing checklist"
   ];
 
   return (
-    <div className="flex flex-col h-[calc(100vh-64px)] md:h-[calc(100vh-73px)] bg-slate-50">
-      <div className="bg-blue-600 text-white p-4 flex items-center gap-3 shrink-0 shadow-sm z-10">
-        <div className="bg-white/20 p-2 rounded-full">
-          <MessageCircle className="h-6 w-6" />
-        </div>
-        <div>
-          <h1 className="font-bold text-lg">LANDED AI Assistant 🤖</h1>
-          <p className="text-blue-100 text-sm">
-            Ask me anything about settling in the UAE
-          </p>
+    <div className="flex flex-col h-[calc(100vh-64px)] md:h-[calc(100vh-73px)] bg-slate-50 font-sans">
+      <div className="bg-white border-b border-slate-100 p-6 flex flex-col gap-4 shrink-0 shadow-sm z-10">
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100">
+                <Sparkles className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                <h1 className="font-black text-xl text-slate-900 tracking-tight uppercase">Landed Assistant</h1>
+                <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest">
+                    Verified UAE Student Guide
+                </p>
+                </div>
+            </div>
+            <button onClick={clearHistory} className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+                <X className="w-6 h-6" />
+            </button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {state.chatHistory.length === 0 && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm max-w-md mx-auto mt-4">
-            <p className="text-slate-700 leading-relaxed">
-              Hi! 👋 I'm LANDED's AI assistant. I can help you with:
-              <br />
-              <br />
-              • Emirates ID questions
-              <br />
-              • Visa process
-              <br />
-              • SIM card options
-              <br />
-              • Banking
-              <br />
-              • Accommodation tips
-              <br />
-              • Or anything else about living in UAE!
-              <br />
-              <br />
-              What would you like to know?
+      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+        {chatHistory.length === 0 && (
+          <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-sm max-w-md mx-auto mt-4 text-center">
+            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <MessageCircle className="h-8 w-8" />
+            </div>
+            <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tight uppercase leading-none">Welcome, {state.name.split(' ')[0]}</h2>
+            <p className="text-slate-500 font-medium leading-relaxed mb-8">
+              I'm specialized in {state.university} and the {state.emirate} area. Ask me anything about your move.
             </p>
-            <div className="mt-6 flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {quickAsks.map((ask) => (
                 <button
                   key={ask}
-                  onClick={() => handleSend(ask)}
-                  className="text-sm bg-blue-50 text-blue-700 border border-blue-100 rounded-xl px-4 py-3 hover:bg-blue-100 transition-colors text-left font-medium"
+                  onClick={() => sendMessage(ask)}
+                  className="text-[10px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:text-blue-600 transition-all text-center leading-tight shadow-sm"
                 >
                   {ask}
                 </button>
@@ -158,64 +81,58 @@ IMPORTANT RULES:
           </div>
         )}
 
-        {state.chatHistory.map((msg, i) => (
+        {chatHistory.map((msg, i) => (
           <div
             key={i}
             className={cn(
-              "flex",
+              "flex animate-in fade-in slide-in-from-bottom-2 duration-300",
               msg.role === "user" ? "justify-end" : "justify-start",
             )}
           >
             <div
               className={cn(
-                "max-w-[85%] md:max-w-[70%] rounded-2xl px-5 py-3 text-[15px] leading-relaxed",
+                "max-w-[90%] md:max-w-[70%] rounded-2xl px-5 py-4 text-[15px] leading-relaxed font-medium shadow-sm",
                 msg.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-sm shadow-sm"
-                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm",
+                  ? "bg-blue-600 text-white rounded-br-sm"
+                  : "bg-white border border-slate-100 text-slate-800 rounded-bl-sm markdown-body",
               )}
             >
-              {msg.content.split("\n").map((line, j) => (
-                <span key={j}>
-                  {line}
-                  {j !== msg.content.split("\n").length - 1 && <br />}
-                </span>
-              ))}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           </div>
         ))}
 
-        {isLoading && (
+        {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-5 py-4 shadow-sm">
-              <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
+            <div className="bg-white border border-slate-100 rounded-2xl rounded-bl-sm px-6 py-5 shadow-sm flex gap-2">
+              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
           </div>
         )}
         <div ref={messagesEndRef} className="h-4" />
       </div>
 
-      <div className="p-4 bg-white border-t border-slate-200 shrink-0 pb-safe">
+      <div className="p-6 bg-white border-t border-slate-100 shrink-0 pb-safe shadow-[0_-4px_20px_rgba(0,0,0,0.02)]">
         <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleSend(input);
-          }}
-          className="flex items-center gap-3 max-w-4xl mx-auto"
+          onSubmit={handleSend}
+          className="flex items-center gap-4 max-w-4xl mx-auto"
         >
           <Input
-            placeholder="e.g., What documents do I need for Emirates ID?"
+            placeholder="Type your question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="h-12 rounded-full bg-slate-50 border-slate-200 focus-visible:ring-blue-500 text-base px-5"
-            disabled={isLoading}
+            className="h-16 rounded-2xl bg-slate-50 border-transparent focus-visible:ring-blue-500 text-base px-6 font-medium shadow-inner"
+            disabled={isTyping}
           />
           <Button
             type="submit"
             size="icon"
-            disabled={!input.trim() || isLoading}
-            className="h-12 w-12 rounded-full shrink-0 bg-blue-600 hover:bg-blue-700 shadow-sm"
+            disabled={!input.trim() || isTyping}
+            className="h-16 w-16 rounded-2xl shrink-0 bg-slate-900 hover:bg-blue-600 shadow-xl shadow-slate-200 transition-all active:scale-95"
           >
-            <Send className="h-5 w-5" />
+            <Send className="h-6 w-6" />
           </Button>
         </form>
       </div>

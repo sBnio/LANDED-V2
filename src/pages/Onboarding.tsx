@@ -1,61 +1,58 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
-import { useOnboarding } from "@/context/OnboardingContext";
-import { Loader2, Check, ChevronLeft } from "lucide-react";
+import { useOnboarding, UserState } from "@/context/OnboardingContext";
+import { Loader2, Check, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { Logo } from "@/components/ui/Logo";
 
-const nationalities = [
-  "India", "Pakistan", "Nigeria", "Egypt", "Philippines", 
-  "Bangladesh", "Jordan", "Iran", "Kenya", "Sri Lanka", 
-  "China", "Russia", "Other"
-];
-
 const universities = [
-  "American University of Sharjah (AUS)",
-  "University of Sharjah (UOS)",
-  "Khalifa University",
-  "NYU Abu Dhabi",
-  "Sorbonne University Abu Dhabi",
-  "Heriot-Watt University Dubai",
-  "University of Birmingham Dubai",
-  "University of Wollongong in Dubai",
-  "Middlesex University Dubai",
-  "Manipal Academy Dubai",
-  "Amity University Dubai",
-  "SP Jain School of Global Management",
-  "Other",
+  "UAEU", "AUS", "AUD", "NYU Abu Dhabi", "Heriot-Watt Dubai", 
+  "Khalifa University", "Zayed University", "BITS Pilani Dubai", 
+  "Canadian University Dubai", "Other"
 ];
 
-const visaStatuses = [
-  "I haven't arrived yet",
-  "Just arrived (< 2 weeks)",
-  "Been here 1–3 months",
+const nationalities = [
+  "Indian", "Pakistani", "Egyptian", "Jordanian", "Syrian", 
+  "Nigerian", "Kenyan", "Filipino", "Bangladeshi", "British", 
+  "American", "Other"
 ];
 
-const helpTopics = [
-  { id: "visa", icon: "🛂", label: "Entry Visa / Tourist Visa" },
-  { id: "emirates_id", icon: "🪪", label: "Emirates ID" },
-  { id: "accommodation", icon: "🏠", label: "Housing" },
-  { id: "bank", icon: "🏦", label: "Bank Account" },
-  { id: "sim_card", icon: "📱", label: "SIM Card" },
-  { id: "university", icon: "📚", label: "University Enrollment" },
-  { id: "transport", icon: "🚗", label: "Transportation Card (Nol)" },
-  { id: "insurance", icon: "💉", label: "Health Insurance" },
+const emirates = [
+  "Dubai", "Abu Dhabi", "Sharjah", "Ajman", "Ras Al Khaimah", "Other"
 ];
 
-const commonDocuments = [
-  { id: "passport", label: "Passport (+ copy)" },
-  { id: "acceptance", label: "University Acceptance Letter" },
-  { id: "photos", label: "Passport Photos (white background)" },
-  { id: "medical", label: "Medical Certificate" },
-  { id: "bank_statement", label: "Bank Statement / Sponsorship Letter" },
+const visaTypes = [
+  "I have not applied yet",
+  "I have a student visa (entry approved)",
+  "I have arrived and am applying for a residence permit",
+  "I have a valid residence permit"
 ];
+
+const sponsors = [
+  "University",
+  "Self-sponsored",
+  "Other"
+];
+
+const languages = [
+  "English", "Arabic", "Hindi", "Urdu"
+];
+
+const universityEmirateMap: Record<string, string> = {
+  "UAEU": "Abu Dhabi",
+  "AUS": "Sharjah",
+  "AUD": "Dubai",
+  "NYU Abu Dhabi": "Abu Dhabi",
+  "Heriot-Watt Dubai": "Dubai",
+  "Khalifa University": "Abu Dhabi",
+  "Zayed University": "Dubai",
+  "BITS Pilani Dubai": "Dubai",
+  "Canadian University Dubai": "Dubai"
+};
 
 export function Onboarding() {
   const navigate = useNavigate();
@@ -64,26 +61,40 @@ export function Onboarding() {
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form State
-  const [name, setName] = useState(state.name || "");
-  const [nationality, setNationality] = useState(state.nationality || "");
-  const [university, setUniversity] = useState(state.university || "");
-  const [arrivalDate, setArrivalDate] = useState(state.arrivalDate || "");
-  const [visaStatus, setVisaStatus] = useState(state.visaStatus || "");
-  const [dateOfBirth, setDateOfBirth] = useState(state.dateOfBirth || "");
-  const [hasHousing, setHasHousing] = useState<boolean | null>(state.hasHousing !== undefined ? state.hasHousing : null);
-  const [helpNeeded, setHelpNeeded] = useState<string[]>(state.helpNeeded || []);
-  const [documents, setDocuments] = useState<string[]>(state.completedDocuments || []);
+  // Form State initialized from context or defaults
+  const [formData, setFormData] = useState<Partial<UserState>>({
+    name: state.name || "",
+    university: state.university || "",
+    nationality: state.nationality || "",
+    dateOfBirth: state.dateOfBirth || "",
+    emirate: state.emirate || "",
+    arrivalDate: state.arrivalDate || "",
+    visaType: state.visaType || "",
+    sponsoringStay: state.sponsoringStay || "",
+    hasAccommodation: state.hasAccommodation || null,
+    hasSIMCard: state.hasSIMCard || false,
+    hasEmiratesID: state.hasEmiratesID || 'not yet',
+    hasBankAccount: state.hasBankAccount || false,
+    languagePreference: state.languagePreference || "English",
+  });
 
-  const totalSteps = 5;
+  // Auto-select emirate based on university
+  useEffect(() => {
+    if (formData.university && universityEmirateMap[formData.university]) {
+      setFormData(prev => ({ ...prev, emirate: universityEmirateMap[formData.university!] }));
+    }
+  }, [formData.university]);
+
+  const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
+
+  const updateFormData = (updates: Partial<UserState>) => {
+    setFormData(prev => ({ ...prev, ...updates }));
+  };
 
   const handleNext = () => {
     if (step < totalSteps) {
       setStep(step + 1);
-      if (step + 1 === 5) {
-        triggerConfetti();
-      }
     } else {
       finishOnboarding();
     }
@@ -96,106 +107,39 @@ export function Onboarding() {
   };
 
   const triggerConfetti = () => {
-    const duration = 3 * 1000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-    const randomInRange = (min: number, max: number) => Math.random() * (max - min) + min;
-
-    const interval: any = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      confetti({
-        ...defaults, particleCount,
-        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
-      });
-      confetti({
-        ...defaults, particleCount,
-        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
-      });
-    }, 250);
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ["#2563EB", "#16A34A", "#D97706"]
+    });
   };
 
   const finishOnboarding = () => {
     setIsLoading(true);
+    triggerConfetti();
     
-    // Auto-detect Emirate based on university
-    let detectedEmirate = "";
-    if (university.includes("Dubai") || university.includes("UOWD") || university.includes("SP Jain")) {
-      detectedEmirate = "Dubai";
-    } else if (university.includes("Abu Dhabi") || university.includes("Khalifa")) {
-      detectedEmirate = "Abu Dhabi";
-    } else if (university.includes("Sharjah") || university.includes("AUS") || university.includes("UOS")) {
-      detectedEmirate = "Sharjah";
-    }
-
-    // Save to autofill data as well
-    const savedAutofill = localStorage.getItem("landed_autofill_data");
-    const currentAutofill = savedAutofill ? JSON.parse(savedAutofill) : {};
-    localStorage.setItem("landed_autofill_data", JSON.stringify({
-      ...currentAutofill,
-      emirate: detectedEmirate || currentAutofill.emirate || "",
-      dateOfBirth: dateOfBirth || currentAutofill.dateOfBirth || "",
-    }));
-
-    // Calculate age robustly
-    let calculatedAge = 18;
-    if (dateOfBirth) {
-      const [year, month, day] = dateOfBirth.split("-").map(Number);
-      if (year && month && day) {
-        const birthDate = new Date(year, month - 1, day);
-        const today = new Date();
-        calculatedAge = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-          calculatedAge--;
-        }
-      }
-    }
-
-    let newCompletedSteps = [...state.completedSteps];
-    if (calculatedAge < 18 && !newCompletedSteps.includes(1)) {
-      newCompletedSteps.push(1);
-    } else if (calculatedAge >= 18 && newCompletedSteps.includes(1)) {
-      // Remove step 1 from completed if they are 18 or older
-      newCompletedSteps = newCompletedSteps.filter(id => id !== 1);
-    }
-    
-    if (hasHousing && !newCompletedSteps.includes(6)) {
-      newCompletedSteps.push(6);
-    } else if (!hasHousing && newCompletedSteps.includes(6)) {
-      // Remove step 6 from completed if they no longer have housing
-      newCompletedSteps = newCompletedSteps.filter(id => id !== 6);
-    }
-
-    updateState({
-      name,
-      nationality,
-      university,
-      arrivalDate,
-      visaStatus,
-      dateOfBirth,
-      hasHousing,
-      helpNeeded,
-      completedSteps: newCompletedSteps,
-      hasCompletedOnboarding: true,
-    });
-
     setTimeout(() => {
+      updateState({
+        ...formData,
+        hasCompletedOnboarding: true,
+      } as Partial<UserState>);
       navigate("/dashboard");
     }, 1500);
   };
 
+  const isStepValid = () => {
+    if (step === 1) return !!(formData.name && formData.dateOfBirth && formData.nationality && formData.university);
+    if (step === 2) return !!(formData.emirate && formData.arrivalDate && formData.visaType && formData.sponsoringStay);
+    if (step === 3) return formData.hasAccommodation !== null;
+    return true;
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FAFAF7] flex flex-col items-center justify-center p-6 text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-[#F59E0B] mb-6" />
-        <h2 className="text-2xl font-bold font-heading text-[#0A1628] mb-2">
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
+        <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-6" />
+        <h2 className="text-2xl font-bold text-slate-900 mb-2">
           Building your personalized roadmap...
         </h2>
         <p className="text-slate-500">
@@ -206,149 +150,151 @@ export function Onboarding() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF7] flex flex-col font-sans">
-      <header className="w-full p-6 flex justify-center">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+      <header className="w-full p-6 flex justify-center bg-white border-b border-slate-100 mb-8">
         <Logo className="text-2xl" />
       </header>
       
-      <div className="w-full max-w-2xl mx-auto p-6 pt-4 flex-1 flex flex-col">
-        <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
-            <button onClick={handleBack} disabled={step === 1} className={cn("p-2 rounded-full hover:bg-slate-200 transition-colors", step === 1 && "opacity-0 pointer-events-none")}>
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <div className="flex-1">
-              <Progress value={progress} className="h-2 bg-slate-200 [&>div]:bg-[#F59E0B]" />
-            </div>
-            <span className="text-sm font-medium text-slate-500 w-12 text-right">{step} / {totalSteps}</span>
+      <div className="w-full max-w-xl mx-auto p-6 flex-1 flex flex-col">
+        <div className="mb-12">
+          <div className="flex justify-between items-center mb-4">
+             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Step {step} of {totalSteps}</span>
+             <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">{Math.round(progress)}% Complete</span>
           </div>
+          <Progress value={progress} className="h-2 bg-slate-200" />
         </div>
 
-        <div className="bg-white rounded-[24px] shadow-sm border border-slate-200 p-8 md:p-10 flex-1 flex flex-col">
+        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 md:p-10 flex-1 flex flex-col">
           {step === 1 && (
-            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-300 space-y-8">
-              <h2 className="text-3xl font-bold font-heading text-[#0A1628]">
-                Tell us about yourself
-              </h2>
+            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-2">Tell us about yourself</h2>
+                <p className="text-slate-500">We'll use this to customize your legal and official tasks.</p>
+              </div>
               
               <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700">What's your name?</label>
-                    <Input
-                      type="text"
-                      placeholder="e.g. Alex"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="h-12 px-4 rounded-xl border-slate-200 focus-visible:ring-[#F59E0B]"
-                    />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700">Date of Birth</label>
-                    <Input
-                      type="date"
-                      value={dateOfBirth}
-                      onChange={(e) => setDateOfBirth(e.target.value)}
-                      className="h-12 px-4 rounded-xl border-slate-200 focus-visible:ring-[#F59E0B]"
-                    />
-                  </div>
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">Full Name</label>
+                  <Input
+                    type="text"
+                    placeholder="e.g. Alex Graham"
+                    value={formData.name}
+                    onChange={(e) => updateFormData({ name: e.target.value })}
+                    className="h-14 px-4 rounded-xl border-slate-200 focus:ring-blue-500"
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700">Which university are you attending?</label>
-                    <select 
-                      value={university}
-                      onChange={(e) => setUniversity(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent outline-none"
-                    >
-                      <option value="" disabled>Select your university</option>
-                      {universities.map(u => <option key={u} value={u}>{u}</option>)}
-                    </select>
+                    <label className="text-sm font-bold text-slate-700">Date of Birth</label>
+                    <Input
+                      type="date"
+                      value={formData.dateOfBirth}
+                      onChange={(e) => updateFormData({ dateOfBirth: e.target.value })}
+                      className="h-14 px-4 rounded-xl border-slate-200 cursor-text"
+                    />
                   </div>
                   <div className="space-y-3">
-                    <label className="text-sm font-bold text-slate-700">What's your nationality?</label>
+                    <label className="text-sm font-bold text-slate-700">Nationality</label>
                     <select 
-                      value={nationality}
-                      onChange={(e) => setNationality(e.target.value)}
-                      className="w-full h-12 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-[#F59E0B] focus:border-transparent outline-none"
+                      value={formData.nationality}
+                      onChange={(e) => updateFormData({ nationality: e.target.value })}
+                      className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                     >
                       <option value="" disabled>Select nationality</option>
                       {nationalities.map(n => <option key={n} value={n}>{n}</option>)}
                     </select>
                   </div>
                 </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">University</label>
+                  <select 
+                    value={formData.university}
+                    onChange={(e) => updateFormData({ university: e.target.value })}
+                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="" disabled>Select your university</option>
+                    {universities.map(u => <option key={u} value={u}>{u}</option>)}
+                  </select>
+                </div>
               </div>
             </div>
           )}
 
           {step === 2 && (
-            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-300 space-y-8">
-              <h2 className="text-3xl font-bold font-heading text-[#0A1628]">
-                Your current status
-              </h2>
+            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
+              <div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-2">Location & Visa</h2>
+                <p className="text-slate-500">Each Emirate has slightly different rules.</p>
+              </div>
               
               <div className="space-y-6">
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-700">Where are you in the relocation process?</label>
+                  <label className="text-sm font-bold text-slate-700">Which Emirate are you moving to?</label>
+                  <select 
+                    value={formData.emirate}
+                    onChange={(e) => updateFormData({ emirate: e.target.value })}
+                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                  >
+                    <option value="" disabled>Select Emirate</option>
+                    {emirates.map(e => <option key={e} value={e}>{e}</option>)}
+                  </select>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">When do you arrive / did you arrive?</label>
+                  <Input
+                    type="date"
+                    value={formData.arrivalDate}
+                    onChange={(e) => updateFormData({ arrivalDate: e.target.value })}
+                    className="h-14 px-4 rounded-xl border-slate-200"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">1. What is your current immigration status?</label>
                   <div className="grid gap-3">
-                    {visaStatuses.map((status) => (
+                    {visaTypes.map((type) => (
                       <button
-                        key={status}
-                        onClick={() => setVisaStatus(status)}
+                        key={type}
+                        onClick={() => updateFormData({ visaType: type })}
                         className={cn(
                           "w-full p-4 rounded-xl border text-left font-medium transition-all flex items-center justify-between",
-                          visaStatus === status
-                            ? "border-[#F59E0B] bg-amber-50 text-[#D97706] ring-1 ring-[#F59E0B]"
+                          formData.visaType === type
+                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
                             : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
                         )}
                       >
-                        {status}
-                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center", visaStatus === status ? "border-[#F59E0B] bg-[#F59E0B]" : "border-slate-300")}>
-                          {visaStatus === status && <div className="w-2 h-2 bg-white rounded-full" />}
+                        <span className="max-w-[90%]">{type}</span>
+                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center shrink-0", formData.visaType === type ? "border-blue-600 bg-blue-600" : "border-slate-300")}>
+                          {formData.visaType === type && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {visaStatus === "I haven't arrived yet" && (
-                  <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <label className="text-sm font-bold text-slate-700">When do you arrive in UAE?</label>
-                    <Input
-                      type="date"
-                      value={arrivalDate}
-                      onChange={(e) => setArrivalDate(e.target.value)}
-                      className="h-12 px-4 rounded-xl border-slate-200 focus-visible:ring-[#F59E0B]"
-                    />
-                  </div>
-                )}
-
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-700">Do you already have housing sorted?</label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => setHasHousing(true)}
-                      className={cn(
-                        "p-4 rounded-xl border text-center font-medium transition-all",
-                        hasHousing === true
-                          ? "border-[#F59E0B] bg-amber-50 text-[#D97706] ring-1 ring-[#F59E0B]"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      Yes, I do
-                    </button>
-                    <button
-                      onClick={() => setHasHousing(false)}
-                      className={cn(
-                        "p-4 rounded-xl border text-center font-medium transition-all",
-                        hasHousing === false
-                          ? "border-[#F59E0B] bg-amber-50 text-[#D97706] ring-1 ring-[#F59E0B]"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
-                      )}
-                    >
-                      No, I need help
-                    </button>
+                  <label className="text-sm font-bold text-slate-700">2. Who is sponsoring your stay?</label>
+                  <div className="grid gap-3">
+                    {sponsors.map((type) => (
+                      <button
+                        key={type}
+                        onClick={() => updateFormData({ sponsoringStay: type })}
+                        className={cn(
+                          "w-full p-4 rounded-xl border text-left font-medium transition-all flex items-center justify-between",
+                          formData.sponsoringStay === type
+                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                            : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+                        )}
+                      >
+                        {type}
+                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center", formData.sponsoringStay === type ? "border-blue-600 bg-blue-600" : "border-slate-300")}>
+                          {formData.sponsoringStay === type && <div className="w-2 h-2 bg-white rounded-full" />}
+                        </div>
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -356,129 +302,170 @@ export function Onboarding() {
           )}
 
           {step === 3 && (
-            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-300 space-y-8">
+            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-500 space-y-8">
               <div>
-                <h2 className="text-3xl font-bold font-heading text-[#0A1628] mb-2">
-                  What do you need?
-                </h2>
-                <p className="text-slate-500">Select all the tasks you need help with.</p>
+                <h2 className="text-3xl font-bold text-slate-900 mb-2">Setup Status</h2>
+                <p className="text-slate-500">We'll skip tasks you've already completed.</p>
               </div>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {helpTopics.map((topic) => {
-                  const isSelected = helpNeeded.includes(topic.id);
-                  return (
+              <div className="space-y-6">
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">Do you have accommodation sorted?</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {(['Yes', 'No', 'Still looking'] as const).map(opt => (
+                      <button
+                        key={opt}
+                        onClick={() => updateFormData({ hasAccommodation: opt })}
+                        className={cn(
+                          "p-3 rounded-xl border text-center text-sm font-semibold transition-all",
+                          formData.hasAccommodation === opt
+                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                            : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                        )}
+                      >
+                        {opt}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => updateFormData({ hasSIMCard: !formData.hasSIMCard })}
+                    className={cn(
+                      "p-5 rounded-2xl border text-left transition-all flex flex-col gap-2",
+                      formData.hasSIMCard ? "border-green-600 bg-green-50" : "border-slate-200"
+                    )}
+                  >
+                    <div className="flex justify-between">
+                      <span className="text-2xl">📱</span>
+                      {formData.hasSIMCard && <Check className="w-5 h-5 text-green-600" />}
+                    </div>
+                    <span className="font-bold text-slate-900">UAE SIM Card</span>
+                    <span className="text-xs text-slate-500">{formData.hasSIMCard ? "Active" : "Not yet"}</span>
+                  </button>
+
+                  <button
+                    onClick={() => updateFormData({ hasBankAccount: !formData.hasBankAccount })}
+                    className={cn(
+                      "p-5 rounded-2xl border text-left transition-all flex flex-col gap-2",
+                      formData.hasBankAccount ? "border-green-600 bg-green-50" : "border-slate-200"
+                    )}
+                  >
+                    <div className="flex justify-between">
+                      <span className="text-2xl">🏦</span>
+                      {formData.hasBankAccount && <Check className="w-5 h-5 text-green-600" />}
+                    </div>
+                    <span className="font-bold text-slate-900">Bank Account</span>
+                    <span className="text-xs text-slate-500">{formData.hasBankAccount ? "Open" : "Not yet"}</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-bold text-slate-700">Emirates ID Status</label>
+                  <div className="grid grid-cols-2 gap-3">
                     <button
-                      key={topic.id}
-                      onClick={() => {
-                        setHelpNeeded((prev) =>
-                          isSelected
-                            ? prev.filter((id) => id !== topic.id)
-                            : [...prev, topic.id],
-                        );
-                      }}
+                      onClick={() => updateFormData({ hasEmiratesID: 'applied' })}
                       className={cn(
-                        "p-4 rounded-xl border text-left font-medium transition-all flex items-center gap-3",
-                        isSelected
-                          ? "border-[#F59E0B] bg-amber-50 text-[#D97706] ring-1 ring-[#F59E0B]"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
+                        "p-4 rounded-xl border text-center font-medium transition-all",
+                        formData.hasEmiratesID === 'applied'
+                          ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       )}
                     >
-                      <span className="text-2xl">{topic.icon}</span>
-                      <span>{topic.label}</span>
-                      {isSelected && (
-                        <Check className="h-5 w-5 text-[#F59E0B] ml-auto" />
-                      )}
+                      Applied
                     </button>
-                  );
-                })}
+                    <button
+                      onClick={() => updateFormData({ hasEmiratesID: 'not yet' })}
+                      className={cn(
+                        "p-4 rounded-xl border text-center font-medium transition-all",
+                        formData.hasEmiratesID === 'not yet'
+                          ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
+                      )}
+                    >
+                      Not Yet
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           )}
 
           {step === 4 && (
-            <div className="flex-1 animate-in fade-in slide-in-from-right-4 duration-300 space-y-8">
-              <div>
-                <h2 className="text-3xl font-bold font-heading text-[#0A1628] mb-2">
-                  Your Documents
-                </h2>
-                <p className="text-slate-500">Mark what you already have ready.</p>
+            <div className="flex-1 animate-in fade-in zoom-in-95 duration-500 space-y-10">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mx-auto mb-6">
+                  <Sparkles className="w-10 h-10" />
+                </div>
+                <h2 className="text-3xl font-bold text-slate-900 mb-2">Almost there!</h2>
+                <p className="text-slate-500">Pick your preferred language for the plan.</p>
               </div>
-              
-              <div className="space-y-3">
-                {commonDocuments.map((doc) => {
-                  const isSelected = documents.includes(doc.id);
-                  return (
-                    <button
-                      key={doc.id}
-                      onClick={() => {
-                        setDocuments((prev) =>
-                          isSelected
-                            ? prev.filter((id) => id !== doc.id)
-                            : [...prev, doc.id],
-                        );
-                      }}
-                      className={cn(
-                        "w-full p-4 rounded-xl border text-left font-medium transition-all flex items-center gap-4",
-                        isSelected
-                          ? "border-emerald-500 bg-emerald-50 text-emerald-800 ring-1 ring-emerald-500"
-                          : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
-                      )}
-                    >
-                      <div className={cn("w-6 h-6 rounded flex items-center justify-center border", isSelected ? "bg-emerald-500 border-emerald-500 text-white" : "border-slate-300 bg-white")}>
-                        {isSelected && <Check className="w-4 h-4" />}
-                      </div>
-                      <span>{doc.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
-          {step === 5 && (
-            <div className="flex-1 animate-in zoom-in-95 duration-500 flex flex-col items-center justify-center text-center space-y-8">
-              <div className="w-24 h-24 bg-emerald-100 rounded-full flex items-center justify-center text-emerald-500 mb-4">
-                <Check className="w-12 h-12" />
+              <div className="grid grid-cols-2 gap-3">
+                {languages.map(lang => (
+                  <button
+                    key={lang}
+                    onClick={() => updateFormData({ languagePreference: lang })}
+                    className={cn(
+                      "p-4 rounded-xl border font-bold transition-all",
+                      formData.languagePreference === lang
+                        ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                    )}
+                  >
+                    {lang}
+                  </button>
+                ))}
               </div>
-              <div>
-                <h2 className="text-3xl font-bold font-heading text-[#0A1628] mb-4">
-                  🎉 Your personalized UAE checklist is ready!
-                </h2>
-                <p className="text-slate-600 text-lg max-w-md mx-auto">
-                  We've organized {helpNeeded.length || 8} tasks in the exact order you need to complete them.
+
+              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 divide-y divide-slate-200">
+                <div className="pb-4 flex justify-between">
+                  <span className="text-sm font-bold text-slate-500">Language</span>
+                  <span className="text-sm font-bold text-blue-600">{formData.languagePreference}</span>
+                </div>
+                <div className="pt-4 pb-4 flex justify-between">
+                  <span className="text-sm font-bold text-slate-500">Destination</span>
+                  <span className="text-sm font-bold text-blue-600">{formData.emirate}</span>
+                </div>
+                <div className="pt-4 flex justify-between">
+                  <span className="text-sm font-bold text-slate-500">University</span>
+                  <span className="text-sm font-bold text-blue-600">{formData.university}</span>
+                </div>
+              </div>
+
+              {formData.languagePreference !== "English" && (
+                <p className="text-center text-sm text-slate-500 italic">
+                  Note: Your plan and AI assistant will be optimized for {formData.languagePreference}.
                 </p>
-              </div>
-              
-              <div className="w-full max-w-sm bg-slate-50 rounded-2xl p-4 border border-slate-200 text-left space-y-3">
-                <p className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">Up Next</p>
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm">
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold">1</div>
-                  <span className="font-medium">Entry Visa</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm">
-                  <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold">2</div>
-                  <span className="font-medium">Medical Fitness Test</span>
-                </div>
-                <div className="flex items-center gap-3 bg-white p-3 rounded-xl shadow-sm">
-                  <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold">3</div>
-                  <span className="font-medium">Emirates ID Biometrics</span>
-                </div>
-              </div>
+              )}
             </div>
           )}
 
-          <div className="mt-8 pt-6 border-t border-slate-100">
+          <div className="mt-12 flex gap-4">
+            {step > 1 && (
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 h-16 rounded-2xl border-slate-200 font-bold text-slate-600"
+              >
+                Back
+              </Button>
+            )}
             <Button
               onClick={handleNext}
-              disabled={
-                (step === 1 && (!name || !dateOfBirth || !nationality || !university)) ||
-                (step === 2 && (!visaStatus || (visaStatus === "I haven't arrived yet" && !arrivalDate) || hasHousing === null)) ||
-                (step === 3 && helpNeeded.length === 0)
-              }
-              className="w-full bg-[#0A1628] hover:bg-slate-800 text-white h-14 text-lg rounded-xl"
+              disabled={!isStepValid()}
+              className={cn(
+                "h-16 rounded-2xl font-bold text-lg shadow-lg hover:scale-[1.02] transition-all",
+                step === 1 ? "w-full" : "flex-[2]",
+                "bg-blue-600 hover:bg-blue-700 text-white"
+              )}
             >
-              {step === totalSteps ? "View Full Roadmap" : "Continue"}
+              {step === totalSteps ? "Build My Plan →" : (
+                <span className="flex items-center gap-2">
+                  Continue <ChevronRight className="w-5 h-5" />
+                </span>
+              )}
             </Button>
           </div>
         </div>
