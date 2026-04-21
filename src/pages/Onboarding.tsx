@@ -10,9 +10,18 @@ import confetti from "canvas-confetti";
 import { Logo } from "@/components/ui/Logo";
 
 const universities = [
-  "UAEU", "AUS", "AUD", "NYU Abu Dhabi", "Heriot-Watt Dubai", 
-  "Khalifa University", "Zayed University", "BITS Pilani Dubai", 
-  "Canadian University Dubai", "Other"
+  "UAEU",
+  "AUS",
+  "AUD",
+  "NYU Abu Dhabi",
+  "Heriot-Watt Dubai",
+  "Khalifa University",
+  "Zayed University",
+  "BITS Pilani Dubai",
+  "CUD (Canadian University Dubai)",
+  "UOWD (University of Wollongong Dubai)",
+  "UoBD (University of Birmingham Dubai)",
+  "UE (University of Europe Dubai)",
 ];
 
 const nationalities = [
@@ -49,9 +58,11 @@ const universityEmirateMap: Record<string, string> = {
   "NYU Abu Dhabi": "Abu Dhabi",
   "Heriot-Watt Dubai": "Dubai",
   "Khalifa University": "Abu Dhabi",
-  "Zayed University": "Dubai",
   "BITS Pilani Dubai": "Dubai",
-  "Canadian University Dubai": "Dubai"
+  "CUD (Canadian University Dubai)": "Dubai",
+  "UOWD (University of Wollongong Dubai)": "Dubai",
+  "UoBD (University of Birmingham Dubai)": "Dubai",
+  "UE (University of Europe Dubai)": "Dubai",
 };
 
 export function Onboarding() {
@@ -76,14 +87,17 @@ export function Onboarding() {
     hasEmiratesID: state.hasEmiratesID || 'not yet',
     hasBankAccount: state.hasBankAccount || false,
     languagePreference: state.languagePreference || "English",
+    zayedCampus: state.zayedCampus || "",
   });
 
   // Auto-select emirate based on university
   useEffect(() => {
     if (formData.university && universityEmirateMap[formData.university]) {
       setFormData(prev => ({ ...prev, emirate: universityEmirateMap[formData.university!] }));
+    } else if (formData.university === "Zayed University" && formData.zayedCampus) {
+      setFormData(prev => ({ ...prev, emirate: formData.zayedCampus! }));
     }
-  }, [formData.university]);
+  }, [formData.university, formData.zayedCampus]);
 
   const totalSteps = 4;
   const progress = (step / totalSteps) * 100;
@@ -129,7 +143,13 @@ export function Onboarding() {
   };
 
   const isStepValid = () => {
-    if (step === 1) return !!(formData.name && formData.dateOfBirth && formData.nationality && formData.university);
+    if (step === 1) {
+      const basicInfo = !!(formData.name && formData.dateOfBirth && formData.nationality && formData.university);
+      if (formData.university === "Zayed University") {
+        return basicInfo && !!formData.zayedCampus;
+      }
+      return basicInfo;
+    }
     if (step === 2) return !!(formData.emirate && formData.arrivalDate && formData.visaType && formData.sponsoringStay);
     if (step === 3) return formData.hasAccommodation !== null;
     return true;
@@ -211,13 +231,35 @@ export function Onboarding() {
                   <label className="text-sm font-bold text-slate-700">University</label>
                   <select 
                     value={formData.university}
-                    onChange={(e) => updateFormData({ university: e.target.value })}
+                    onChange={(e) => updateFormData({ university: e.target.value, zayedCampus: "" })}
                     className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                   >
                     <option value="" disabled>Select your university</option>
                     {universities.map(u => <option key={u} value={u}>{u}</option>)}
                   </select>
                 </div>
+
+                {formData.university === "Zayed University" && (
+                  <div className="space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                    <label className="text-sm font-bold text-slate-700">Which Zayed University campus are you attending?</label>
+                    <div className="grid grid-cols-2 gap-3">
+                      {["Abu Dhabi", "Dubai"].map(campus => (
+                        <button
+                          key={campus}
+                          onClick={() => updateFormData({ zayedCampus: campus })}
+                          className={cn(
+                            "h-14 rounded-xl border font-bold transition-all",
+                            formData.zayedCampus === campus
+                              ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                              : "border-slate-200 text-slate-700 hover:bg-slate-50"
+                          )}
+                        >
+                          {campus}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

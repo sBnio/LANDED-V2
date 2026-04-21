@@ -19,6 +19,7 @@ export interface UserState {
   completedSteps: number[];
   completedDocuments: string[];
   submittedDocuments: string[];
+  zayedCampus: string;
   chatHistory: { role: "user" | "assistant"; content: string }[];
   hasCompletedOnboarding: boolean;
 }
@@ -42,6 +43,7 @@ const defaultState: UserState = {
   completedSteps: [],
   completedDocuments: [],
   submittedDocuments: [],
+  zayedCampus: "",
   chatHistory: [],
   hasCompletedOnboarding: false,
 };

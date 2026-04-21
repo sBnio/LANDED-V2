@@ -55,16 +55,10 @@ export function Landing() {
           <p className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed">
             Stop guessing your next move. Landed gives you a personalized roadmap for your Emirates ID, bank account, and housing in minutes.
           </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-6 pt-4">
+          <div className="flex justify-center pt-4">
              <Button asChild size="lg" className="h-20 px-12 text-xl font-black rounded-[32px] bg-blue-600 hover:bg-blue-700 text-white shadow-2xl shadow-blue-300 transition-all hover:scale-105 uppercase tracking-widest">
                <Link to="/onboarding">Build My Plan Now</Link>
              </Button>
-             <div className="flex flex-col items-center justify-center text-slate-400">
-                <div className="flex -space-x-3 mb-2">
-                   {[1,2,3,4].map(i => <div key={i} className="w-10 h-10 rounded-full bg-slate-200 border-2 border-white" />)}
-                </div>
-                <span className="text-xs font-bold uppercase tracking-tighter italic">Join Batch 2026</span>
-             </div>
           </div>
         </div>
       </section>
@@ -72,17 +66,17 @@ export function Landing() {
       {/* Stats / Social Proof */}
       <section className="py-20 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12 text-center">
-          <div>
-            <p className="text-5xl font-black mb-2 text-blue-400 italic">90%</p>
-            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">Faster Onboarding</p>
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-black mb-2 text-blue-400 italic uppercase">Your first 90 days,</p>
+            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-[10px]">fully mapped</p>
           </div>
-          <div>
-            <p className="text-5xl font-black mb-2 text-blue-400 italic">AED 2k+</p>
-            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">Saved in Fees</p>
+          <div className="flex flex-col items-center">
+            <p className="text-3xl font-black mb-2 text-blue-400 italic uppercase leading-tight">Avoid the most expensive</p>
+            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-[10px]">onboarding mistakes</p>
           </div>
-          <div>
-            <p className="text-5xl font-black mb-2 text-blue-400 italic">15+</p>
-            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">Universities Supported</p>
+          <div className="flex flex-col items-center">
+            <p className="text-5xl font-black mb-2 text-blue-400 italic">12</p>
+            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">UAE Universities Supported</p>
           </div>
         </div>
       </section>
