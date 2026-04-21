@@ -20,6 +20,7 @@ const ChatMobile = lazy(() => import("@/pages/ChatMobile").then(m => ({ default:
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { AIChatWidget } from "@/components/chat/AIChatWidget";
+import { AutoFillWidget } from "@/components/autofill/AutoFillWidget";
 
 function PageLoader() {
   return (
@@ -103,7 +104,8 @@ function AppLayout({ children }: { children: React.ReactNode }) {
 
       <BottomNav />
 
-      <div className={isChatMobile ? "hidden md:block" : "block"}>
+      <div className={isChatMobile ? "hidden md:flex flex-col gap-4" : "flex flex-col gap-4"}>
+        <AutoFillWidget />
         <AIChatWidget />
       </div>
     </div>

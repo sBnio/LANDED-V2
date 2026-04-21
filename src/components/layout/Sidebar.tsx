@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { useOnboarding } from "@/context/OnboardingContext";
+import { stepsData } from "@/data/steps";
 import { 
   Map, 
   FileText, 
@@ -15,10 +16,9 @@ export function Sidebar() {
   const location = useLocation();
   
   // Calculate progress
-  // Assuming 20 total tasks for the demo
   const completed = state.completedSteps.length;
-  const totalTasks = 20; 
-  const percent = Math.round((completed / totalTasks) * 100);
+  const totalTasks = stepsData.length; 
+  const percent = Math.round((completed / totalTasks) * 100) || 0;
 
   const navItems = [
     { name: "My Roadmap", path: "/dashboard", icon: Map },

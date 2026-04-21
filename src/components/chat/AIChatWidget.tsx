@@ -9,8 +9,28 @@ export function AIChatWidget() {
   const { state } = useOnboarding();
   const { chatHistory, isTyping, sendMessage, clearHistory } = useLandedChat();
   const [isOpen, setIsOpen] = useState(false);
+  const [isAutoFillOpen, setIsAutoFillOpen] = useState(false);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleOpen = () => setIsAutoFillOpen(true);
+    const handleClose = () => setIsAutoFillOpen(false);
+    window.addEventListener("autofill-open", handleOpen);
+    window.addEventListener("autofill-close", handleClose);
+    return () => {
+      window.removeEventListener("autofill-open", handleOpen);
+      window.removeEventListener("autofill-close", handleClose);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      window.dispatchEvent(new Event("chat-open"));
+    } else {
+      window.dispatchEvent(new Event("chat-close"));
+    }
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,7 +63,7 @@ export function AIChatWidget() {
         onClick={() => setIsOpen(true)}
         className={cn(
           "fixed bottom-8 right-8 w-20 h-20 bg-gradient-to-br from-[#1E3A8A] via-[#2563EB] to-[#4F46E5] text-white rounded-full flex items-center justify-center transition-all z-50 hover:scale-110 active:scale-95 shadow-[0_20px_50px_rgba(37,99,235,0.6)] group border border-white/20",
-          isOpen ? "scale-0 opacity-0" : "scale-100 opacity-100 animate-in zoom-in-50 duration-500"
+          (isOpen || isAutoFillOpen) ? "scale-0 opacity-0 pointer-events-none" : "scale-100 opacity-100 animate-in zoom-in-50 duration-500"
         )}
       >
         <div className="absolute inset-0 rounded-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
