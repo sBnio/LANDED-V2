@@ -47,9 +47,6 @@ const sponsors = [
   "Other"
 ];
 
-const languages = [
-  "English", "Arabic", "Hindi", "Urdu"
-];
 
 const universityEmirateMap: Record<string, string> = {
   "UAEU": "Abu Dhabi",
@@ -99,7 +96,7 @@ export function Onboarding() {
     }
   }, [formData.university, formData.zayedCampus]);
 
-  const totalSteps = 4;
+  const totalSteps = 3;
   const progress = (step / totalSteps) * 100;
 
   const updateFormData = (updates: Partial<UserState>) => {
@@ -434,55 +431,7 @@ export function Onboarding() {
             </div>
           )}
 
-          {step === 4 && (
-            <div className="flex-1 animate-in fade-in zoom-in-95 duration-500 space-y-10">
-              <div className="text-center">
-                <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 mx-auto mb-6">
-                  <Sparkles className="w-10 h-10" />
-                </div>
-                <h2 className="text-3xl font-bold text-slate-900 mb-2">Almost there!</h2>
-                <p className="text-slate-500">Pick your preferred language for the plan.</p>
-              </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                {languages.map(lang => (
-                  <button
-                    key={lang}
-                    onClick={() => updateFormData({ languagePreference: lang })}
-                    className={cn(
-                      "p-4 rounded-xl border font-bold transition-all",
-                      formData.languagePreference === lang
-                        ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
-                        : "border-slate-200 text-slate-700 hover:bg-slate-50"
-                    )}
-                  >
-                    {lang}
-                  </button>
-                ))}
-              </div>
-
-              <div className="bg-slate-50 rounded-2xl p-6 border border-slate-100 divide-y divide-slate-200">
-                <div className="pb-4 flex justify-between">
-                  <span className="text-sm font-bold text-slate-500">Language</span>
-                  <span className="text-sm font-bold text-blue-600">{formData.languagePreference}</span>
-                </div>
-                <div className="pt-4 pb-4 flex justify-between">
-                  <span className="text-sm font-bold text-slate-500">Destination</span>
-                  <span className="text-sm font-bold text-blue-600">{formData.emirate}</span>
-                </div>
-                <div className="pt-4 flex justify-between">
-                  <span className="text-sm font-bold text-slate-500">University</span>
-                  <span className="text-sm font-bold text-blue-600">{formData.university}</span>
-                </div>
-              </div>
-
-              {formData.languagePreference !== "English" && (
-                <p className="text-center text-sm text-slate-500 italic">
-                  Note: Your plan and AI assistant will be optimized for {formData.languagePreference}.
-                </p>
-              )}
-            </div>
-          )}
 
           <div className="mt-12 flex gap-4">
             {step > 1 && (
