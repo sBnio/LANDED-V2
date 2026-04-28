@@ -17,15 +17,21 @@ import {
   Calendar,
   MapPin,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  X,
+  AlertTriangle,
+  Info,
+  CheckCircle2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { EmiratesIDForm } from "@/components/autofill/EmiratesIDForm";
 import { BankMatchmaker } from "@/components/banking/BankMatchmaker";
+import { getStudentConfig } from "@/utils/studentConfig";
 
 const CATEGORIES = [
-  { id: "visa", title: "Visa & ID", icon: FileText, stepIds: [1, 2] },
+  { id: "pre_landing", title: "Before You Land", icon: MapPin, stepIds: [] },
+  { id: "visa", title: "Arrival & Emirates ID", icon: FileText, stepIds: [1, 2] },
   { id: "housing", title: "Housing", icon: Building, stepIds: [6] },
   { id: "banking", title: "Banking", icon: Landmark, stepIds: [4] },
   { id: "telecom", title: "Telecom", icon: Smartphone, stepIds: [3] },
@@ -35,12 +41,27 @@ const CATEGORIES = [
 
 export function Dashboard() {
   const { state, toggleStep } = useOnboarding();
-  const [expandedStep, setExpandedStep] = useState<number | null>(null);
+  const [expandedStep, setExpandedStep] = useState<number | string | null>(null);
   const [showEmiratesIDForm, setShowEmiratesIDForm] = useState(false);
-  const [expandedCategories, setExpandedCategories] = useState<string[]>(["visa", "housing"]);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>(["pre_landing", "visa"]);
+
+  const studentConfig = useMemo(() => getStudentConfig(state.nationality || "", state.university || ""), [state.nationality, state.university]);
+  const [dismissedAlerts, setDismissedAlerts] = useState<string[]>(() => {
+    const saved = localStorage.getItem("landed_dismissed_alerts");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const dismissAlert = (id: string) => {
+    setDismissedAlerts(prev => {
+      const next = [...prev, id];
+      localStorage.setItem("landed_dismissed_alerts", JSON.stringify(next));
+      return next;
+    });
+  };
 
   const completedCount = state.completedSteps.length;
-  const totalSteps = stepsData.length;
+  // Calculate total steps including personalized additional tasks and priority task
+  const totalSteps = stepsData.length + studentConfig.additionalTasks.length + (studentConfig.priorityTask ? 1 : 0);
   const progressPercent = Math.round((completedCount / totalSteps) * 100);
 
   // Age calculation
@@ -67,7 +88,7 @@ export function Dashboard() {
     }
   }, [age, state.hasAccommodation, state.completedSteps, toggleStep]);
 
-  const handleToggleStep = (id: number) => {
+  const handleToggleStep = (id: number | string) => {
     const isCompleting = !state.completedSteps.includes(id);
     toggleStep(id);
     if (isCompleting) {
@@ -160,6 +181,84 @@ export function Dashboard() {
             </div>
           )}
 
+          {/* Alerts Section */}
+          <div className="space-y-4 mb-10">
+            {studentConfig.primaryAlert && !dismissedAlerts.includes('primary_alert') && (
+              <div className="relative bg-blue-50 border-l-4 border-blue-500 rounded-lg p-5 pr-12 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+                <button
+                  onClick={() => dismissAlert('primary_alert')}
+                  className="absolute top-4 right-4 text-blue-400 hover:text-blue-600 transition-colors"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="flex gap-4">
+                  <div className="mt-0.5">
+                    <Info className="w-6 h-6 text-blue-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-blue-900 font-bold mb-1">{studentConfig.primaryAlert.title}</h3>
+                    <p className="text-blue-800 text-sm leading-relaxed">{studentConfig.primaryAlert.body}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {studentConfig.secondaryAlert && !dismissedAlerts.includes('secondary_alert') && (
+              <div 
+                className={cn(
+                  "relative border-l-4 rounded-lg p-5 pr-12 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500",
+                  studentConfig.secondaryAlert.type === 'warning' && "bg-amber-50 border-amber-500",
+                  studentConfig.secondaryAlert.type === 'info' && "bg-blue-50 border-blue-500",
+                  studentConfig.secondaryAlert.type === 'success' && "bg-emerald-50 border-emerald-500"
+                )}
+              >
+                <button
+                  onClick={() => dismissAlert('secondary_alert')}
+                  className={cn(
+                    "absolute top-4 right-4 transition-colors",
+                    studentConfig.secondaryAlert.type === 'warning' && "text-amber-400 hover:text-amber-600",
+                    studentConfig.secondaryAlert.type === 'info' && "text-blue-400 hover:text-blue-600",
+                    studentConfig.secondaryAlert.type === 'success' && "text-emerald-400 hover:text-emerald-600"
+                  )}
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="flex gap-4">
+                  <div className="mt-0.5">
+                    {studentConfig.secondaryAlert.type === 'warning' && <AlertTriangle className="w-6 h-6 text-amber-500" />}
+                    {studentConfig.secondaryAlert.type === 'info' && <Info className="w-6 h-6 text-blue-500" />}
+                    {studentConfig.secondaryAlert.type === 'success' && <CheckCircle2 className="w-6 h-6 text-emerald-500" />}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className={cn(
+                        "font-bold",
+                        studentConfig.secondaryAlert.type === 'warning' && "text-amber-900",
+                        studentConfig.secondaryAlert.type === 'info' && "text-blue-900",
+                        studentConfig.secondaryAlert.type === 'success' && "text-emerald-900"
+                      )}>
+                        {studentConfig.secondaryAlert.title}
+                      </h3>
+                      {studentConfig.secondaryAlert.verifiedContent && (
+                        <span className="inline-flex items-center gap-1 bg-green-100 text-green-700 text-[10px] uppercase font-black px-2 py-0.5 rounded-sm tracking-wider">
+                          ✓ Verified
+                        </span>
+                      )}
+                    </div>
+                    <p className={cn(
+                      "text-sm leading-relaxed",
+                      studentConfig.secondaryAlert.type === 'warning' && "text-amber-800",
+                      studentConfig.secondaryAlert.type === 'info' && "text-blue-800",
+                      studentConfig.secondaryAlert.type === 'success' && "text-emerald-800"
+                    )}>
+                      {studentConfig.secondaryAlert.body}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Progress Section */}
           <div className="bg-white border border-slate-200 shadow-sm rounded-3xl p-8">
             <div className="flex justify-between items-end mb-6">
@@ -188,7 +287,34 @@ export function Dashboard() {
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
 
         {CATEGORIES.map((category) => {
-          const categorySteps = stepsData.filter((s) => category.stepIds.includes(s.id));
+          let categorySteps = stepsData.filter((s) => category.stepIds.includes(s.id));
+
+          if (category.id === "pre_landing") {
+            const extraSteps: any[] = [];
+            if (studentConfig.priorityTask) {
+              extraSteps.push({
+                ...studentConfig.priorityTask,
+                shortDescription: studentConfig.priorityTask.description,
+                timeEstimate: studentConfig.priorityTask.timeline || "Action Required",
+                dependsOn: [],
+                details: { documentsNeeded: [], process: [] }
+              });
+            }
+            if (studentConfig.additionalTasks && studentConfig.additionalTasks.length > 0) {
+              const mappedTasks = studentConfig.additionalTasks.map(task => ({
+                ...task,
+                shortDescription: task.description || "",
+                timeEstimate: task.timeline || "Action Required",
+                dependsOn: [],
+                details: { documentsNeeded: [], process: [] }
+              }));
+              extraSteps.push(...mappedTasks);
+            }
+            categorySteps = [...extraSteps, ...categorySteps] as any;
+          }
+
+          if (categorySteps.length === 0) return null;
+
           const completedInCategory = categorySteps.filter((s) => state.completedSteps.includes(s.id));
           const totalInCategory = categorySteps.length;
           const isExpanded = expandedCategories.includes(category.id);
@@ -234,10 +360,10 @@ export function Dashboard() {
 
               {isExpanded && (
                 <div className="border-t border-slate-100 divide-y divide-slate-50">
-                  {sortedSteps.map((step) => {
+                  {sortedSteps.map((step: any) => {
                     const isCompleted = state.completedSteps.includes(step.id);
                     const isStepExpanded = expandedStep === step.id;
-                    const depsMet = step.dependsOn.every((depId) => state.completedSteps.includes(depId));
+                    const depsMet = step.dependsOn ? step.dependsOn.every((depId: any) => state.completedSteps.includes(depId)) : true;
                     const isLocked = !depsMet && !isCompleted;
                     
                     // Specific logic for medical test & housing auto-complete labels
@@ -269,11 +395,21 @@ export function Dashboard() {
                                     >
                                       {step.title}
                                     </h3>
-                                    {autoCompletedLabel && (
-                                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider mt-1 border border-green-100">
-                                        <Sparkles className="w-3 h-3" /> {autoCompletedLabel}
-                                      </span>
-                                    )}
+                                    <div className="flex flex-wrap items-center gap-2 mt-1.5">
+                                      {step.badge && (
+                                        <span className={cn(
+                                          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border",
+                                          step.badgeColor === 'blue' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-slate-50 text-slate-700 border-slate-200"
+                                        )}>
+                                          {step.badge}
+                                        </span>
+                                      )}
+                                      {autoCompletedLabel && (
+                                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-50 text-green-700 text-[10px] font-bold uppercase tracking-wider border border-green-100">
+                                          <Sparkles className="w-3 h-3" /> {autoCompletedLabel}
+                                        </span>
+                                      )}
+                                    </div>
                                  </div>
                                  <div className="flex items-center gap-3">
                                     <span className="text-xs font-bold text-slate-400 flex items-center gap-1 uppercase tracking-tighter">
@@ -305,30 +441,34 @@ export function Dashboard() {
                                   </div>
 
                                   <div className="grid md:grid-cols-2 gap-8 mb-8">
-                                     <div>
-                                        <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
-                                           <FileText className="w-4 h-4 text-slate-400" /> Documents Checklist
-                                        </h4>
-                                        <ul className="space-y-3">
-                                          {step.details.documentsNeeded.map((doc, i) => (
-                                            <li key={i} className="flex gap-3 text-sm text-slate-600 font-medium">
-                                              <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
-                                              {doc}
-                                            </li>
-                                          ))}
-                                        </ul>
-                                     </div>
-                                     <div>
-                                        <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4">How to complete this</h4>
-                                        <div className="space-y-4">
-                                          {step.details.process.map((p, i) => (
-                                            <div key={i} className="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                               <span className="text-blue-600 font-black text-lg">{i + 1}</span>
-                                               <p className="text-sm text-slate-700 leading-relaxed font-medium">{p.replace(/^\d+\.\s*/, '')}</p>
-                                            </div>
-                                          ))}
-                                        </div>
-                                     </div>
+                                     {step.details?.documentsNeeded?.length > 0 && (
+                                       <div>
+                                          <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4 flex items-center gap-2">
+                                             <FileText className="w-4 h-4 text-slate-400" /> Documents Checklist
+                                          </h4>
+                                          <ul className="space-y-3">
+                                            {step.details.documentsNeeded.map((doc: any, i: number) => (
+                                              <li key={i} className="flex gap-3 text-sm text-slate-600 font-medium">
+                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                                {doc}
+                                              </li>
+                                            ))}
+                                          </ul>
+                                       </div>
+                                     )}
+                                     {step.details?.process?.length > 0 && (
+                                       <div>
+                                          <h4 className="font-black text-slate-900 text-xs uppercase tracking-widest mb-4">How to complete this</h4>
+                                          <div className="space-y-4">
+                                            {step.details.process.map((p: any, i: number) => (
+                                              <div key={i} className="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
+                                                 <span className="text-blue-600 font-black text-lg">{i + 1}</span>
+                                                 <p className="text-sm text-slate-700 leading-relaxed font-medium">{p.replace(/^\d+\.\s*/, '')}</p>
+                                              </div>
+                                            ))}
+                                          </div>
+                                       </div>
+                                     )}
                                   </div>
 
                                   <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-100">

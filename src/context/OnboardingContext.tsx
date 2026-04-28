@@ -16,7 +16,7 @@ export interface UserState {
   sponsoringStay: string;
   languagePreference: string;
   helpNeeded: string[];
-  completedSteps: number[];
+  completedSteps: (number | string)[];
   completedDocuments: string[];
   submittedDocuments: string[];
   zayedCampus: string;
@@ -51,7 +51,7 @@ const defaultState: UserState = {
 interface OnboardingContextType {
   state: UserState;
   updateState: (updates: Partial<UserState>) => void;
-  toggleStep: (stepId: number) => void;
+  toggleStep: (stepId: number | string) => void;
   toggleDocument: (docId: string) => void;
   toggleSubmittedDocument: (docId: string) => void;
   resetState: () => void;
@@ -79,7 +79,7 @@ export function OnboardingProvider({
     setState((prev) => ({ ...prev, ...updates }));
   };
 
-  const toggleStep = (stepId: number) => {
+  const toggleStep = (stepId: number | string) => {
     setState((prev) => {
       const isCompleted = prev.completedSteps.includes(stepId);
       return {
