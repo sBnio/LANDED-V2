@@ -46,14 +46,11 @@ export function Landing() {
       <section className="pt-40 pb-24 px-6 relative overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1200px] h-[600px] bg-blue-50/50 rounded-full blur-[120px] -z-10" />
         <div className="max-w-7xl mx-auto text-center space-y-10">
-          <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-blue-50 text-blue-600 font-black text-xs uppercase tracking-widest border border-blue-100 animate-bounce">
-            <Zap className="w-4 h-4 fill-blue-600" /> Trusted by students
-          </div>
           <h1 className="text-5xl md:text-8xl font-black tracking-tight leading-[0.9] text-slate-900 max-w-5xl mx-auto uppercase italic">
             LAND IN THE UAE <br /> <span className="text-blue-600">FULLY PREPARED.</span>
           </h1>
           <p className="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed">
-            Stop guessing your next move. Landed gives you a personalized roadmap for your Emirates ID, bank account, and housing in minutes.
+            Every year, thousands of international students arrive in the UAE overwhelmed and underprepared. Landed gives them a personalized, step-by-step onboarding plan — so they start studying, not stressing.
           </p>
           <div className="flex justify-center pt-4">
              <Button asChild size="lg" className="h-20 px-12 text-xl font-black rounded-[32px] bg-blue-600 hover:bg-blue-700 text-white shadow-2xl shadow-blue-300 transition-all hover:scale-105 uppercase tracking-widest">
