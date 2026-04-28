@@ -13,6 +13,7 @@ const Landing = lazy(() => import("@/pages/Landing").then(m => ({ default: m.Lan
 const Onboarding = lazy(() => import("@/pages/Onboarding").then(m => ({ default: m.Onboarding })));
 const Dashboard = lazy(() => import("@/pages/Dashboard").then(m => ({ default: m.Dashboard })));
 const Documents = lazy(() => import("@/pages/Documents").then(m => ({ default: m.Documents })));
+const BudgetPlanner = lazy(() => import("@/pages/BudgetPlanner").then(m => ({ default: m.BudgetPlanner })));
 const Services = lazy(() => import("@/pages/Services").then(m => ({ default: m.Services })));
 const Community = lazy(() => import("@/pages/Community").then(m => ({ default: m.Community })));
 const ChatMobile = lazy(() => import("@/pages/ChatMobile").then(m => ({ default: m.ChatMobile })));
@@ -125,6 +126,14 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/budget"
+              element={
+                <ProtectedRoute>
+                  <BudgetPlanner />
                 </ProtectedRoute>
               }
             />

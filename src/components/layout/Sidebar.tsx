@@ -7,6 +7,7 @@ import {
   Briefcase, 
   Users, 
   Settings,
+  Wallet
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/Logo";
@@ -22,6 +23,7 @@ export function Sidebar() {
 
   const navItems = [
     { name: "My Roadmap", path: "/dashboard", icon: Map },
+    { name: "Budget Planner", path: "/budget", icon: Wallet },
     { name: "My Documents", path: "/documents", icon: FileText },
     { name: "Services", path: "/services", icon: Briefcase },
     { name: "Community", path: "/community", icon: Users },

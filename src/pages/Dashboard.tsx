@@ -23,7 +23,6 @@ import { cn } from "@/lib/utils";
 import confetti from "canvas-confetti";
 import { EmiratesIDForm } from "@/components/autofill/EmiratesIDForm";
 import { BankMatchmaker } from "@/components/banking/BankMatchmaker";
-import { CostEstimator } from "@/components/cost/CostEstimator";
 
 const CATEGORIES = [
   { id: "visa", title: "Visa & ID", icon: FileText, stepIds: [1, 2] },
@@ -187,7 +186,6 @@ export function Dashboard() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-6 py-12 space-y-8">
-        <CostEstimator />
 
         {CATEGORIES.map((category) => {
           const categorySteps = stepsData.filter((s) => category.stepIds.includes(s.id));

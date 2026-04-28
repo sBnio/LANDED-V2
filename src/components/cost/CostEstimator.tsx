@@ -1,50 +1,124 @@
 import { useState, useMemo } from "react";
-import { Calculator, ChevronDown, ChevronUp, AlertCircle } from "lucide-react";
+import { Calculator, ChevronDown, ChevronUp, AlertCircle, Info, CheckCircle2, Copy } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/context/OnboardingContext";
 
 export function CostEstimator() {
   const { state } = useOnboarding();
   const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Track state for items marked as paid/not applicable
+  const [paidItems, setPaidItems] = useState<Record<string, boolean>>({});
+  
+  // Track state for optional items included
+  const [includedOptionals, setIncludedOptionals] = useState<Record<string, boolean>>({});
 
-  const costs = useMemo(() => {
+  const togglePaid = (id: string) => setPaidItems(prev => ({ ...prev, [id]: !prev[id] }));
+  const toggleOptional = (id: string) => setIncludedOptionals(prev => ({ ...prev, [id]: !prev[id] }));
+
+  // Required & Conditional Items
+  const sections = useMemo(() => {
     const isDubai = state.emirate === "Dubai";
     
     return [
       {
-        category: "Visa & Identity",
+        category: "Estimated Minimum",
         items: [
-          { name: "Student Visa (1 Year)", amount: isDubai ? 1500 : 1200, required: true },
-          { name: "Emirates ID", amount: 370, required: true },
-          { name: "Medical Fitness Test", amount: 320, required: true },
-          { name: "Typing Center Fees", amount: 150, required: false },
+          { id: "visa", name: "Student Visa (1 Year)", amount: isDubai ? 1500 : 1200, paidLabel: "Already paid by university / sponsor" },
+          { id: "eid", name: "Emirates ID", amount: 370, paidLabel: "Already paid" },
+          { id: "medical", name: "Medical Fitness Test", amount: 320, paidLabel: "Already done / exempt" },
+          { id: "typing", name: "Typing Center Fees", amount: 150, paidLabel: "Already paid" },
+          { id: "sim", name: "SIM Card", amount: 55, paidLabel: "Already have a SIM" },
         ]
       },
       {
-        category: "Housing & Setup",
+        category: "Only If Renting Privately",
         items: [
-          { name: "Ejari Registration", amount: 220, required: false },
-          { name: "DEWA Activation", amount: 2130, required: false }, // 2000 deposit + 130 activation
-          { name: "SIM Card (Student)", amount: 55, required: true },
+          { 
+            id: "ejari", 
+            name: "Ejari Registration", 
+            amount: 220, 
+            paidLabel: "Not renting my own place",
+            tooltip: "Required only if signing your own tenancy contract in Dubai."
+          },
+          { 
+            id: "dewa", 
+            name: "DEWA Activation", 
+            amount: 2130, 
+            paidLabel: "Not renting my own place (only needed for private apartments)",
+            tooltip: "Only required if you're renting your own apartment. Students in university housing or shared accommodation typically do not pay this."
+          },
         ]
       }
     ];
   }, [state.emirate]);
 
-  const totalRequired = useMemo(() => {
-    return costs.reduce((acc, cat) => 
-      acc + cat.items.filter(i => i.required).reduce((sum, item) => sum + item.amount, 0)
-    , 0);
-  }, [costs]);
+  // Optional Items
+  const optionals = useMemo(() => [
+    { 
+      id: "health", 
+      name: "Health Insurance (if not covered by university)", 
+      range: "~800–1,200", 
+      amount: 1000, 
+      tooltip: "Many UAE universities include health insurance. Check with your Student Affairs office first." 
+    },
+    { id: "airport", name: "Airport Transfer (one way)", range: "~80–150", amount: 115 },
+    { id: "groceries", name: "Initial Groceries & Household Setup", range: "~300–500", amount: 400 },
+    { id: "textbooks", name: "Textbooks & Stationery (first semester)", range: "~200–500", amount: 350 },
+    { 
+      id: "emergency", 
+      name: "Emergency Buffer (recommended)", 
+      range: "~500", 
+      amount: 500,
+      tooltip: "We always recommend keeping a buffer for unexpected fees or delays."
+    },
+  ], []);
 
-  const totalOptional = useMemo(() => {
-    return costs.reduce((acc, cat) => 
-      acc + cat.items.filter(i => !i.required).reduce((sum, item) => sum + item.amount, 0)
-    , 0);
-  }, [costs]);
+  // Calculations
+  const { totalBase, totalSorted, totalOptionalsInclude, stillNeedToPay, estimatedTotal } = useMemo(() => {
+    let base = 0;
+    let sorted = 0;
+    
+    sections.forEach(sec => {
+      sec.items.forEach(item => {
+        base += item.amount;
+        if (paidItems[item.id]) sorted += item.amount;
+      });
+    });
+
+    let optionalsAmt = 0;
+    optionals.forEach(opt => {
+      if (includedOptionals[opt.id]) optionalsAmt += opt.amount;
+    });
+
+    const stillNeed = (base - sorted) + optionalsAmt;
+    const estTotal = base + optionalsAmt;
+
+    return {
+      totalBase: base,
+      totalSorted: sorted,
+      totalOptionalsInclude: optionalsAmt,
+      stillNeedToPay: stillNeed,
+      estimatedTotal: estTotal
+    };
+  }, [sections, optionals, paidItems, includedOptionals]);
+
+  const handleCopySummary = () => {
+    const uni = state.university || "UAE";
+    const nat = state.nationality || "Student";
+    const text = `My Landed Setup Budget — ${uni} ${nat}
+Still need to pay: ${stillNeedToPay.toLocaleString()} AED
+Already sorted: ${totalSorted.toLocaleString()} AED  
+Optional costs: ${totalOptionalsInclude.toLocaleString()} AED
+Estimated total: ${estimatedTotal.toLocaleString()} AED
+Generated by Landed — landed-v2.vercel.app`;
+    
+    navigator.clipboard.writeText(text);
+    alert("Budget summary copied to clipboard!"); // Basic feedback, user can paste anywhere
+  };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden flex flex-col">
       <div 
         className="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between cursor-pointer hover:bg-slate-100 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
@@ -54,66 +128,193 @@ export function CostEstimator() {
             <Calculator className="w-5 h-5 text-emerald-600" />
           </div>
           <div>
-            <h3 className="font-bold text-navy-900">Cost Estimator</h3>
-            <p className="text-xs text-slate-500">Estimated setup costs</p>
+            <h3 className="font-bold text-slate-900">Setup Budget Planner</h3>
+            <p className="text-xs text-slate-500">Your personalized cost breakdown — adjust for your situation</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <p className="font-bold text-navy-900">{totalRequired.toLocaleString()} AED</p>
-            <p className="text-[10px] text-slate-500 uppercase tracking-wider">Required</p>
+        <div className="flex items-center gap-3 shrink-0">
+          <div className="text-right hidden sm:block">
+            <p className="font-bold text-slate-900">{stillNeedToPay.toLocaleString()} AED</p>
+            <p className="text-[10px] text-slate-500 uppercase tracking-wider">To Pay</p>
           </div>
           {isExpanded ? <ChevronUp className="w-5 h-5 text-slate-400" /> : <ChevronDown className="w-5 h-5 text-slate-400" />}
         </div>
       </div>
 
       {isExpanded && (
-        <div className="p-4 space-y-6 animate-in slide-in-from-top-2 fade-in duration-200">
-          <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl flex gap-2">
-            <AlertCircle className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
-            <p className="text-xs text-blue-800">
-              Prices are estimates based on standard {state.emirate || "UAE"} rates. Actual costs may vary slightly depending on your university and specific typing center.
-            </p>
+        <div className="p-4 space-y-8 animate-in slide-in-from-top-2 fade-in duration-200 overflow-y-auto">
+          
+          <p className="text-[11px] text-slate-500 leading-relaxed italic bg-slate-50 p-3 rounded-xl border border-slate-100">
+            These are real UAE government and standard market rates for Dubai. Your actual costs depend on your choices below. Prices accurate as of 2025 — always verify with official sources before paying.
+          </p>
+
+          {/* Core Sections */}
+          <div className="space-y-6">
+            {sections.map((section, idx) => (
+              <div key={idx}>
+                <h4 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-100 pb-2">
+                  {section.category}
+                </h4>
+                <div className="space-y-3">
+                  {section.items.map((item) => {
+                    const isSorted = paidItems[item.id];
+                    return (
+                      <div key={item.id} className="flex flex-col gap-1.5 p-3 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors bg-white">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-2 pt-0.5">
+                            {isSorted ? (
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                            ) : (
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                            )}
+                            <div>
+                              <div className="flex items-center gap-1.5">
+                                <span className={cn(
+                                  "text-sm font-semibold transition-colors duration-300", 
+                                  isSorted ? "text-slate-400 line-through decoration-slate-300" : "text-slate-700"
+                                )}>
+                                  {item.name}
+                                </span>
+                                {item.tooltip && (
+                                  <div className="group relative">
+                                    <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
+                                      {item.tooltip}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                              <label className="flex items-center gap-2 mt-2 cursor-pointer group/label w-max">
+                                <div className="w-4 h-4 rounded border flex items-center justify-center shrink-0 border-slate-300 group-hover/label:border-emerald-400 transition-colors bg-slate-50">
+                                  <input 
+                                    type="checkbox" 
+                                    className="opacity-0 absolute w-0 h-0"
+                                    checked={!!isSorted}
+                                    onChange={() => togglePaid(item.id)}
+                                  />
+                                  {isSorted && <div className="w-2.5 h-2.5 rounded-sm bg-emerald-500" />}
+                                </div>
+                                <span className="text-[11px] text-slate-500 font-medium select-none">{item.paidLabel}</span>
+                              </label>
+                            </div>
+                          </div>
+                          
+                          <div className="text-right shrink-0">
+                            <span className={cn(
+                              "font-bold transition-colors duration-300 text-sm",
+                              isSorted ? "text-slate-300" : "text-slate-700"
+                            )}>
+                              {item.amount.toLocaleString()} AED
+                            </span>
+                            {isSorted && (
+                              <div className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded flex items-center justify-end gap-1 mt-1 animate-in zoom-in slide-in-from-right-2 duration-300">
+                                ✓ Saved
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
 
-          {costs.map((category, idx) => (
-            <div key={idx}>
-              <h4 className="font-bold text-sm text-slate-700 mb-3 border-b border-slate-100 pb-2">
-                {category.category}
-              </h4>
-              <div className="space-y-2">
-                {category.items.map((item, i) => (
-                  <div key={i} className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
+          <div className="w-full h-px bg-slate-100" />
+
+          {/* Optionals Section */}
+          <div>
+            <h4 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-3 border-b border-slate-100 pb-2">
+              Optional / Personal Costs
+            </h4>
+            <div className="space-y-3">
+              {optionals.map((item) => {
+                const isInc = includedOptionals[item.id];
+                return (
+                  <div key={item.id} className={cn(
+                    "flex items-start justify-between gap-3 p-3 rounded-xl border transition-colors",
+                    isInc ? "border-blue-200 bg-blue-50/30" : "border-slate-100 bg-slate-50 border-dashed"
+                  )}>
+                    <div className="flex items-start gap-2 pt-0.5">
                       <span className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        item.required ? "bg-red-400" : "bg-slate-300"
+                        "w-1.5 h-1.5 rounded-full mt-1.5 shrink-0",
+                        isInc ? "bg-blue-500" : "bg-slate-300"
                       )} />
-                      <span className={item.required ? "text-slate-700" : "text-slate-500"}>
-                        {item.name}
+                      <div>
+                         <div className="flex items-center gap-1.5">
+                            <span className={cn("text-sm font-semibold transition-colors", isInc ? "text-slate-800" : "text-slate-600")}>
+                               {item.name}
+                            </span>
+                            {item.tooltip && (
+                              <div className="group relative">
+                                <Info className="w-3.5 h-3.5 text-slate-400 cursor-help" />
+                                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 bg-slate-800 text-white text-[10px] rounded-lg shadow-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
+                                  {item.tooltip}
+                                </div>
+                              </div>
+                            )}
+                         </div>
+                         <label className="flex items-center gap-2 mt-2 cursor-pointer group/label w-max">
+                            <div className="w-4 h-4 rounded border flex items-center justify-center shrink-0 border-slate-300 group-hover/label:border-blue-400 transition-colors bg-white">
+                              <input 
+                                type="checkbox" 
+                                className="opacity-0 absolute w-0 h-0"
+                                checked={!!isInc}
+                                onChange={() => toggleOptional(item.id)}
+                              />
+                              {isInc && <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />}
+                            </div>
+                            <span className="text-[11px] text-slate-500 font-medium select-none">Include in estimate</span>
+                         </label>
+                      </div>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <span className={cn(
+                        "font-bold text-sm",
+                        isInc ? "text-slate-800" : "text-slate-400"
+                      )}>
+                        {item.range} AED
                       </span>
                     </div>
-                    <span className="font-medium text-slate-700">{item.amount.toLocaleString()} AED</span>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
-
-          <div className="pt-4 border-t border-slate-200">
-            <div className="flex items-center justify-between text-sm mb-1">
-              <span className="text-slate-500">Total Required</span>
-              <span className="font-bold text-navy-900">{totalRequired.toLocaleString()} AED</span>
-            </div>
-            <div className="flex items-center justify-between text-sm mb-3">
-              <span className="text-slate-500">Total Optional/Deposits</span>
-              <span className="font-medium text-slate-500">{totalOptional.toLocaleString()} AED</span>
-            </div>
-            <div className="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200">
-              <span className="font-bold text-navy-900">Estimated Total</span>
-              <span className="font-bold text-emerald-600 text-lg">{(totalRequired + totalOptional).toLocaleString()} AED</span>
+                );
+              })}
             </div>
           </div>
+
+          <div className="w-full h-px bg-slate-200" />
+
+          {/* Dynamic Totals */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+             <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex flex-col justify-center relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 to-blue-400/10" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600/80 mb-1">What You Still Need to Pay</span>
+                <span className="text-2xl font-black text-blue-700">{stillNeedToPay.toLocaleString()} <span className="text-sm font-bold text-blue-600/60">AED</span></span>
+             </div>
+             
+             <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600/80 mb-1">Already Sorted</span>
+                <span className="text-xl font-bold text-emerald-700">{totalSorted.toLocaleString()} <span className="text-xs font-semibold text-emerald-600/60">AED</span></span>
+             </div>
+             
+             <div className="bg-slate-100 border border-slate-200 rounded-xl p-4 flex flex-col justify-center">
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">Your Estimated Total</span>
+                <span className="text-xl font-bold text-slate-700">{estimatedTotal.toLocaleString()} <span className="text-xs font-semibold text-slate-500/60">AED</span></span>
+             </div>
+          </div>
+
+          <button 
+            onClick={handleCopySummary}
+            className="w-full h-12 bg-slate-900 hover:bg-black text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] shadow-md shadow-slate-200"
+          >
+            <Copy className="w-4 h-4" /> 📋 Copy My Budget Summary
+          </button>
+
+          <p className="text-[9px] text-slate-400 text-center leading-relaxed">
+            Landed provides these estimates for planning purposes only. Figures are based on standard UAE government fees and typical Dubai market rates. Actual costs may differ. Always confirm fees directly with your university, GDRFA, ICA, and service providers before making payments. Landed is not responsible for discrepancies between estimates and actual charges.
+          </p>
+
         </div>
       )}
     </div>
