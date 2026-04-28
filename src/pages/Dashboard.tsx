@@ -31,12 +31,12 @@ import { getStudentConfig } from "@/utils/studentConfig";
 
 const CATEGORIES = [
   { id: "pre_landing", title: "Before You Land", icon: MapPin, stepIds: [] },
-  { id: "visa", title: "Arrival & Emirates ID", icon: FileText, stepIds: [1, 2] },
   { id: "housing", title: "Housing", icon: Building, stepIds: [6] },
-  { id: "banking", title: "Banking", icon: Landmark, stepIds: [4] },
   { id: "telecom", title: "Telecom", icon: Smartphone, stepIds: [3] },
   { id: "uni", title: "University", icon: GraduationCap, stepIds: [9] },
+  { id: "visa", title: "Emirates ID", icon: FileText, stepIds: [1, 2] },
   { id: "health", title: "Health", icon: Stethoscope, stepIds: [5] },
+  { id: "banking", title: "Banking", icon: Landmark, stepIds: [4] },
 ];
 
 export function Dashboard() {
