@@ -37,7 +37,7 @@ export function Landing() {
             <a href="#faq" className="hover:text-blue-600 transition-colors">FAQ</a>
           </div>
           <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black px-6 h-12 shadow-lg shadow-blue-200">
-            <Link to="/onboarding">GET STARTED</Link>
+            <Link to="/auth">GET STARTED</Link>
           </Button>
         </div>
       </nav>
@@ -54,7 +54,7 @@ export function Landing() {
           </p>
           <div className="flex justify-center pt-4">
              <Button asChild size="lg" className="h-20 px-12 text-xl font-black rounded-[32px] bg-blue-600 hover:bg-blue-700 text-white shadow-2xl shadow-blue-300 transition-all hover:scale-105 uppercase tracking-widest">
-               <Link to="/onboarding">Build My Plan Now</Link>
+               <Link to="/auth">Build My Plan Now</Link>
              </Button>
           </div>
         </div>
@@ -135,7 +135,7 @@ export function Landing() {
         <div className="max-w-4xl mx-auto relative z-10">
            <h2 className="text-5xl md:text-8xl font-black mb-12 uppercase italic leading-none">STOP WORRYING. <br /> START LANDING.</h2>
            <Button asChild size="lg" className="h-20 px-16 text-xl font-black rounded-full bg-white text-blue-600 hover:bg-white/90 shadow-2xl shadow-blue-900 transition-all hover:scale-105 uppercase tracking-widest">
-             <Link to="/onboarding">CREATE MY ROADMAP <ArrowRight className="ml-2 w-6 h-6" /></Link>
+             <Link to="/auth">CREATE MY ROADMAP <ArrowRight className="ml-2 w-6 h-6" /></Link>
            </Button>
         </div>
       </section>

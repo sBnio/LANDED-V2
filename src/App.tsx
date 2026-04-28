@@ -10,6 +10,7 @@ import { OnboardingProvider, useOnboarding } from "@/context/OnboardingContext";
 import { Loader2 } from "lucide-react";
 
 const Landing = lazy(() => import("@/pages/Landing").then(m => ({ default: m.Landing })));
+const Auth = lazy(() => import("@/pages/Auth").then(m => ({ default: m.Auth })));
 const Onboarding = lazy(() => import("@/pages/Onboarding").then(m => ({ default: m.Onboarding })));
 const Dashboard = lazy(() => import("@/pages/Dashboard").then(m => ({ default: m.Dashboard })));
 const Documents = lazy(() => import("@/pages/Documents").then(m => ({ default: m.Documents })));
@@ -42,7 +43,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function AppLayout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const isLandingOrOnboarding =
-    location.pathname === "/" || location.pathname === "/onboarding";
+    location.pathname === "/" || location.pathname === "/onboarding" || location.pathname === "/auth";
   const isChatMobile = location.pathname === "/chat";
 
   // Create refs to target the exact scrollable content areas defensively
@@ -120,6 +121,7 @@ export default function App() {
         <AppLayout>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route
               path="/dashboard"
