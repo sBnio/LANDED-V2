@@ -22,6 +22,9 @@ export interface UserState {
   zayedCampus: string;
   chatHistory: { role: "user" | "assistant"; content: string }[];
   hasCompletedOnboarding: boolean;
+  authMethod?: "google" | "email";
+  preferredCurrency: string;
+  preferredLanguage: string;
 }
 
 const defaultState: UserState = {
@@ -46,6 +49,8 @@ const defaultState: UserState = {
   zayedCampus: "",
   chatHistory: [],
   hasCompletedOnboarding: false,
+  preferredCurrency: "AED",
+  preferredLanguage: "English",
 };
 
 interface OnboardingContextType {

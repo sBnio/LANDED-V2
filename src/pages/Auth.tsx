@@ -3,15 +3,17 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Mail, ArrowRight, ArrowLeft } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
+import { useOnboarding } from "@/context/OnboardingContext";
 
 export function Auth() {
   const navigate = useNavigate();
+  const { updateState } = useOnboarding();
   const [step, setStep] = useState<"choose" | "email" | "verify">("choose");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
 
   const handleGoogleAuth = () => {
-    // For now, prepared logic, just skips to onboarding
+    updateState({ authMethod: "google" });
     navigate("/onboarding");
   };
 
@@ -23,7 +25,7 @@ export function Auth() {
   const handleVerifySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (code.trim()) {
-      // Mock successful verification
+      updateState({ authMethod: "email" });
       navigate("/onboarding");
     }
   };
