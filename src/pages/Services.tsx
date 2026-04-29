@@ -14,7 +14,8 @@ import {
   ExternalLink,
   Info,
   MapPin,
-  Star
+  Star,
+  CheckSquare
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useOnboarding } from "@/context/OnboardingContext";
@@ -25,6 +26,14 @@ const SERVICES = [
     name: "Mashreq Neo",
     category: "Banks",
     description: "Digital bank popular with international students — app-based account opening",
+    docs: [
+      "Passport — original + copy",
+      "Emirates ID or application receipt",
+      "University enrollment letter (official letterhead)",
+      "Passport-size photo (white background)",
+      "Proof of address (tenancy contract or university address confirmation letter)"
+    ],
+    issue: "Most applications stall on proof of address — if you don't have a tenancy contract yet, ask your university for an official address confirmation letter before applying.",
     tags: ["Accepts student visa holders", "Online application", "Arabic + English support"],
     rating: 4.1,
     reviews: 52,
@@ -42,6 +51,14 @@ const SERVICES = [
     name: "Emirates Islamic",
     category: "Banks",
     description: "Islamic banking option with student-accessible account requirements",
+    docs: [
+      "Passport — original + copy",
+      "Emirates ID or application receipt",
+      "University enrollment letter (official letterhead)",
+      "Passport-size photo (white background)",
+      "Proof of address"
+    ],
+    issue: "Arriving without the enrollment letter on official university letterhead is the most common reason for same-day rejection — a printed email from admissions is not accepted.",
     tags: ["Accepts student visa holders", "Walk-in available", "Arabic + English support"],
     rating: 3.8,
     reviews: 29,
@@ -58,6 +75,14 @@ const SERVICES = [
     name: "ADCB (Abu Dhabi Commercial Bank)",
     category: "Banks",
     description: "Full-service bank with branches across Dubai and Abu Dhabi",
+    docs: [
+      "Passport — original + copy",
+      "Emirates ID or application receipt",
+      "University enrollment letter (official letterhead)",
+      "Passport-size photo (white background)",
+      "Proof of address (tenancy contract or utility bill)"
+    ],
+    issue: "ADCB frequently updates minimum balance requirements for student accounts — call 600-502-030 to confirm the current amount before your visit to avoid a wasted trip.",
     tags: ["Accepts student visa holders", "Walk-in available", "Online application"],
     rating: 3.6,
     reviews: 18,
@@ -74,6 +99,10 @@ const SERVICES = [
     name: "du (Student Plan)",
     category: "SIM Cards",
     description: "Student SIM plans starting from 55 AED — available at airport on arrival",
+    docs: [
+      "Passport — original (Emirates ID not required for SIM registration — passport is sufficient)"
+    ],
+    issue: "Attempting to register with a photo of your passport instead of the original will be rejected — always carry your physical passport on arrival day.",
     tags: ["Walk-in available", "Online application", "Arabic + English support"],
     rating: 4.3,
     reviews: 87,
@@ -91,6 +120,10 @@ const SERVICES = [
     name: "e& (Etisalat) Student Plan",
     category: "SIM Cards",
     description: "UAE's largest telecom — wide coverage and student data packages",
+    docs: [
+      "Passport — original"
+    ],
+    issue: "Same as du — original passport required by UAE telecom law for SIM registration. No exceptions.",
     tags: ["Walk-in available", "Online application", "Arabic + English support"],
     rating: 4.1,
     reviews: 64,
@@ -107,6 +140,13 @@ const SERVICES = [
     name: "Al Barsha Typing Centre",
     category: "Typing Centres",
     description: "Conveniently located for students near Knowledge Park and Media City",
+    docs: [
+      "Passport — original + copy",
+      "Emirates ID receipt (if applying for Emirates ID)",
+      "Passport-size photos — white background, bring at least 4 copies",
+      "Any documents for submission — originals only"
+    ],
+    issue: "Bringing photocopies only without originals is the single most common mistake — typing centres cannot process submissions without original documents present.",
     tags: ["Walk-in available", "Arabic + English support", "Near Knowledge Park"],
     rating: 4.0,
     reviews: 33,
@@ -125,6 +165,14 @@ const SERVICES = [
     name: "DIAC Typing Centre",
     category: "Typing Centres",
     description: "On-site at Dubai International Academic City — convenient for DIAC campus students",
+    docs: [
+      "Passport — original + copy",
+      "Emirates ID receipt",
+      "Passport-size photos — white background, 4 copies",
+      "University enrollment letter",
+      "Originals of any documents being submitted"
+    ],
+    issue: "Students from DIAC universities often forget their enrollment letter — this is required for student visa processing at this centre specifically.",
     tags: ["Walk-in available", "Near Academic City", "Arabic + English support"],
     rating: 4.2,
     reviews: 41,
@@ -141,6 +189,12 @@ const SERVICES = [
     name: "Aster Clinic — Al Barsha",
     category: "Medical",
     description: "Medical fitness test centre commonly used by students near Knowledge Park",
+    docs: [
+      "Passport — original",
+      "Emirates ID application receipt",
+      "Passport-size photos — white background, 2 copies"
+    ],
+    issue: "Photos with cream or off-white backgrounds are rejected — background must be pure white. Many phone photo apps add warmth automatically, so check before printing.",
     tags: ["Walk-in available", "Online application", "Arabic + English support"],
     rating: 4.2,
     reviews: 56,
@@ -158,6 +212,12 @@ const SERVICES = [
     name: "NMC Medical Centre",
     category: "Medical",
     description: "Approved medical fitness test centre with multiple Dubai locations",
+    docs: [
+      "Passport — original",
+      "Emirates ID application receipt",
+      "Passport-size photos — white background, 2 copies"
+    ],
+    issue: "Same photo background rule applies — pure white only. Budget an extra 10 AED for on-site photo printing if unsure.",
     tags: ["Walk-in available", "Arabic + English support"],
     rating: 3.9,
     reviews: 28,
@@ -174,6 +234,13 @@ const SERVICES = [
     name: "Dubizzle",
     category: "Housing",
     description: "UAE's largest property listings platform — rooms, studios and apartments",
+    docs: [
+      "Passport copy",
+      "Emirates ID copy",
+      "Proof of funds — bank statement or sponsor/university financial guarantee letter",
+      "Post-dated cheques — most Dubai landlords require 1–4 cheques per year"
+    ],
+    issue: "Most international students are shocked by the cheque requirement — UAE landlords almost universally require post-dated cheques, not bank transfers or cash. Open your bank account before signing any tenancy agreement.",
     tags: ["Online application"],
     rating: 4.0,
     reviews: 44,
@@ -191,6 +258,13 @@ const SERVICES = [
     name: "Bayut",
     category: "Housing",
     description: "Property search platform with verified listings and price history",
+    docs: [
+      "Passport copy",
+      "Emirates ID copy",
+      "Proof of funds",
+      "Post-dated cheques"
+    ],
+    issue: "Same as Dubizzle — arrange your UAE bank account before apartment hunting, otherwise you cannot sign a tenancy contract in Dubai.",
     tags: ["Online application"],
     rating: 3.8,
     reviews: 19,
@@ -207,6 +281,11 @@ const SERVICES = [
     name: "Careem",
     category: "Transport",
     description: "UAE's most popular ride-hailing app — reliable airport and daily transport",
+    docs: [
+      "No documents needed",
+      "Requires a phone number and payment method only"
+    ],
+    issue: "International cards occasionally fail on first use — add a backup payment method in the app before your first ride.",
     tags: ["Online application"],
     rating: 4.4,
     reviews: 102,
@@ -223,6 +302,11 @@ const SERVICES = [
     name: "RTA Dubai Metro",
     category: "Transport",
     description: "Dubai's metro system — cheapest way to travel across the city",
+    docs: [
+      "No documents needed for Nol Card purchase",
+      "Pay by cash or card at any station"
+    ],
+    issue: "Nol Cards purchased at the airport are sometimes set to the wrong zone — ask the station attendant to confirm your card covers all zones before loading a large balance.",
     tags: ["Walk-in available"],
     rating: 4.5,
     reviews: 78,
@@ -239,6 +323,13 @@ const SERVICES = [
     name: "Daman Health Insurance",
     category: "Insurance",
     description: "Leading UAE health insurer — offers student plans where university doesn't provide coverage",
+    docs: [
+      "Passport copy",
+      "Emirates ID copy (or visa page)",
+      "University enrollment letter",
+      "Existing insurance documents if transferring"
+    ],
+    issue: "Many students purchase insurance unnecessarily — check with your university Student Affairs office first, as most UAE universities include basic health coverage in tuition fees.",
     tags: ["Online application", "Arabic + English support"],
     rating: 3.7,
     reviews: 22,
@@ -268,46 +359,39 @@ export function Services() {
   const [nearMe, setNearMe] = useState(true);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   
-  // Review Modal State
-  const [showReviewModal, setShowReviewModal] = useState(false);
-  const [reviewingServiceId, setReviewingServiceId] = useState<string | null>(null);
-  const [reviewStars, setReviewStars] = useState(0);
-  const [reviewText, setReviewText] = useState("");
-  const [localReviews, setLocalReviews] = useState<Record<string, { rating: number, reviews: number }>>({});
+  const getCategoryColorStyles = (category: string) => {
+    switch (category) {
+      case 'Banks': return 'bg-blue-100 text-blue-700';
+      case 'SIM Cards': return 'bg-emerald-100 text-emerald-700';
+      case 'Medical': return 'bg-rose-100 text-rose-700';
+      case 'Housing': return 'bg-amber-100 text-amber-700';
+      case 'Typing Centres': return 'bg-purple-100 text-purple-700';
+      case 'Transport': return 'bg-teal-100 text-teal-700';
+      case 'Insurance': return 'bg-indigo-100 text-indigo-700';
+      default: return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  const getTagColor = (tag: string) => {
+    if (tag === 'Accepts student visa holders') return 'bg-green-50 text-green-700';
+    if (tag === 'Walk-in available') return 'bg-blue-50 text-blue-700';
+    if (tag === 'Online application') return 'bg-purple-50 text-purple-700';
+    if (tag === 'Arabic + English support') return 'bg-amber-50 text-amber-700';
+    if (tag.startsWith('Near')) return 'bg-teal-50 text-teal-700';
+    return 'bg-slate-50 text-slate-700';
+  };
+
+  const getTagDotColor = (tag: string) => {
+    if (tag === 'Accepts student visa holders') return 'bg-green-500';
+    if (tag === 'Walk-in available') return 'bg-blue-500';
+    if (tag === 'Online application') return 'bg-purple-500';
+    if (tag === 'Arabic + English support') return 'bg-amber-500';
+    if (tag.startsWith('Near')) return 'bg-teal-500';
+    return 'bg-slate-400';
+  };
 
   const toggleExpand = (id: string) => {
-    setExpandedCards(prev => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const openReviewModal = (id: string) => {
-    setReviewingServiceId(id);
-    setReviewStars(0);
-    setReviewText("");
-    setShowReviewModal(true);
-  };
-
-  const submitReview = () => {
-    if (!reviewingServiceId || reviewStars === 0) return;
-    
-    setLocalReviews(prev => {
-      const current = prev[reviewingServiceId] || { 
-        rating: SERVICES.find(s => s.id === reviewingServiceId)?.rating || 0, 
-        reviews: SERVICES.find(s => s.id === reviewingServiceId)?.reviews || 0 
-      };
-      
-      const newReviews = current.reviews + 1;
-      const newRating = ((current.rating * current.reviews) + reviewStars) / newReviews;
-      
-      return {
-        ...prev,
-        [reviewingServiceId]: {
-          rating: Number(newRating.toFixed(1)),
-          reviews: newReviews
-        }
-      };
-    });
-    
-    setShowReviewModal(false);
+    setExpandedCards(prev => prev[id] ? {} : { [id]: true });
   };
 
   const isNearUniversity = (service: typeof SERVICES[0]) => {
@@ -410,40 +494,42 @@ export function Services() {
 
       {/* SERVICE CARDS */}
       <div className="max-w-6xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-6 items-start">
           {filteredServices.map((service) => {
             const Icon = CATEGORIES.find(c => c.id === service.category)?.icon || Info;
             const isExpanded = expandedCards[service.id];
             
-            const displayRating = localReviews[service.id]?.rating || service.rating;
-            const displayReviews = localReviews[service.id]?.reviews || service.reviews;
+            const displayRating = service.rating;
+            const displayReviews = service.reviews;
+            const categoryColors = getCategoryColorStyles(service.category);
             
             return (
-              <Card key={service.id} className="bg-white border border-slate-200 shadow-sm rounded-2xl overflow-hidden flex flex-col">
-                 <div className="p-5 md:p-6 flex-1 flex flex-col">
+              <Card key={service.id} className="bg-white border-y border-r border-slate-200 border-l-4 border-l-blue-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 rounded-[28px] overflow-hidden flex flex-col">
+                 <div className="p-6 md:p-7 flex-1 flex flex-col">
                     
                     {/* Top Row */}
-                    <div className="flex justify-between items-start mb-4">
+                    <div className="flex justify-between items-start mb-4 gap-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-700">
+                        <div className={cn("w-11 h-11 rounded-xl flex items-center justify-center shrink-0", categoryColors)}>
                            <Icon className="w-5 h-5" />
                         </div>
-                        <h3 className="text-[15px] font-bold text-slate-900 leading-tight">{service.name}</h3>
+                        <h3 className="text-[16px] font-bold text-slate-900 leading-tight">{service.name}</h3>
                       </div>
-                      <div className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
+                      <div className={cn("px-3 py-1 rounded-full text-[11px] font-bold shrink-0 mt-1", categoryColors)}>
                          {service.category}
                       </div>
                     </div>
   
                     {/* Description */}
-                    <p className="text-sm text-slate-600 leading-relaxed mb-5">
+                    <p className="text-[15px] text-slate-800 leading-relaxed mb-6">
                       {service.description}
                     </p>
                     
                     {/* Status Tags */}
-                    <div className="flex flex-wrap gap-2 mb-5">
+                    <div className="flex flex-wrap gap-2 mb-6">
                       {service.tags.map((tag, idx) => (
-                        <span key={idx} className="bg-slate-50 border border-slate-200 text-slate-600 text-[12px] px-2.5 py-1 rounded-full font-medium">
+                        <span key={idx} className={cn("text-[12px] px-2.5 py-1 rounded-full font-medium flex items-center gap-1.5 w-fit", getTagColor(tag))}>
+                          <span className={cn("w-1.5 h-1.5 rounded-full shrink-0", getTagDotColor(tag))} />
                           {tag}
                         </span>
                       ))}
@@ -451,41 +537,37 @@ export function Services() {
                     
                     {/* Rating Row */}
                     <div className="flex flex-wrap items-center justify-between gap-4 mt-auto border-t border-slate-100 pt-5 mb-5">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-1.5">
-                          <div className="flex items-center text-amber-400">
-                            {[1, 2, 3, 4, 5].map(star => (
-                              <Star key={star} className={cn("w-4 h-4", star <= Math.round(displayRating) ? "fill-amber-400" : "fill-slate-200 text-slate-200")} />
-                            ))}
-                          </div>
-                          <span className="text-sm font-bold text-slate-900">{displayRating.toFixed(1)}</span>
-                          <span className="text-xs text-slate-500">· {displayReviews} student reviews</span>
+                      <div className="flex items-center gap-1.5">
+                        <div className="flex items-center text-amber-400">
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star key={star} className={cn("w-4 h-4", star <= Math.round(displayRating) ? "fill-amber-400" : "fill-slate-200 text-slate-200")} />
+                          ))}
                         </div>
-                        <button 
-                          onClick={() => openReviewModal(service.id)}
-                          className="text-xs text-blue-600 hover:text-blue-700 hover:underline text-left font-medium w-fit"
-                        >
-                          Leave a review
-                        </button>
+                        <span className="text-sm font-bold text-slate-900">{displayRating.toFixed(1)}</span>
+                        <span className="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full font-medium ml-1">{displayReviews} reviews</span>
                       </div>
+                      <Button variant="outline" size="sm" className="h-8 text-xs font-bold text-slate-600 rounded-full">
+                        Leave a review
+                      </Button>
                     </div>
   
                     {/* Actions */}
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                       <Button 
-                        variant="ghost" 
+                        variant="secondary" 
                         onClick={() => toggleExpand(service.id)}
-                        className="flex-1 justify-between sm:justify-center border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold"
+                        className="flex-1 justify-between bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold h-11 px-4"
                       >
-                        How to use {isExpanded ? <ChevronUp className="w-4 h-4 ml-2" /> : <ChevronDown className="w-4 h-4 ml-2" />}
+                        <span className="text-left w-full">How to use</span>
+                        <ChevronDown className={cn("w-4 h-4 ml-2 shrink-0 transition-transform duration-200", isExpanded && "rotate-180")} />
                       </Button>
                       <Button 
                         variant="default"
                         asChild
-                        className="flex-1 bg-white text-slate-900 border-2 border-slate-900 hover:bg-slate-50 font-bold transition-colors"
+                        className="flex-1 bg-blue-600 text-white hover:bg-blue-700 font-bold h-11 transition-colors"
                       >
                         <a href={service.website} target="_blank" rel="noopener noreferrer">
-                          Visit website <ExternalLink className="w-4 h-4 ml-2" />
+                          Visit website <ExternalLink className="w-4 h-4 ml-2 shrink-0" />
                         </a>
                       </Button>
                     </div>
@@ -494,9 +576,31 @@ export function Services() {
                     <div 
                       className={cn(
                         "mt-4 bg-slate-50 rounded-xl overflow-hidden transition-all duration-300",
-                        isExpanded ? "max-h-[500px] border border-slate-100 p-4" : "max-h-0 border-transparent p-0"
+                        isExpanded ? "max-h-[1000px] border border-slate-100 p-5" : "max-h-0 border-transparent p-0"
                       )}
                     >
+                      {/* Documents */}
+                      {service.docs && service.docs.length > 0 && (
+                        <div className="mb-5">
+                          <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Required Documents</h4>
+                          <ul className="space-y-2.5">
+                            {service.docs.map((doc, idx) => (
+                              <li key={idx} className="text-[13px] text-slate-600 flex items-start gap-2.5">
+                                <CheckSquare className="w-4 h-4 text-slate-300 shrink-0 mt-0.5" />
+                                <span className="leading-snug">{doc}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          {service.issue && (
+                            <div className="mt-4 border-l-2 border-amber-400 pl-3">
+                              <p className="text-[11px] font-bold text-amber-600 uppercase tracking-widest mb-1 mt-1">Common issue</p>
+                              <p className="text-[13px] text-slate-600 leading-snug">{service.issue}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3 pt-5 border-t border-slate-200">How to use</h4>
                       <ul className="space-y-2">
                         {service.howTo.map((step, idx) => (
                           <li key={idx} className="text-[13px] text-slate-700 flex items-start gap-2">
@@ -527,62 +631,6 @@ export function Services() {
           </div>
         )}
       </div>
-
-      {/* Review Modal */}
-      {showReviewModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/50 backdrop-blur-sm" onClick={() => setShowReviewModal(false)} />
-          <div className="relative bg-white rounded-2xl w-full max-w-md p-6 shadow-xl animate-in fade-in zoom-in-95 duration-200">
-            <h3 className="text-xl font-bold text-slate-900 mb-6">Rate this service</h3>
-            
-            <div className="flex justify-center gap-2 mb-6">
-              {[1, 2, 3, 4, 5].map(star => (
-                <button
-                  key={star}
-                  onClick={() => setReviewStars(star)}
-                  className="hover:scale-110 transition-transform"
-                >
-                  <Star 
-                    className={cn(
-                      "w-8 h-8", 
-                      star <= reviewStars ? "fill-amber-400 text-amber-400" : "fill-slate-100 text-slate-200"
-                    )} 
-                  />
-                </button>
-              ))}
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-sm font-bold text-slate-700 mb-2">
-                Share your experience (optional)
-              </label>
-              <textarea 
-                value={reviewText}
-                onChange={(e) => setReviewText(e.target.value)}
-                maxLength={200}
-                placeholder="What went well? What didn't?"
-                className="w-full h-24 p-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-              />
-              <p className="text-right text-xs text-slate-400 mt-1">{reviewText.length}/200</p>
-            </div>
-
-            <div className="flex gap-3 mb-4">
-              <Button variant="outline" className="flex-1" onClick={() => setShowReviewModal(false)}>Cancel</Button>
-              <Button 
-                className="flex-1 bg-slate-900 text-white hover:bg-slate-800" 
-                onClick={submitReview}
-                disabled={reviewStars === 0}
-              >
-                Submit
-              </Button>
-            </div>
-
-            <p className="text-[11px] text-center text-slate-400 leading-snug">
-              Reviews are from Landed users. We don't verify or moderate reviews — use your own judgment.
-            </p>
-          </div>
-        </div>
-      )}
 
       {/* FOOTER */}
       <div className="max-w-6xl mx-auto px-6 pt-12 pb-6 border-t border-slate-200 mt-12">
