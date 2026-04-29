@@ -18,7 +18,6 @@ const BudgetPlanner = lazy(() => import("@/pages/BudgetPlanner").then(m => ({ de
 const Services = lazy(() => import("@/pages/Services").then(m => ({ default: m.Services })));
 const Community = lazy(() => import("@/pages/Community").then(m => ({ default: m.Community })));
 const ChatMobile = lazy(() => import("@/pages/ChatMobile").then(m => ({ default: m.ChatMobile })));
-const Settings = lazy(() => import("@/pages/Settings").then(m => ({ default: m.Settings })));
 
 import { BottomNav } from "@/components/layout/BottomNav";
 import { Sidebar } from "@/components/layout/Sidebar";
@@ -161,14 +160,6 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <Community />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <Settings />
                 </ProtectedRoute>
               }
             />
