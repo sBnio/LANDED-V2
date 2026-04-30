@@ -34,7 +34,7 @@ export function Auth() {
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 px-6 sm:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center mb-8">
-          <Logo className="text-3xl text-slate-900" />
+          <Logo className="text-3xl" />
         </div>
         
         <div className="bg-white py-12 px-8 shadow-xl shadow-slate-200/50 rounded-[32px] sm:px-12 border border-slate-100">

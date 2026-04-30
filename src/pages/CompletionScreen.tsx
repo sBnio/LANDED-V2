@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, Download, Link as LinkIcon, Award, Calendar, CheckCircle2, ChevronDown } from "lucide-react";
 import confetti from "canvas-confetti";
 import html2canvas from "html2canvas";
-import { Logo } from "@/components/ui/Logo";
 
 export function CompletionScreen({ 
   onBack, 
@@ -150,7 +149,9 @@ export function CompletionScreen({
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
             Back to Dashboard
           </button>
-          <Logo className="text-xl text-white" />
+          <div className="font-black text-xl tracking-tighter text-white">
+            landed.
+          </div>
         </div>
       </motion.div>
 
@@ -164,7 +165,7 @@ export function CompletionScreen({
             transition={{ type: "spring", bounce: 0.5, duration: 1 }}
             className="mb-8 filter drop-shadow-2xl flex justify-center"
           >
-            <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_United_Arab_Emirates.svg" alt="UAE Flag" className="w-24 md:w-32 h-auto rounded-sm shadow-md" crossOrigin="anonymous" />
+            <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-24 md:w-32 h-auto rounded-sm shadow-md" />
           </motion.div>
           
           <motion.div
@@ -257,9 +258,9 @@ export function CompletionScreen({
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-10">
-                    <Logo className="text-2xl text-blue-600" />
-                    <div className="filter drop-shadow hover:scale-110 transition-transform flex-shrink-0 ml-4">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/cb/Flag_of_the_United_Arab_Emirates.svg" alt="UAE Flag" className="w-10 h-auto rounded-[2px] shadow-sm" crossOrigin="anonymous" />
+                    <div className="font-black text-2xl tracking-tighter text-blue-600">landed.</div>
+                    <div className="filter drop-shadow hover:scale-110 transition-transform">
+                      <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-10 h-auto rounded-[2px] shadow-sm" />
                     </div>
                   </div>
                   
