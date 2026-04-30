@@ -64,7 +64,7 @@ export function Dashboard() {
   const completedCount = state.completedSteps.length;
   // Calculate total steps including personalized additional tasks and priority task
   const totalSteps = stepsData.length + studentConfig.additionalTasks.length + (studentConfig.priorityTask ? 1 : 0);
-  const progressPercent = Math.round((completedCount / totalSteps) * 100);
+  const progressPercent = Math.min(100, Math.round((completedCount / totalSteps) * 100));
   const prevCompletedCount = useRef(completedCount);
 
   useEffect(() => {
@@ -293,7 +293,7 @@ export function Dashboard() {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
-            {progressPercent === 100 && (
+            {completedCount === totalSteps && totalSteps > 0 && (
               <div className="mt-6 flex justify-center animate-in fade-in duration-500">
                 <button
                   onClick={() => setShowCompletion(true)}

@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { stepsData } from "@/data/steps";
+import { getStudentConfig } from "@/utils/studentConfig";
 import { 
   Map, 
   FileText, 
@@ -16,10 +17,11 @@ export function Sidebar() {
   const { state } = useOnboarding();
   const location = useLocation();
   
-  // Calculate progress
+  // Calculate progress dynamic to student's config
+  const studentConfig = getStudentConfig(state.nationality || "", state.university || "");
+  const totalTasks = stepsData.length + studentConfig.additionalTasks.length + (studentConfig.priorityTask ? 1 : 0);
   const completed = state.completedSteps.length;
-  const totalTasks = stepsData.length; 
-  const percent = Math.round((completed / totalTasks) * 100) || 0;
+  const percent = Math.min(100, Math.round((completed / totalTasks) * 100)) || 0;
 
   const navItems = [
     { name: "My Roadmap", path: "/dashboard", icon: Map },
