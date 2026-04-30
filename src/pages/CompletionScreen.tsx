@@ -19,6 +19,7 @@ export function CompletionScreen({
   const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     // Determine and save completion date if not present
     let completionDate = localStorage.getItem("landed_completion_date");
     if (!completionDate) {
@@ -91,7 +92,8 @@ export function CompletionScreen({
     try {
       const canvas = await html2canvas(cardRef.current, { 
         backgroundColor: null,
-        scale: 2 // High quality
+        scale: 2, // High quality
+        useCORS: true
       });
       const link = document.createElement("a");
       link.download = "landed-fully-landed.png";
@@ -161,9 +163,9 @@ export function CompletionScreen({
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", bounce: 0.5, duration: 1 }}
-            className="text-[80px] md:text-[100px] leading-none mb-6 filter drop-shadow-2xl"
+            className="mb-8 filter drop-shadow-2xl flex justify-center"
           >
-            🇦🇪
+            <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-24 md:w-32 h-auto rounded-sm shadow-md" />
           </motion.div>
           
           <motion.div
@@ -257,7 +259,9 @@ export function CompletionScreen({
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-10">
                     <div className="font-black text-2xl tracking-tighter text-blue-600">landed.</div>
-                    <div className="text-4xl filter drop-shadow hover:scale-110 transition-transform">🇦🇪</div>
+                    <div className="filter drop-shadow hover:scale-110 transition-transform">
+                      <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-10 h-auto rounded-[2px] shadow-sm" />
+                    </div>
                   </div>
                   
                   <h4 className="font-black text-3xl mb-8 leading-tight tracking-tight text-slate-900">
