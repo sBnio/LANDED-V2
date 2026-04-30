@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useOnboarding } from "@/context/OnboardingContext";
 import { stepsData } from "@/data/steps";
 import { Card } from "@/components/ui/card";
@@ -28,6 +28,7 @@ import confetti from "canvas-confetti";
 import { EmiratesIDForm } from "@/components/autofill/EmiratesIDForm";
 import { BankMatchmaker } from "@/components/banking/BankMatchmaker";
 import { getStudentConfig } from "@/utils/studentConfig";
+import { CompletionScreen } from "./CompletionScreen";
 
 const CATEGORIES = [
   { id: "pre_landing", title: "Before You Land", icon: MapPin, stepIds: [] },
@@ -44,6 +45,7 @@ export function Dashboard() {
   const [expandedStep, setExpandedStep] = useState<number | string | null>(null);
   const [showEmiratesIDForm, setShowEmiratesIDForm] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["pre_landing", "visa"]);
+  const [showCompletion, setShowCompletion] = useState(false);
 
   const studentConfig = useMemo(() => getStudentConfig(state.nationality || "", state.university || ""), [state.nationality, state.university]);
   const [dismissedAlerts, setDismissedAlerts] = useState<string[]>(() => {
@@ -63,6 +65,14 @@ export function Dashboard() {
   // Calculate total steps including personalized additional tasks and priority task
   const totalSteps = stepsData.length + studentConfig.additionalTasks.length + (studentConfig.priorityTask ? 1 : 0);
   const progressPercent = Math.round((completedCount / totalSteps) * 100);
+  const prevCompletedCount = useRef(completedCount);
+
+  useEffect(() => {
+    if (completedCount === totalSteps && totalSteps > 0 && prevCompletedCount.current !== totalSteps) {
+      setShowCompletion(true);
+    }
+    prevCompletedCount.current = completedCount;
+  }, [completedCount, totalSteps]);
 
   // Age calculation
   const age = useMemo(() => {
@@ -122,6 +132,10 @@ export function Dashboard() {
       (s.priority === "URGENT" || s.id === 2 || s.id === 1)
     ).slice(0, 2);
   }, [state.completedSteps]);
+
+  if (showCompletion) {
+    return <CompletionScreen onBack={() => setShowCompletion(false)} totalTasks={totalSteps} />;
+  }
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 md:pb-12 font-sans">
@@ -279,6 +293,17 @@ export function Dashboard() {
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
+            {progressPercent === 100 && (
+              <div className="mt-6 flex justify-center animate-in fade-in duration-500">
+                <button
+                  onClick={() => setShowCompletion(true)}
+                  className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold py-2.5 px-6 rounded-full transition-colors text-sm flex items-center gap-2"
+                >
+                  <Sparkles className="w-4 h-4" /> 
+                  View Your Completion Summary
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
