@@ -32,8 +32,8 @@ export function Landing() {
         <div className="max-w-7xl mx-auto flex justify-between items-center">
           <Logo className="text-2xl" />
           <div className="hidden md:flex gap-8 font-bold text-sm uppercase tracking-widest text-slate-500">
-            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">How it works</a>
             <a href="#features" className="hover:text-blue-600 transition-colors">Features</a>
+            <a href="#how-it-works" className="hover:text-blue-600 transition-colors">How it works</a>
             <a href="#faq" className="hover:text-blue-600 transition-colors">FAQ</a>
           </div>
           <Button asChild className="rounded-full bg-blue-600 hover:bg-blue-700 text-white font-black px-6 h-12 shadow-lg shadow-blue-200">
@@ -78,8 +78,64 @@ export function Landing() {
         </div>
       </section>
 
+      {/* Features */}
+      <section id="features" className="py-20 bg-slate-50">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 uppercase italic tracking-tight leading-tight">Everything you need to land confidently</h2>
+            <p className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto font-medium">Built specifically for international students arriving in the UAE</p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {[
+              {
+                emoji: "🗺",
+                title: "Personalized Roadmap",
+                desc: "A step-by-step checklist built around your nationality, university, and arrival date. No generic advice — your exact next step, always."
+              },
+              {
+                emoji: "💰",
+                title: "Budget Planner",
+                desc: "Know exactly how much money to bring before you land. Adjust for what you've already paid and your living situation."
+              },
+              {
+                emoji: "📋",
+                title: "Document Checklists",
+                desc: "Every service — banks, typing centres, medical — tells you exactly what to bring and the most common reason students get turned away."
+              },
+              {
+                emoji: "🏢",
+                title: "Services Directory",
+                desc: "Student-relevant services near your campus. Banks that accept student visa holders, SIM cards, housing, medical centres and more."
+              },
+              {
+                emoji: "👥",
+                title: "Community",
+                desc: "Connect with students at your university arriving the same semester. Find a Study Buddy for one-on-one support."
+              },
+              {
+                emoji: "🤖",
+                title: "AI Assistant",
+                desc: "Ask anything in plain language — visa steps, bank requirements, what to bring tomorrow. Get a clear answer instantly."
+              }
+            ].map((feature, idx) => (
+              <div key={idx} className="bg-white rounded-[24px] p-8 border border-slate-200/60 shadow-lg shadow-slate-200/30 hover:shadow-xl hover:shadow-blue-200/30 hover:-translate-y-1 transition-all duration-300 group relative overflow-hidden flex flex-col h-full">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-blue-50 to-transparent rounded-bl-full -z-10 group-hover:scale-125 transition-transform duration-500" />
+                <div className="w-14 h-14 bg-slate-50/80 rounded-2xl flex items-center justify-center text-3xl mb-6 shadow-sm border border-slate-100 group-hover:bg-blue-50 transition-colors duration-300 transform group-hover:-rotate-3 group-hover:scale-110 shrink-0">
+                  {feature.emoji}
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed font-medium text-[15px]">
+                  {feature.desc}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* How it Works */}
-      <section id="how-it-works" className="py-32 px-6 bg-slate-50">
+      <section id="how-it-works" className="py-32 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-24">
              <h2 className="text-xs font-black text-blue-600 uppercase tracking-[0.3em] mb-6 block">The Workflow</h2>
