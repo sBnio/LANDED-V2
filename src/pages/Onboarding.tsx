@@ -68,6 +68,9 @@ export function Onboarding() {
 
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [showCustomNationality, setShowCustomNationality] = useState(
+    !!state.nationality && !nationalities.includes(state.nationality) && state.nationality !== "Other"
+  );
 
   // Form State initialized from context or defaults
   const [formData, setFormData] = useState<Partial<UserState>>({
@@ -214,13 +217,32 @@ export function Onboarding() {
                   <div className="space-y-3">
                     <label className="text-sm font-bold text-slate-700">Nationality</label>
                     <select 
-                      value={formData.nationality}
-                      onChange={(e) => updateFormData({ nationality: e.target.value })}
+                      value={showCustomNationality ? "Other" : (formData.nationality || "")}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === "Other") {
+                          setShowCustomNationality(true);
+                          updateFormData({ nationality: "" });
+                        } else {
+                          setShowCustomNationality(false);
+                          updateFormData({ nationality: val });
+                        }
+                      }}
                       className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
                     >
                       <option value="" disabled>Select nationality</option>
                       {nationalities.map(n => <option key={n} value={n}>{n}</option>)}
                     </select>
+                    {showCustomNationality && (
+                       <Input
+                         type="text"
+                         placeholder="Please specify your nationality"
+                         value={nationalities.includes(formData.nationality || "") ? "" : formData.nationality}
+                         onChange={(e) => updateFormData({ nationality: e.target.value })}
+                         className="h-14 px-4 rounded-xl border-slate-200 focus:ring-blue-500 mt-2"
+                         autoFocus
+                       />
+                    )}
                   </div>
                 </div>
 
