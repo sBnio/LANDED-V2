@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useOnboarding } from "@/context/OnboardingContext";
-
-declare global {
-  interface Window {
-    confetti: any;
-    html2canvas: any;
-  }
-}
+import { motion, AnimatePresence } from "motion/react";
+import { ArrowLeft, Download, Link as LinkIcon, Award, Calendar, CheckCircle2, ChevronDown } from "lucide-react";
+import confetti from "canvas-confetti";
+import html2canvas from "html2canvas";
 
 export function CompletionScreen({ 
   onBack, 
@@ -16,40 +13,51 @@ export function CompletionScreen({
   totalTasks: number;
 }) {
   const { state } = useOnboarding();
-  const [visibleStep, setVisibleStep] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const part2Ref = useRef<HTMLDivElement>(null);
-  const part3Ref = useRef<HTMLDivElement>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  const [hasScrolled, setHasScrolled] = useState(false);
 
   useEffect(() => {
-    // Load scripts dynamically
-    const loadScript = (src: string) => {
-      return new Promise((resolve, reject) => {
-        if (document.querySelector(`script[src="${src}"]`)) {
-          resolve(true);
-          return;
-        }
-        const script = document.createElement("script");
-        script.src = src;
-        script.onload = () => resolve(true);
-        script.onerror = reject;
-        document.body.appendChild(script);
-      });
-    };
-
-    Promise.all([
-      loadScript("https://cdn.jsdelivr.net/npm/canvas-confetti"),
-      loadScript("https://cdn.jsdelivr.net/npm/html2canvas")
-    ]).catch(err => console.error("Failed to load CDNs", err));
-
     // Determine and save completion date if not present
     let completionDate = localStorage.getItem("landed_completion_date");
     if (!completionDate) {
       completionDate = new Date().toISOString();
       localStorage.setItem("landed_completion_date", completionDate);
     }
+    
+    // Fire confetti sequence
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 100 };
+    const colors = ["#F59E0B", "#D97706", "#2563EB", "#FFFFFF"];
+
+    const interval: any = setInterval(function() {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confetti({
+        ...defaults, particleCount,
+        origin: { x: Math.random(), y: Math.random() - 0.2 },
+        colors: colors
+      });
+    }, 250);
+
+    const handleScroll = () => {
+      if (window.scrollY > 50) setHasScrolled(true);
+      else setHasScrolled(false);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   const completionDateString = localStorage.getItem("landed_completion_date") || new Date().toISOString();
@@ -60,11 +68,6 @@ export function CompletionScreen({
     year: "numeric"
   });
 
-  // Calculate days passed since account creation to completion
-  // We'll assume account created = today (as we don't have explicit date in state).
-  // Actually, state.arrivalDate could be used? No, the prompt says "account creation to today". 
-  // Let's check when the user was created or just use a fallback if not available.
-  // We'll mimic this by checking "landed_account_created" or default to 14 days for MVP if not trackable.
   const createdAtString = localStorage.getItem("landed_account_created") || new Date().toISOString();
   localStorage.setItem("landed_account_created", createdAtString); // Ensure it's set
   const createdDateObj = new Date(createdAtString);
@@ -82,65 +85,19 @@ export function CompletionScreen({
     year: "numeric"
   });
 
-  const rawBudget = localStorage.getItem("landed_budget_total") || "2245";
-  const navigatedAed = parseFloat(rawBudget).toLocaleString();
-
-  useEffect(() => {
-    // Fade in text elements one by one
-    const timers = [
-      setTimeout(() => setVisibleStep(1), 300),
-      setTimeout(() => setVisibleStep(2), 600),
-      setTimeout(() => setVisibleStep(3), 900),
-      setTimeout(() => setVisibleStep(4), 1200),
-    ];
-
-    // Fire confetti for 3 seconds
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
-    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-    const colors = ["#F59E0B", "#ffffff", "#1E3A5F"];
-
-    const interval: any = setInterval(function() {
-      const timeLeft = animationEnd - Date.now();
-
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
-
-      const particleCount = 50 * (timeLeft / duration);
-      if (window.confetti) {
-        window.confetti({
-          ...defaults, particleCount,
-          origin: { x: Math.random(), y: Math.random() - 0.2 },
-          colors: colors
-        });
-      }
-    }, 250);
-
-    return () => {
-      timers.forEach(clearTimeout);
-      clearInterval(interval);
-    };
-  }, []);
-
-  const scrollToPart2 = () => {
-    part2Ref.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const scrollToPart3 = () => {
-    part3Ref.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const saveImage = async () => {
-    if (!cardRef.current || !window.html2canvas) return;
+    if (!cardRef.current) return;
     setIsSaving(true);
     try {
-      const canvas = await window.html2canvas(cardRef.current, { backgroundColor: null });
+      const canvas = await html2canvas(cardRef.current, { 
+        backgroundColor: null,
+        scale: 2 // High quality
+      });
       const link = document.createElement("a");
       link.download = "landed-fully-landed.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-      showToast("Image saved ✓");
+      showToast("Image saved!");
     } catch (err) {
       console.error(err);
       showToast("Failed to save image");
@@ -150,10 +107,10 @@ export function CompletionScreen({
   };
 
   const copyLink = async () => {
-    const textToCopy = `I'm Fully Landed 🇦🇪 Just completed my UAE student onboarding with Landed — landed-v2.vercel.app`;
+    const textToCopy = `I'm Fully Landed 🇦🇪 Just completed my UAE student onboarding with Landed!`;
     try {
       await navigator.clipboard.writeText(textToCopy);
-      showToast("Copied! Ready to share ✓");
+      showToast("Copied! Ready to share");
     } catch (err) {
       showToast("Failed to copy link");
     }
@@ -164,173 +121,218 @@ export function CompletionScreen({
     setTimeout(() => setToastMessage(null), 3000);
   };
 
+  const scrollToStats = () => {
+    document.getElementById("stats-section")?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="bg-white min-h-screen font-sans relative">
-      <div className="absolute top-6 right-6 z-50">
-        <button 
-          onClick={onBack}
-          className="text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors"
-        >
-          Back to dashboard
-        </button>
+    <div className="bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-blue-500/30">
+      {/* Dynamic Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-blue-600/20 blur-[120px] rounded-full mix-blend-screen" />
+        <div className="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4 bg-amber-500/10 blur-[150px] rounded-full mix-blend-screen" />
       </div>
 
-      <div className="flex flex-col items-center">
-        {/* PART 1 */}
-        <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 w-full">
-          <div className="space-y-6 flex flex-col items-center">
-            <div 
-              className={`text-[48px] transition-opacity duration-700 ${visibleStep >= 1 ? "opacity-100" : "opacity-0"}`}
-            >
-              🇦🇪
+      {/* Header */}
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        className={`fixed top-0 w-full z-50 transition-all duration-300 ${hasScrolled ? 'bg-slate-950/80 backdrop-blur-md border-b border-white/10 py-4' : 'bg-transparent py-6'}`}
+      >
+        <div className="max-w-5xl mx-auto px-6 flex justify-between items-center">
+          <button 
+            onClick={onBack}
+            className="flex items-center gap-2 text-slate-400 hover:text-white font-medium text-sm transition-colors group"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
+            Back to Dashboard
+          </button>
+          <div className="font-black text-xl tracking-tighter text-white">
+            landed.
+          </div>
+        </div>
+      </motion.div>
+
+      <div className="relative z-10 flex flex-col items-center">
+        
+        {/* HERO SECTION */}
+        <section className="min-h-screen flex flex-col items-center justify-center text-center p-6 w-full max-w-5xl mx-auto relative">
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", bounce: 0.5, duration: 1 }}
+            className="text-[80px] md:text-[100px] leading-none mb-6 filter drop-shadow-2xl"
+          >
+            🇦🇪
+          </motion.div>
+          
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="space-y-4"
+          >
+            <div className="flex items-center justify-center gap-2 text-amber-400 font-bold tracking-widest uppercase text-sm mb-4">
+              <Award className="w-4 h-4" /> Mission Accomplished
             </div>
-            
-            <h1 
-              className={`text-3xl md:text-[32px] font-bold text-[#1E3A5F] transition-opacity duration-700 ${visibleStep >= 2 ? "opacity-100" : "opacity-0"}`}
-            >
+            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-slate-400 tracking-tight leading-tight">
               You're Fully Landed.
             </h1>
-            
-            <p 
-              className={`text-lg text-slate-500 transition-opacity duration-700 ${visibleStep >= 3 ? "opacity-100" : "opacity-0"}`}
-            >
-              Welcome to the UAE, {firstName}.
+            <p className="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto mt-4 leading-relaxed">
+              Welcome to the UAE, <span className="text-white">{firstName}</span>. Your journey has just begun.
             </p>
-            
-            <div className={`pt-8 transition-opacity duration-700 ${visibleStep >= 4 ? "opacity-100" : "opacity-0"}`}>
-              <button 
-                onClick={scrollToPart2}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full transition-colors flex items-center justify-center gap-2"
-              >
-                See my journey →
-              </button>
-            </div>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* PART 2 */}
-        <div ref={part2Ref} className="min-h-screen flex flex-col items-center justify-center text-center p-6 w-full">
-          <div className="bg-white shadow-sm border border-slate-200 rounded-3xl p-8 max-w-[480px] w-full">
-            <div className="mb-6">
-              <h2 className="text-xl font-bold text-slate-900 mb-1">{state.name}</h2>
-              <p className="text-sm text-slate-500 mb-1">{nationality} student at {university}</p>
-              <p className="text-sm text-slate-500">Arrived: {formattedArrivalDate}</p>
-            </div>
-
-            <hr className="border-slate-100 mb-6" />
-
-            <div className="grid grid-cols-2 gap-y-6 gap-x-4 mb-6">
-              <div className="text-left flex flex-col items-start">
-                <span className="text-base font-bold text-[#1E3A5F] leading-tight">{daysPassed} days</span>
-                <span className="text-xs text-slate-500 mt-1">✓ Completed in</span>
-              </div>
-              <div className="text-left flex flex-col items-start">
-                <span className="text-base font-bold text-[#1E3A5F] leading-tight">{totalTasks} tasks</span>
-                <span className="text-xs text-slate-500 mt-1">✓ Completed</span>
-              </div>
-              <div className="text-left flex flex-col items-start">
-                <span className="text-base font-bold text-[#1E3A5F] leading-tight">{navigatedAed} AED</span>
-                <span className="text-xs text-slate-500 mt-1">✓ Navigated</span>
-              </div>
-              <div className="text-left flex flex-col items-start">
-                <span className="text-base font-bold text-[#1E3A5F] leading-tight">Fully Landed 🇦🇪</span>
-                <span className="text-xs text-slate-500 mt-1">✓ Status</span>
-              </div>
-            </div>
-
-            <hr className="border-slate-100 mb-6" />
-
-            <p className="text-sm text-slate-500 italic mb-8 leading-relaxed">
-              "You navigated your student visa, Emirates ID, medical fitness test, bank account, SIM card, and health insurance — in a country you'd never lived in before."
-            </p>
-
-            <p className="text-lg font-bold text-blue-600 mb-4">
-              That's not nothing. That's everything.
-            </p>
-
-            <p className="text-xs text-slate-400 mb-8">
-              Fully Landed on {formattedCompletionDate}
-            </p>
-
-            <button 
-              onClick={scrollToPart3}
-              className="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-full transition-colors flex items-center justify-center gap-2"
-            >
-              See my shareable card →
-            </button>
-          </div>
-        </div>
-
-        {/* PART 3 */}
-        <div ref={part3Ref} className="min-h-screen flex flex-col items-center justify-center text-center p-6 w-full">
-          <div className="mb-8">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Share your achievement</h3>
-            <p className="text-sm text-slate-500">Let your friends and family back home know you made it 🎓</p>
-          </div>
-
-          <div 
-            ref={cardRef}
-            className="w-[320px] sm:w-[360px] h-[480px] sm:h-[520px] bg-[#1E3A5F] rounded-2xl p-10 flex flex-col mb-10 relative overflow-hidden"
+          <motion.button 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            onClick={scrollToStats}
+            className="absolute bottom-12 animate-bounce flex flex-col items-center gap-2 text-slate-500 hover:text-white transition-colors"
           >
-            <div className="text-white font-bold text-lg text-left tracking-tight">
-              landed.
-            </div>
+            <span className="text-xs font-bold uppercase tracking-widest">See your stats</span>
+            <ChevronDown className="w-5 h-5" />
+          </motion.button>
+        </section>
+
+        {/* STATS SECTION */}
+        <section id="stats-section" className="min-h-screen flex flex-col items-center justify-center py-24 px-6 w-full max-w-5xl mx-auto">
+          
+          <div className="grid md:grid-cols-2 gap-16 md:gap-24 w-full items-center">
             
-            <div className="flex-1 flex flex-col justify-center items-center">
-              <div className="text-[40px] mb-6 mt-6">🇦🇪</div>
-              
-              <h4 className="text-white font-bold text-[26px] mb-3 leading-tight">
-                Fully Landed
-              </h4>
-              
-              <p className="text-white text-base mb-1">
-                {state.name}
-              </p>
-              
-              <p className="text-[#F59E0B] text-[13px] mb-2 font-medium">
-                {university}
-              </p>
-              
-              <p className="text-white text-[13px]">
-                Completed in {daysPassed} days
-              </p>
-              
-              <div className="w-[60px] h-[1px] bg-[#F59E0B] mx-auto my-6" />
-            </div>
-
-            <div className="text-[#94A3B8] text-[11px] text-center mt-auto pb-2">
-              landed-v2.vercel.app
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 w-full max-w-[360px] mb-6">
-            <button 
-              onClick={saveImage}
-              disabled={isSaving}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-full transition-colors flex items-center justify-center gap-2"
+            {/* Story text */}
+            <motion.div 
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+              className="space-y-8"
             >
-              📸 {isSaving ? "Saving..." : "Save as Image"}
-            </button>
-            <button 
-              onClick={copyLink}
-              className="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-3 px-6 rounded-full transition-colors flex items-center justify-center gap-2"
-            >
-              🔗 Copy Link
-            </button>
-          </div>
+              <div className="space-y-2">
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight">The Journey</h2>
+                <p className="text-blue-400 font-medium text-lg">From arrival to fully settled.</p>
+              </div>
 
-          <p className="text-xs text-slate-400">
-            Share on Instagram, WhatsApp, or LinkedIn
-          </p>
-        </div>
+              <div className="space-y-6">
+                <p className="text-lg text-slate-300 leading-relaxed">
+                  You navigated your student visa, Emirates ID, medical fitness test, bank account, SIM card, and health insurance — in a country you'd never lived in before.
+                </p>
+                <div className="pl-4 border-l-2 border-blue-600/50">
+                  <p className="text-xl font-medium text-white italic">
+                    "That's not nothing. That's everything."
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-6 pt-6">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                  <div className="text-amber-400 mb-2"><CheckCircle2 className="w-6 h-6" /></div>
+                  <div className="text-2xl font-bold text-white mb-1">{totalTasks}</div>
+                  <div className="text-sm text-slate-400 font-medium">Tasks Conquered</div>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
+                  <div className="text-blue-400 mb-2"><Calendar className="w-6 h-6" /></div>
+                  <div className="text-2xl font-bold text-white mb-1">{daysPassed}</div>
+                  <div className="text-sm text-slate-400 font-medium">Days Taken</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* The Ticket / Shareable Card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
+              whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ type: "spring", bounce: 0.4, duration: 1 }}
+              className="flex flex-col items-center"
+            >
+              <div 
+                ref={cardRef}
+                className="w-full max-w-[380px] bg-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden ring-1 ring-black/5 text-slate-900"
+              >
+                {/* Graphics */}
+                <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-50 rounded-full blur-2xl translate-y-1/4 -translate-x-1/4" />
+                
+                <div className="relative z-10">
+                  <div className="flex justify-between items-start mb-10">
+                    <div className="font-black text-2xl tracking-tighter text-blue-600">landed.</div>
+                    <div className="text-4xl filter drop-shadow hover:scale-110 transition-transform">🇦🇪</div>
+                  </div>
+                  
+                  <h4 className="font-black text-3xl mb-8 leading-tight tracking-tight text-slate-900">
+                    Fully Landed
+                  </h4>
+                  
+                  <div className="space-y-6">
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Student</div>
+                      <div className="text-lg font-bold text-slate-900 leading-tight">{state.name}</div>
+                      <div className="text-sm font-medium text-slate-500">{nationality}</div>
+                    </div>
+                    
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">University</div>
+                      <div className="text-lg font-bold text-slate-900 leading-tight">{university}</div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Arrived</div>
+                        <div className="font-semibold text-slate-700">{formattedArrivalDate}</div>
+                      </div>
+                      <div>
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Completed</div>
+                        <div className="font-semibold text-slate-700">{formattedCompletionDate}</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-10 pt-6 border-t border-slate-200 border-dashed flex justify-between items-center text-xs text-slate-400 font-medium">
+                    <span>landed-v2.vercel.app</span>
+                    <span className="font-bold text-blue-600">#LandedUAE</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Share actions */}
+              <div className="flex flex-col sm:flex-row gap-3 w-full max-w-[380px] mt-8">
+                <button 
+                  onClick={saveImage}
+                  disabled={isSaving}
+                  className="flex-1 bg-white hover:bg-slate-100 text-slate-900 font-bold py-4 px-6 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 disabled:opacity-50"
+                >
+                  <Download className="w-5 h-5" /> 
+                  {isSaving ? "Saving..." : "Save Image"}
+                </button>
+                <button 
+                  onClick={copyLink}
+                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95"
+                >
+                  <LinkIcon className="w-5 h-5" /> 
+                  Copy Link
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
       </div>
 
       {/* Toast */}
-      {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-green-600 text-white text-sm font-bold py-3 px-6 rounded-full shadow-lg z-50 animate-in slide-in-from-bottom-4 fade-in duration-300">
-          {toastMessage}
-        </div>
-      )}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white text-slate-900 text-sm font-bold py-3 px-6 rounded-full shadow-2xl shadow-black/20 z-50 flex items-center gap-2 border border-slate-200"
+          >
+            <CheckCircle2 className="w-4 h-4 text-green-500" />
+            {toastMessage}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
