@@ -63,15 +63,15 @@ export function Landing() {
       {/* Stats / Social Proof */}
       <section className="py-20 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-3 gap-12 text-center">
-          <div className="flex flex-col items-center">
-            <p className="text-4xl font-black mb-2 text-blue-400 italic uppercase">Your first 90 days,</p>
-            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-[10px]">fully mapped</p>
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-5xl font-black mb-2 text-blue-400 italic uppercase">30 days</p>
+            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">fully mapped</p>
           </div>
-          <div className="flex flex-col items-center">
-            <p className="text-3xl font-black mb-2 text-blue-400 italic uppercase leading-tight">Avoid the most expensive</p>
-            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-[10px]">onboarding mistakes</p>
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-5xl font-black mb-2 text-blue-400 italic uppercase leading-tight">AVOID</p>
+            <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">onboarding mistakes</p>
           </div>
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center justify-center">
             <p className="text-5xl font-black mb-2 text-blue-400 italic">12</p>
             <p className="text-blue-100/50 font-bold uppercase tracking-[0.2em] text-xs">UAE Universities Supported</p>
           </div>
