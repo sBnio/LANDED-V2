@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { BiologicalHeart } from "@/components/ui/BiologicalHeart";
+import { WaitlistSection } from "@/components/ui/WaitlistSection";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 
@@ -181,9 +182,10 @@ export function Landing() {
 
       {/* Workflow Section */}
       <section id="how-it-works" className="py-32 px-6 relative z-10">
-        <div className="max-w-6xl mx-auto">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,0,0,0.03),transparent_50%)] pointer-events-none" />
+        <div className="max-w-6xl mx-auto relative">
           <div className="flex flex-col items-center text-center mb-24">
-             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-8 backdrop-blur-md">
+             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-8 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)]">
                Process
              </div>
              <h3 className="text-4xl md:text-5xl font-medium text-white tracking-tight leading-tight max-w-2xl">
@@ -191,25 +193,35 @@ export function Landing() {
              </h3>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-6 relative">
+          <div className="grid md:grid-cols-3 gap-6 relative mt-12">
              {/* Connection Line (Desktop) */}
-             <div className="hidden md:block absolute top-[45px] left-[10%] right-[10%] h-[1px] bg-gradient-to-r from-transparent via-white/10 to-transparent -z-10" />
+             <div className="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-red-500/30 to-transparent -z-10" />
+             <div className="hidden md:block absolute top-[45px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-red-500/10 to-transparent blur-[4px] -z-10" />
 
              {[
                { 
                  title: "Connect Data", 
                  desc: "Input your university, arrival date, and nationality. Our engine maps your legal path instantly.", 
                  icon: Globe,
+                 color: "text-blue-400",
+                 bgColor: "group-hover:bg-blue-500/10",
+                 borderColor: "group-hover:border-blue-500/30"
                },
                { 
                  title: "Generate Roadmap", 
                  desc: "Receive a prioritized checklist (Visa, ID, SIM, Bank) ordered perfectly for minimum delays.", 
                  icon: Zap,
+                 color: "text-amber-400",
+                 bgColor: "group-hover:bg-amber-500/10",
+                 borderColor: "group-hover:border-amber-500/30"
                },
                { 
                  title: "Automate Execution", 
                  desc: "Action items as you go and use our AI to handle document verification and fast-tracking.", 
                  icon: CheckCircle2,
+                 color: "text-emerald-400",
+                 bgColor: "group-hover:bg-emerald-500/10",
+                 borderColor: "group-hover:border-emerald-500/30"
                }
              ].map((step, i) => (
                <motion.div 
@@ -219,13 +231,16 @@ export function Landing() {
                  transition={{ delay: i * 0.2, duration: 0.8, type: "spring", bounce: 0.4 }}
                  whileHover={{ y: -8, scale: 1.02 }}
                  key={i} 
-                 className="relative p-8 rounded-[2rem] border border-white/5 bg-[#0a0a0a] group hover:border-white/10 transition-colors cursor-default"
+                 className={`relative p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl group transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden ${step.borderColor}`}
                >
-                  <div className="w-12 h-12 rounded-full border border-white/10 bg-[#0f0f0f] flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(255,255,255,0.03)] group-hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] group-hover:scale-110 transition-all duration-300">
-                     <step.icon className="w-5 h-5 text-white group-hover:text-indigo-400 transition-colors" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
+                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${step.color.replace('text-', 'bg-')}`} />
+                  
+                  <div className={`w-14 h-14 rounded-full border border-white/10 bg-[#0f0f0f] flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(255,255,255,0.03)] group-hover:scale-110 transition-all duration-300 relative z-10 ${step.bgColor}`}>
+                     <step.icon className={`w-6 h-6 text-white transition-colors duration-300 ${step.color.replace('text-', 'group-hover:text-')}`} />
                   </div>
-                  <h4 className="text-xl font-medium text-white mb-3">{step.title}</h4>
-                  <p className="text-neutral-400 font-normal leading-relaxed text-sm">{step.desc}</p>
+                  <h4 className="text-2xl font-medium text-white mb-4 relative z-10">{step.title}</h4>
+                  <p className="text-neutral-400 font-normal leading-relaxed text-sm md:text-base relative z-10">{step.desc}</p>
                </motion.div>
              ))}
           </div>
@@ -233,16 +248,16 @@ export function Landing() {
       </section>
 
       {/* Features Section (Bento Grid) */}
-      <section id="features" className="py-32 px-6 relative z-10 border-y border-white/5 bg-[#0A0A0A]">
+      <section id="features" className="py-32 px-6 relative z-10">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col items-center md:items-start mb-20 text-center md:text-left">
-            <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-6 backdrop-blur-md">
+             <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-6 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)]">
                Features
-            </div>
-            <h2 className="text-4xl md:text-5xl font-medium text-white tracking-tight leading-tight max-w-3xl">
-              Everything you need.<br />
-              <span className="text-neutral-600">Nothing you don't.</span>
-            </h2>
+             </div>
+             <h2 className="text-4xl md:text-5xl font-medium text-white tracking-tight leading-tight max-w-3xl">
+               Everything you need.<br />
+               <span className="text-neutral-600">Nothing you don't.</span>
+             </h2>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
@@ -253,12 +268,12 @@ export function Landing() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, type: "spring", bounce: 0.3 }}
               whileHover={{ scale: 1.02 }}
-              className="md:col-span-4 bg-[#0F0F0F] border border-white/5 rounded-[2rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-300 cursor-default"
+              className="md:col-span-4 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 md:p-12 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent)] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
-              <Map className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-indigo-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300" />
-              <h3 className="text-2xl font-medium text-white mb-3">Smart Logic Engine</h3>
-              <p className="text-neutral-400 text-base max-w-md leading-relaxed">
+              <Map className="w-10 h-10 text-white mb-8 opacity-80 group-hover:text-red-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:drop-shadow-[0_0_20px_rgba(248,113,113,0.4)]" />
+              <h3 className="text-3xl font-medium text-white mb-4">Smart Logic Engine</h3>
+              <p className="text-neutral-400 text-base md:text-lg max-w-lg leading-relaxed">
                 Our inference engine pre-calculates prerequisites. You'll never attempt to open a bank account before your Emirates ID is actively being processed.
               </p>
             </motion.div>
@@ -270,11 +285,11 @@ export function Landing() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.1, type: "spring", bounce: 0.3 }}
               whileHover={{ scale: 1.03 }}
-              className="md:col-span-2 bg-[#0F0F0F] border border-white/5 rounded-[2rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-300 cursor-default"
+              className="md:col-span-2 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
-              <CreditCard className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-amber-400 group-hover:-rotate-12 group-hover:scale-110 transition-all duration-300" />
-              <h3 className="text-xl font-medium text-white mb-3">Budget Planner</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
+              <CreditCard className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-amber-400 group-hover:-rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+              <h3 className="text-2xl font-medium text-white mb-3">Budget Planner</h3>
+              <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
                 Predict mandatory upfront costs like deposits, processing fees, and utility setups instantly.
               </p>
             </motion.div>
@@ -286,11 +301,11 @@ export function Landing() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.2, type: "spring", bounce: 0.3 }}
               whileHover={{ scale: 1.03 }}
-              className="md:col-span-2 bg-[#0F0F0F] border border-white/5 rounded-[2rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-300 cursor-default"
+              className="md:col-span-2 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
-              <FileCheck className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-emerald-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300" />
-              <h3 className="text-xl font-medium text-white mb-3">Doc Verifier</h3>
-              <p className="text-neutral-400 text-sm leading-relaxed">
+              <FileCheck className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-emerald-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+              <h3 className="text-2xl font-medium text-white mb-3">Doc Verifier</h3>
+              <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
                 Check exact dimensions, formats, and attestations required before entering any center.
               </p>
             </motion.div>
@@ -302,18 +317,18 @@ export function Landing() {
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.3, type: "spring", bounce: 0.3 }}
               whileHover={{ scale: 1.02 }}
-              className="md:col-span-4 bg-[#0F0F0F] border border-white/5 rounded-[2rem] p-10 relative overflow-hidden flex flex-col md:flex-row gap-10 items-center group hover:border-white/10 transition-all duration-300 cursor-default"
+              className="md:col-span-4 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 md:p-12 relative overflow-hidden flex flex-col md:flex-row gap-10 items-center group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
-              <div className="flex-1">
-                <Users className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-pink-400 group-hover:-translate-y-2 transition-all duration-300" />
-                <h3 className="text-2xl font-medium text-white mb-3">High-value Networking</h3>
-                <p className="text-neutral-400 text-base leading-relaxed max-w-sm">
+              <div className="flex-1 z-10 w-full">
+                <Users className="w-10 h-10 text-white mb-8 opacity-80 group-hover:text-pink-400 group-hover:-translate-y-2 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+                <h3 className="text-3xl font-medium text-white mb-4">High-value Networking</h3>
+                <p className="text-neutral-400 text-base md:text-lg leading-relaxed max-w-sm">
                   Connect precisely with peers arriving the same week at your university. Compound knowledge, share rides, minimize friction.
                 </p>
               </div>
-              <div className="w-full md:w-48 aspect-square rounded-[1.5rem] bg-white/[0.02] border border-white/5 flex items-center justify-center relative overflow-hidden group-hover:bg-white/[0.04] transition-colors duration-500">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.05),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-500 group-hover:scale-150" />
-                <MessageCircle className="w-10 h-10 text-white/50 group-hover:text-white group-hover:scale-110 transition-all duration-500" />
+              <div className="w-full md:w-56 aspect-square rounded-[2rem] bg-white/[0.02] border border-white/10 flex items-center justify-center relative overflow-hidden group-hover:bg-white/[0.05] transition-colors duration-500 shadow-[inset_0_0_30px_rgba(255,255,255,0.02)]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.1),transparent)] opacity-0 group-hover:opacity-100 transition-opacity duration-700 group-hover:scale-150" />
+                <MessageCircle className="w-12 h-12 text-white/50 group-hover:text-white group-hover:scale-110 transition-all duration-500 z-10" />
               </div>
             </motion.div>
           </div>
@@ -323,41 +338,44 @@ export function Landing() {
       {/* FAQ Section */}
       <section id="faq" className="py-32 px-6 relative z-10 max-w-3xl mx-auto">
         <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] text-xs font-semibold uppercase tracking-widest text-neutral-400 mb-6 backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)]">
+            FAQ
+          </div>
           <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 tracking-tight">Got Questions?</h2>
-          <p className="text-neutral-400">Everything you need to know about the platform and how it works.</p>
+          <p className="text-neutral-400 text-lg">Everything you need to know about the platform and how it works.</p>
         </div>
         
         <div className="space-y-4">
           {faqs.map((faq, i) => (
             <motion.div 
-              initial={{ opacity: 0, x: -20, filter: "blur(4px)" }}
-              whileInView={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+              initial={{ opacity: 0, y: 20, filter: "blur(4px)" }}
+              whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: i * 0.1, duration: 0.5, type: "spring", bounce: 0.3 }}
               key={i} 
-              className="border-b border-white/10 overflow-hidden"
+              className={`bg-white/[0.02] border ${activeFaq === i ? 'border-white/20 shadow-[0_0_30px_rgba(255,255,255,0.05)]' : 'border-white/5'} rounded-3xl overflow-hidden backdrop-blur-md transition-all duration-500 hover:border-white/15 hover:bg-white/[0.04]`}
             >
               <button 
                 onClick={() => setActiveFaq(activeFaq === i ? null : i)}
-                className="w-full py-6 flex justify-between items-center text-left group"
+                className="w-full py-6 px-8 flex justify-between items-center text-left group"
               >
-                <span className="text-lg font-medium pr-8 text-neutral-300 group-hover:text-white group-hover:translate-x-2 transition-all duration-300">{faq.q}</span>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center bg-white/[0.02] group-hover:bg-white/[0.08] transition-colors duration-300 shrink-0">
-                  <ChevronRight className={cn("w-4 h-4 text-neutral-500 group-hover:text-white transition-transform duration-300", activeFaq === i && "rotate-90")} />
+                <span className={`text-lg font-medium pr-8 transition-colors duration-300 ${activeFaq === i ? 'text-white' : 'text-neutral-300 group-hover:text-white'}`}>{faq.q}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 shrink-0 ${activeFaq === i ? 'bg-white text-black border-white shadow-[0_0_15px_rgba(255,255,255,0.2)]' : 'bg-white/[0.02] border-white/10 group-hover:border-white/20 group-hover:bg-white/[0.05] text-neutral-500 group-hover:text-white'}`}>
+                  <ChevronDown className={cn("w-4 h-4 transition-transform duration-500", activeFaq === i ? "rotate-180" : "rotate-0")} />
                 </div>
               </button>
               <AnimatePresence>
                 {activeFaq === i && (
                   <motion.div 
-                    initial={{ height: 0, opacity: 0, width: "95%" }}
-                    animate={{ height: "auto", opacity: 1, width: "100%" }}
-                    exit={{ height: 0, opacity: 0, width: "95%" }}
-                    transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="overflow-hidden"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
                   >
-                    <p className="pb-6 text-neutral-400 font-normal leading-relaxed text-sm md:text-base">
+                    <div className="px-8 pb-8 text-neutral-400 font-normal leading-relaxed text-base">
+                      <div className="h-[1px] w-full bg-white/10 mb-6" />
                       {faq.a}
-                    </p>
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -366,27 +384,8 @@ export function Landing() {
         </div>
       </section>
 
-      {/* Final CTA */}
-      <section className="py-32 px-6 relative z-10 border-t border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_100%,rgba(255,255,255,0.03),transparent)] pointer-events-none" />
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center relative"
-        >
-           <h2 className="text-5xl md:text-7xl font-medium mb-6 text-white tracking-tight">
-             Ready to scale?
-           </h2>
-           <p className="text-lg text-neutral-400 max-w-xl mx-auto mb-10 font-normal">
-             Don't leave your arrival to chance. Join the ecosystem and handle the bureaucracy efficiently.
-           </p>
-           <Button asChild size="lg" className="h-14 px-10 text-base font-medium rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-[1.02] shadow-[0_0_30px_rgba(255,255,255,0.1)]">
-             <Link to="/auth">Create Your Roadmap</Link>
-           </Button>
-        </motion.div>
-      </section>
+      {/* Connect / Waitlist Section */}
+      <WaitlistSection />
 
       <footer className="py-12 px-6 border-t border-white/5 text-center relative z-10 bg-[#050505]">
          <div className="flex justify-center mb-6">
