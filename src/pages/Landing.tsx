@@ -18,7 +18,8 @@ import {
   Building2,
   Lock,
   MapPin,
-  SlidersHorizontal
+  SlidersHorizontal,
+  Star
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { DubaiSkyline } from "@/components/ui/DubaiSkyline";
@@ -353,35 +354,19 @@ export function Landing() {
               </p>
             </motion.div>
 
-            {/* Secure Vault */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.8, delay: 0.3, type: "spring", bounce: 0.3 }}
-              whileHover={{ scale: 1.03 }}
-              className="md:col-span-2 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
-            >
-              <Lock className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-blue-400 group-hover:-rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
-              <h3 className="text-2xl font-medium text-white mb-3">Secure Vault</h3>
-              <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                Store and access your attested documents anytime, anywhere without compromises.
-              </p>
-            </motion.div>
-
-            {/* Networking (Shrunk to md:col-span-2) */}
+            {/* Networking (Expanded to md:col-span-4) */}
             <motion.div 
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               whileInView={{ opacity: 1, scale: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, delay: 0.4, type: "spring", bounce: 0.3 }}
-              whileHover={{ scale: 1.03 }}
-              className="md:col-span-2 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
+              whileHover={{ scale: 1.02 }}
+              className="md:col-span-4 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
-              <Users className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-pink-400 group-hover:-rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
-              <h3 className="text-2xl font-medium text-white mb-3">Networking</h3>
-              <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                Connect with peers arriving the same week. Share rides & minimize friction.
+              <Users className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-pink-400 group-hover:-translate-y-1 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
+              <h3 className="text-2xl font-medium text-white mb-3">High-value Networking & StudyBuddy</h3>
+              <p className="text-neutral-400 text-sm md:text-base leading-relaxed max-w-xl">
+                Connect with peers arriving the same week. Find your perfect StudyBuddy, share rides, minimize friction, and compound your knowledge from day one.
               </p>
             </motion.div>
 
@@ -398,7 +383,7 @@ export function Landing() {
                 <Building2 className="w-10 h-10 text-white mb-8 opacity-80 group-hover:text-cyan-400 group-hover:-translate-y-2 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
                 <h3 className="text-3xl font-medium text-white mb-4">Local Services Discovery</h3>
                 <p className="text-neutral-400 text-base md:text-lg leading-relaxed max-w-lg mb-8">
-                  Find the best student-friendly services—banks, clinics, telecom—filtered by proximity to your university and sorted by processing speed and cost.
+                  Find the best student-friendly services—banks, clinics, telecom—filtered by proximity to your university and evaluated using authentic Google Reviews.
                 </p>
                 <div className="flex flex-wrap items-center gap-4">
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 text-sm text-neutral-300 font-medium">
@@ -406,8 +391,8 @@ export function Landing() {
                     Near University
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.03] border border-white/5 text-sm text-neutral-300 font-medium">
-                    <SlidersHorizontal className="w-4 h-4 text-cyan-400" />
-                    Sort by Setup Time
+                    <Star className="w-4 h-4 text-amber-400" />
+                    Google Reviews
                   </div>
                 </div>
               </div>
@@ -426,8 +411,9 @@ export function Landing() {
                          <div className="text-neutral-400 text-xs mt-0.5">0.5 km away</div>
                        </div>
                      </div>
-                     <div className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
-                       Fast setup
+                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
+                       <Star className="w-3.5 h-3.5 fill-amber-400" />
+                       4.8
                      </div>
                    </div>
 
@@ -441,8 +427,9 @@ export function Landing() {
                          <div className="text-neutral-500 text-xs mt-0.5">1.2 km away</div>
                        </div>
                      </div>
-                     <div className="px-3 py-1 rounded-full bg-white/5 border border-white/5 text-neutral-400 text-xs font-semibold">
-                       Standard
+                     <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold">
+                       <Star className="w-3.5 h-3.5 fill-amber-400" />
+                       4.5
                      </div>
                    </div>
                 </div>
