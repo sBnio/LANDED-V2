@@ -126,8 +126,8 @@ export function Landing() {
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
             className="text-6xl md:text-8xl font-medium tracking-tighter leading-[1.0] text-white max-w-4xl mx-auto drop-shadow-2xl"
           >
-            Intelligent setup for<br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-300"> modern students.</span>
+            Land in the UAE.<br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-300"> Not in the chaos.</span>
           </motion.h1>
           
           <motion.p 
