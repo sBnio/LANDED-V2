@@ -195,7 +195,7 @@ const SERVICES = [
       "Passport-size photos — white background, 2 copies"
     ],
     issue: "Photos with cream or off-white backgrounds are rejected — background must be pure white. Many phone photo apps add warmth automatically, so check before printing.",
-    tags: ["Walk-in available", "Online application", "Arabic + English support"],
+    tags: ["Walk-in available", "Online application", "Arabic + English support", "Near Knowledge Park"],
     rating: 4.2,
     reviews: 56,
     howTo: [
@@ -394,20 +394,43 @@ export function Services() {
     setExpandedCards(prev => prev[id] ? {} : { [id]: true });
   };
 
+  const getUserZone = () => {
+    if (!state.university) return null;
+    
+    const uni = state.university;
+    const diacUnis = ["Heriot-Watt Dubai", "BITS Pilani Dubai", "UoBD (University of Birmingham Dubai)", "UE (University of Europe Dubai)"];
+    const kpUnis = ["UOWD (University of Wollongong Dubai)", "AUD"];
+    const adUnis = ["NYU Abu Dhabi", "Khalifa University", "UAEU"];
+    const sharjahUnis = ["AUS"];
+
+    if (diacUnis.includes(uni) || (uni === "Zayed University" && state.zayedCampus === "Dubai")) {
+      return "Academic City";
+    }
+    if (kpUnis.includes(uni)) return "Knowledge Park";
+    if (adUnis.includes(uni) || (uni === "Zayed University" && state.zayedCampus === "Abu Dhabi")) return "Abu Dhabi";
+    if (sharjahUnis.includes(uni)) return "Sharjah";
+    if (uni === "CUD (Canadian University Dubai)") return "City Walk";
+    
+    return "Dubai";
+  };
+
   const isNearUniversity = (service: typeof SERVICES[0]) => {
-    if (!state.zayedCampus) return true; // Default to true if no campus selected
+    const zone = getUserZone();
+    if (!zone) return true; // Show all if no university is selected
     
-    const isDIAC = state.zayedCampus === "diac_campus";
-    const isKnowledgePark = state.zayedCampus === "knowledge_park";
+    const isServiceKP = service.tags.includes("Near Knowledge Park");
+    const isServiceDIAC = service.tags.includes("Near Academic City");
     
-    // Simple mock logic for "near me" based on tags since we lack actual geodata
-    if (service.tags.includes("Near Knowledge Park") && isKnowledgePark) return true;
-    if (service.tags.includes("Near Academic City") && isDIAC) return true;
+    // If a service is explicitly tied to a specific location, only show it if the user is in that zone
+    if (isServiceKP && zone !== "Knowledge Park") return false;
+    if (isServiceDIAC && zone !== "Academic City") return false;
     
-    // Some services are city-wide or online, these match anywhere
-    if (service.tags.includes("Online application") || service.category === "Transport" || service.category === "SIM Cards") return true;
+    // Dubai Metro makes no sense for Abu Dhabi or Sharjah
+    if ((zone === "Abu Dhabi" || zone === "Sharjah") && service.name.includes("Dubai Metro")) {
+      return false;
+    }
     
-    return false;
+    return true;
   };
 
   const filteredServices = SERVICES.filter(s => {
@@ -482,10 +505,10 @@ export function Services() {
                 Near my university
               </span>
             </label>
-            {state.zayedCampus && (
+            {getUserZone() && (
               <div className="hidden md:flex text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full items-center gap-1.5">
                 <MapPin className="w-3 h-3" />
-                {state.zayedCampus === "diac_campus" ? "Academic City" : "Knowledge Park"}
+                {getUserZone()}
               </div>
             )}
           </div>
