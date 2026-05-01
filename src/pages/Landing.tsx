@@ -17,7 +17,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
-import { BiologicalHeart } from "@/components/ui/BiologicalHeart";
+import { DubaiSkyline } from "@/components/ui/DubaiSkyline";
 import { WaitlistSection } from "@/components/ui/WaitlistSection";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
@@ -34,10 +34,44 @@ export function Landing() {
   ];
 
   return (
-    <div ref={containerRef} className="min-h-screen bg-[#050505] font-sans text-neutral-300 scroll-smooth selection:bg-neutral-800 selection:text-white">
-      {/* Background grain & grid */}
-      <div className="fixed inset-0 z-0 pointer-events-none opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-      <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,206,0.1),rgba(255,255,255,0))]" />
+    <div ref={containerRef} className="min-h-screen bg-[#020202] font-sans text-neutral-300 scroll-smooth selection:bg-neutral-800 selection:text-white">
+      {/* Immersive background elements */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        {/* Glows */}
+        <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.12),transparent_60%)] blur-[80px] mix-blend-screen animate-pulse" style={{ animationDuration: '8s' }} />
+        <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.08),transparent_60%)] blur-[100px] mix-blend-screen" />
+        <div className="absolute bottom-[-10%] right-[10%] w-[40vw] h-[40vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(16,185,129,0.06),transparent_60%)] blur-[100px] mix-blend-screen" />
+
+        {/* 3D Tech Grid */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `
+              linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+              linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)
+            `,
+            backgroundSize: '4rem 4rem',
+            maskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 20%, transparent 80%)',
+            WebkitMaskImage: 'radial-gradient(ellipse 100% 100% at 50% 50%, black 20%, transparent 80%)',
+            transform: 'perspective(100vh) rotateX(60deg) scale(2.5) translateY(-10%)',
+            transformOrigin: 'top center'
+          }}
+        />
+
+        {/* Dense dots pattern top */}
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at center, rgba(255,255,255,0.08) 1px, transparent 1px)`,
+            backgroundSize: '24px 24px',
+            maskImage: 'linear-gradient(to bottom, black 0%, transparent 40%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 0%, transparent 40%)',
+          }}
+        />
+        
+        {/* Grain overlay for premium startup feel */}
+        <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
+      </div>
       
       {/* Navigation */}
       <motion.nav 
@@ -62,38 +96,40 @@ export function Landing() {
 
       {/* Hero Section */}
       <section className="relative pt-48 pb-32 px-6 flex flex-col items-center justify-center min-h-[90vh]">
+        {/* Dubai Landscape Background */}
+        <div className="absolute top-0 left-0 right-0 h-[100vh] z-0 pointer-events-none opacity-100 mix-blend-screen overflow-hidden">
+           <DubaiSkyline />
+           {/* Fade out bottom of skyline to blend into the dark background */}
+           <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-[#020202] via-[#020202]/80 to-transparent z-10" />
+        </div>
+
         <div className="max-w-5xl mx-auto text-center space-y-8 z-10 w-full relative">
-          
-          {/* Biological Beating Heart Background */}
-          <div className="absolute top-[45%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] -z-10 pointer-events-none flex items-center justify-center opacity-80 mix-blend-screen">
-             <BiologicalHeart className="w-full h-full" />
-          </div>
 
           <motion.div 
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/20 text-xs font-medium text-red-200 backdrop-blur-md"
+            className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-xs md:text-sm font-medium text-orange-200 backdrop-blur-md shadow-[0_0_30px_rgba(234,88,12,0.15)] mx-auto"
           >
-            <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-            <span>The heart of your onboarding</span>
+            <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.8)]" />
+            <span className="tracking-wide">The intelligent OS for your onboarding</span>
           </motion.div>
           
           <motion.h1 
-            initial={{ y: 30, opacity: 0 }}
+            initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-            className="text-6xl md:text-8xl font-medium tracking-tighter leading-[1.0] text-white max-w-4xl mx-auto"
+            className="text-6xl md:text-8xl font-medium tracking-tighter leading-[1.0] text-white max-w-4xl mx-auto drop-shadow-2xl"
           >
             Intelligent setup for<br className="hidden md:block" />
-            <span className="text-neutral-500"> modern students.</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-300"> modern students.</span>
           </motion.h1>
           
           <motion.p 
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-            className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-normal leading-relaxed"
+            className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-md"
           >
             Ditch the Reddit threads and confusing government portals. Get a personalized, step-by-step roadmap to automate your arrival in the Emirates.
           </motion.p>
@@ -102,16 +138,19 @@ export function Landing() {
             initial={{ y: 30, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
-            className="flex flex-col sm:flex-row justify-center gap-4 pt-4"
+            className="flex flex-col sm:flex-row justify-center gap-4 pt-6"
           >
-             <Button asChild size="lg" className="h-14 px-8 text-base font-medium rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-[1.02] active:scale-[0.98] group shadow-[0_0_20px_rgba(255,255,255,0.1)]">
+             <Button asChild size="lg" className="h-14 px-8 text-base font-medium rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-[1.02] active:scale-[0.98] group shadow-[0_0_40px_rgba(255,255,255,0.15)] relative overflow-hidden">
                <Link to="/auth">
-                 Start Free Trial 
-                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] skew-x-12 group-hover:animate-[shine_1.5s_ease-out]" />
+                 <span className="relative z-10 flex items-center">
+                   Deploy Roadmap 
+                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                 </span>
                </Link>
              </Button>
-             <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base font-medium rounded-full border-white/10 hover:bg-white/[0.03] text-white transition-all bg-transparent backdrop-blur-sm">
-               <a href="#how-it-works">Explore the platform</a>
+             <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base font-medium rounded-full border border-white/20 hover:border-white/40 hover:bg-white/[0.05] text-white transition-all bg-white/[0.02] backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)]">
+               <a href="#how-it-works">See how it works</a>
              </Button>
           </motion.div>
         </div>
