@@ -117,7 +117,7 @@ export function Landing() {
             className="inline-flex items-center gap-3 px-4 py-2 rounded-full bg-orange-500/10 border border-orange-500/20 text-xs md:text-sm font-medium text-orange-200 backdrop-blur-md shadow-[0_0_30px_rgba(234,88,12,0.15)] mx-auto"
           >
             <div className="w-2 h-2 rounded-full bg-orange-500 animate-pulse shadow-[0_0_10px_rgba(234,88,12,0.8)]" />
-            <span className="tracking-wide">The intelligent OS for your onboarding</span>
+            <span className="tracking-wide">Built for international students arriving in the UAE </span>
           </motion.div>
           
           <motion.h1 
@@ -136,7 +136,7 @@ export function Landing() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-normal leading-relaxed drop-shadow-md"
           >
-            Ditch the Reddit threads and confusing government portals. Get a personalized, step-by-step roadmap to automate your arrival in the Emirates.
+            Stop scrolling Reddit at midnight. Get a personalized, step-by-step roadmap plan for your visa, Emirates ID, bank account and housing.
           </motion.p>
           
           <motion.div 
@@ -149,7 +149,7 @@ export function Landing() {
                <Link to="/auth">
                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] skew-x-12 group-hover:animate-[shine_1.5s_ease-out]" />
                  <span className="relative z-10 flex items-center">
-                   Deploy Roadmap 
+                   Build My Plan 
                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                  </span>
                </Link>
