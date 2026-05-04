@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { createPortal } from "react-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
   ArrowRight, 
@@ -28,8 +29,30 @@ import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
 
 export function Landing() {
+  const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  const [showTransition, setShowTransition] = useState(false);
+  const [transitionStage, setTransitionStage] = useState(0);
+
+  const handleStartClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+
+    setShowTransition(true);
+    setTransitionStage(0);
+
+    try {
+      setTimeout(() => setTransitionStage(1), 200);
+      setTimeout(() => setTransitionStage(2), 600);
+      setTimeout(() => setTransitionStage(3), 1000);
+      setTimeout(() => {
+        navigate('/onboarding');
+      }, 1800);
+    } catch (err) {
+      navigate('/onboarding');
+    }
+  };
 
   const faqs = [
     { q: "Do I need an Emirates ID to open a bank account?", a: "Generally yes, but some digital banks like Liv. or Mashreq Neo allow you to start the process with your passport and visa. Landed shows you exactly which ones." },
@@ -93,8 +116,8 @@ export function Landing() {
         </div>
         <div className="flex items-center gap-4">
           <Link to="/auth" className="hidden md:block text-sm font-medium hover:text-white transition-colors text-neutral-400">Log in</Link>
-          <Button asChild className="rounded-full bg-white text-black hover:bg-neutral-200 font-semibold px-6 h-10 transition-all text-sm">
-            <Link to="/auth">Get Started</Link>
+          <Button onClick={handleStartClick} className="rounded-full bg-white text-black hover:bg-neutral-200 font-semibold px-6 h-10 transition-all text-sm">
+            Get Started
           </Button>
         </div>
       </motion.nav>
@@ -145,14 +168,12 @@ export function Landing() {
             transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
             className="flex flex-col sm:flex-row justify-center gap-4 pt-6"
           >
-             <Button asChild size="lg" className="h-14 px-8 text-base font-medium rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-[1.02] active:scale-[0.98] group shadow-[0_0_40px_rgba(255,255,255,0.15)] relative overflow-hidden">
-               <Link to="/auth">
+             <Button onClick={handleStartClick} size="lg" className="h-14 px-8 text-base font-medium rounded-full bg-white text-black hover:bg-neutral-200 transition-all hover:scale-[1.02] active:scale-[0.98] group shadow-[0_0_40px_rgba(255,255,255,0.15)] relative overflow-hidden">
                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-[150%] skew-x-12 group-hover:animate-[shine_1.5s_ease-out]" />
                  <span className="relative z-10 flex items-center">
                    Build My Plan 
                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                  </span>
-               </Link>
              </Button>
              <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base font-medium rounded-full border border-white/20 hover:border-white/40 hover:bg-white/[0.05] text-white transition-all bg-white/[0.02] backdrop-blur-md shadow-[0_0_20px_rgba(255,255,255,0.02)]">
                <a href="#how-it-works">See how it works</a>
@@ -497,6 +518,62 @@ export function Landing() {
          </div>
          <p className="text-neutral-500 font-normal text-sm tracking-wide">© 2026 Landed Tech. Built for the modern ecosystem.</p>
       </footer>
+
+      {showTransition && createPortal(
+        <div 
+          className={cn(
+            "fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-300 bg-black",
+            transitionStage >= 4 ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
+          )}
+        >
+          {/* Subtle radial gradient */}
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1000_0%,#000000_70%)]" />
+          
+          <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-[300px]">
+            {/* Logo */}
+            <div 
+              style={{ transitionDuration: '400ms' }}
+              className={cn(
+                "font-bold text-[28px] text-white transition-opacity ease-in-out flex items-center tracking-tighter lowercase font-heading",
+                transitionStage >= 1 ? "opacity-100" : "opacity-0"
+              )}
+            >
+              landed.
+              <span className="w-[0.3em] h-[0.3em] bg-[#F59E0B] rounded-full ml-[0.05em] mb-[0.05em]"></span>
+            </div>
+
+            {/* Tagline */}
+            <div 
+              style={{ transitionDuration: '400ms' }}
+              className={cn(
+                "mt-2 text-[16px] text-[#94A3B8] tracking-[0.05em] transition-opacity ease-in-out font-medium",
+                transitionStage >= 2 ? "opacity-100" : "opacity-0"
+              )}
+            >
+              Let's get you landed. 🇦🇪
+            </div>
+
+            {/* Progress bar container */}
+            <div 
+              className={cn(
+                "mt-8 w-[200px] h-[2px] bg-[#1a1a1a] rounded-full overflow-hidden transition-opacity duration-400 ease-in-out",
+                transitionStage >= 3 ? "opacity-100" : "opacity-0"
+              )}
+            >
+               <div 
+                 className="h-full rounded-full bg-gradient-to-r from-[#F59E0B] to-[#ffffff]"
+                 style={{ 
+                   width: transitionStage >= 3 ? '100%' : '0%',
+                   transitionProperty: 'width',
+                   transitionDuration: '700ms',
+                   transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                 }}
+               />
+            </div>
+          </div>
+        </div>,
+        document.body
+      )}
     </div>
   );
 }
