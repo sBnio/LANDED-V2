@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/ui/Logo";
 import { DubaiSkyline } from "@/components/ui/DubaiSkyline";
+import { StarsBackground } from "@/components/ui/StarsBackground";
 import { WaitlistSection } from "@/components/ui/WaitlistSection";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
@@ -64,6 +65,8 @@ export function Landing() {
     <div ref={containerRef} className="min-h-screen bg-[#020202] font-sans text-neutral-300 scroll-smooth selection:bg-neutral-800 selection:text-white">
       {/* Immersive background elements */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <StarsBackground />
+        
         {/* Glows */}
         <div className="absolute top-[-10%] right-[-5%] w-[40vw] h-[40vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(220,38,38,0.12),transparent_60%)] blur-[80px] mix-blend-screen animate-pulse" style={{ animationDuration: '8s' }} />
         <div className="absolute top-[20%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(59,130,246,0.08),transparent_60%)] blur-[100px] mix-blend-screen" />
