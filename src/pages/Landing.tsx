@@ -187,57 +187,22 @@ export function Landing() {
            <p className="text-sm font-medium text-neutral-500 uppercase tracking-widest">Supporting students from 12+ top institutions</p>
         </div>
         
-        {/* Marquee container */}
-        <div className="relative flex overflow-hidden group">
-          {/* Fading edges to make it look seamless */}
-          <div className="absolute top-0 left-0 bottom-0 w-32 bg-gradient-to-r from-[#050505] to-transparent z-10 pointer-events-none" />
-          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-[#050505] to-transparent z-10 pointer-events-none" />
+        <div className="relative flex overflow-hidden">
+          <div className="absolute top-0 left-0 bottom-0 w-32 bg-gradient-to-r from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
+          <div className="absolute top-0 right-0 bottom-0 w-32 bg-gradient-to-l from-[#0A0A0A] to-transparent z-10 pointer-events-none" />
           
           <motion.div 
             animate={{ x: ["0%", "-50%"] }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="flex gap-16 md:gap-24 items-center whitespace-nowrap pl-16 md:pl-24"
+            className="flex gap-x-12 md:gap-x-20 items-center whitespace-nowrap pl-12 md:pl-20"
           >
-            {/* Duplicated list to create the seamless loop */}
             {[
-              { name: "UOW Dubai", logo: "https://logo.clearbit.com/uowdubai.ac.ae" },
-              { name: "AUD", logo: "https://logo.clearbit.com/aud.edu" },
-              { name: "Heriot-Watt", logo: "https://logo.clearbit.com/hw.ac.uk" },
-              { name: "Birmingham", logo: "https://logo.clearbit.com/birmingham.ac.ae" },
-              { name: "BITS Pilani", logo: "https://logo.clearbit.com/bits-pilani.ac.in" },
-              { name: "Middlesex", logo: "https://logo.clearbit.com/mdx.ac.ae" },
-              { name: "CUD", logo: "https://logo.clearbit.com/cud.ac.ae" },
-              { name: "NYUAD", logo: "https://logo.clearbit.com/nyuad.nyu.edu" },
-              { name: "Khalifa", logo: "https://logo.clearbit.com/ku.ac.ae" },
-              { name: "UAEU", logo: "https://logo.clearbit.com/uaeu.ac.ae" },
-              { name: "AUS", logo: "https://logo.clearbit.com/aus.edu" },
-              { name: "Zayed", logo: "https://logo.clearbit.com/zu.ac.ae" },
-              // Repeated for loop (first copy)
-              { name: "UOW Dubai", logo: "https://logo.clearbit.com/uowdubai.ac.ae" },
-              { name: "AUD", logo: "https://logo.clearbit.com/aud.edu" },
-              { name: "Heriot-Watt", logo: "https://logo.clearbit.com/hw.ac.uk" },
-              { name: "Birmingham", logo: "https://logo.clearbit.com/birmingham.ac.ae" },
-              { name: "BITS Pilani", logo: "https://logo.clearbit.com/bits-pilani.ac.in" },
-              { name: "Middlesex", logo: "https://logo.clearbit.com/mdx.ac.ae" },
-              { name: "CUD", logo: "https://logo.clearbit.com/cud.ac.ae" },
-              { name: "NYUAD", logo: "https://logo.clearbit.com/nyuad.nyu.edu" },
-              { name: "Khalifa", logo: "https://logo.clearbit.com/ku.ac.ae" },
-              { name: "UAEU", logo: "https://logo.clearbit.com/uaeu.ac.ae" },
-              { name: "AUS", logo: "https://logo.clearbit.com/aus.edu" },
-              { name: "Zayed", logo: "https://logo.clearbit.com/zu.ac.ae" }
+              "UOW Dubai", "AUD", "Heriot-Watt", "Birmingham", "BITS Pilani", "Middlesex", "CUD", "NYUAD", "Khalifa", "UAEU", "AUS", "Zayed",
+              "UOW Dubai", "AUD", "Heriot-Watt", "Birmingham", "BITS Pilani", "Middlesex", "CUD", "NYUAD", "Khalifa", "UAEU", "AUS", "Zayed"
             ].map((uni, i) => (
-              <div key={i} className="flex items-center justify-center opacity-40 hover:opacity-100 transition-all duration-500 grayscale hover:grayscale-0 hover:scale-110 cursor-default">
-                <img 
-                  src={uni.logo} 
-                  alt={uni.name} 
-                  className="h-10 w-auto object-contain max-w-[140px]"
-                  title={uni.name}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                    e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                  }}
-                />
-                <span className="hidden text-xl font-bold tracking-tight text-white">{uni.name}</span>
+              <div key={i} className="flex items-center gap-x-12 md:gap-x-20 opacity-70 hover:opacity-100 transition-opacity duration-300">
+                <span className="text-white text-xl md:text-3xl font-extrabold font-sans tracking-tighter antialiased">{uni}</span>
+                <span className="text-[#F59E0B] font-black leading-none flex items-center justify-center" style={{ fontSize: '32px' }}>·</span>
               </div>
             ))}
           </motion.div>
