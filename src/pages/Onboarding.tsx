@@ -158,7 +158,7 @@ export function Onboarding() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-6" />
+        <Loader2 className="h-12 w-12 animate-spin text-amber-600 mb-6" />
         <h2 className="text-2xl font-bold text-slate-900 mb-2">
           Building your personalized roadmap...
         </h2>
@@ -179,7 +179,7 @@ export function Onboarding() {
         <div className="mb-12">
           <div className="flex justify-between items-center mb-4">
              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Step {step} of {totalSteps}</span>
-             <span className="text-xs font-bold text-blue-600 uppercase tracking-widest">{Math.round(progress)}% Complete</span>
+             <span className="text-xs font-bold text-amber-600 uppercase tracking-widest">{Math.round(progress)}% Complete</span>
           </div>
           <Progress value={progress} className="h-2 bg-slate-200" />
         </div>
@@ -200,7 +200,7 @@ export function Onboarding() {
                     placeholder="e.g. Alex Graham"
                     value={formData.name}
                     onChange={(e) => updateFormData({ name: e.target.value })}
-                    className="h-14 px-4 rounded-xl border-slate-200 focus:ring-blue-500"
+                    className="h-14 px-4 rounded-xl border-slate-200 focus:ring-amber-500"
                   />
                 </div>
 
@@ -228,7 +228,7 @@ export function Onboarding() {
                           updateFormData({ nationality: val });
                         }
                       }}
-                      className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                      className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-amber-500 outline-none"
                     >
                       <option value="" disabled>Select nationality</option>
                       {nationalities.map(n => <option key={n} value={n}>{n}</option>)}
@@ -239,7 +239,7 @@ export function Onboarding() {
                          placeholder="Please specify your nationality"
                          value={nationalities.includes(formData.nationality || "") ? "" : formData.nationality}
                          onChange={(e) => updateFormData({ nationality: e.target.value })}
-                         className="h-14 px-4 rounded-xl border-slate-200 focus:ring-blue-500 mt-2"
+                         className="h-14 px-4 rounded-xl border-slate-200 focus:ring-amber-500 mt-2"
                          autoFocus
                        />
                     )}
@@ -251,7 +251,7 @@ export function Onboarding() {
                   <select 
                     value={formData.university}
                     onChange={(e) => updateFormData({ university: e.target.value, zayedCampus: "" })}
-                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-amber-500 outline-none"
                   >
                     <option value="" disabled>Select your university</option>
                     {universities.map(u => <option key={u} value={u}>{u}</option>)}
@@ -269,7 +269,7 @@ export function Onboarding() {
                           className={cn(
                             "h-14 rounded-xl border font-bold transition-all",
                             formData.zayedCampus === campus
-                              ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                              ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                               : "border-slate-200 text-slate-700 hover:bg-slate-50"
                           )}
                         >
@@ -296,7 +296,7 @@ export function Onboarding() {
                   <select 
                     value={formData.emirate}
                     onChange={(e) => updateFormData({ emirate: e.target.value })}
-                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full h-14 px-4 rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-amber-500 outline-none"
                   >
                     <option value="" disabled>Select Emirate</option>
                     {emirates.map(e => <option key={e} value={e}>{e}</option>)}
@@ -323,12 +323,12 @@ export function Onboarding() {
                         className={cn(
                           "w-full p-4 rounded-xl border text-left font-medium transition-all flex items-center justify-between",
                           formData.visaType === type
-                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                            ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                             : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
                         )}
                       >
                         <span className="max-w-[90%]">{type}</span>
-                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center shrink-0", formData.visaType === type ? "border-blue-600 bg-blue-600" : "border-slate-300")}>
+                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center shrink-0", formData.visaType === type ? "border-amber-600 bg-amber-600" : "border-slate-300")}>
                           {formData.visaType === type && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
                       </button>
@@ -346,12 +346,12 @@ export function Onboarding() {
                         className={cn(
                           "w-full p-4 rounded-xl border text-left font-medium transition-all flex items-center justify-between",
                           formData.sponsoringStay === type
-                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                            ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                             : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50",
                         )}
                       >
                         {type}
-                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center", formData.sponsoringStay === type ? "border-blue-600 bg-blue-600" : "border-slate-300")}>
+                        <div className={cn("w-5 h-5 rounded-full border flex items-center justify-center", formData.sponsoringStay === type ? "border-amber-600 bg-amber-600" : "border-slate-300")}>
                           {formData.sponsoringStay === type && <div className="w-2 h-2 bg-white rounded-full" />}
                         </div>
                       </button>
@@ -380,7 +380,7 @@ export function Onboarding() {
                         className={cn(
                           "p-3 rounded-xl border text-center text-sm font-semibold transition-all",
                           formData.hasAccommodation === opt
-                            ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                            ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                             : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                         )}
                       >
@@ -430,7 +430,7 @@ export function Onboarding() {
                       className={cn(
                         "p-4 rounded-xl border text-center font-medium transition-all",
                         formData.hasEmiratesID === 'applied'
-                          ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                          ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                           : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       )}
                     >
@@ -441,7 +441,7 @@ export function Onboarding() {
                       className={cn(
                         "p-4 rounded-xl border text-center font-medium transition-all",
                         formData.hasEmiratesID === 'not yet'
-                          ? "border-blue-600 bg-blue-50 text-blue-700 ring-1 ring-blue-600"
+                          ? "border-amber-600 bg-amber-50 text-amber-700 ring-1 ring-amber-600"
                           : "border-slate-200 text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                       )}
                     >
@@ -471,7 +471,7 @@ export function Onboarding() {
               className={cn(
                 "h-16 rounded-2xl font-bold text-lg shadow-lg hover:scale-[1.02] transition-all",
                 step === 1 ? "w-full" : "flex-[2]",
-                "bg-blue-600 hover:bg-blue-700 text-white"
+                "bg-amber-600 hover:bg-amber-700 text-white"
               )}
             >
               {step === totalSteps ? "Build My Plan →" : (

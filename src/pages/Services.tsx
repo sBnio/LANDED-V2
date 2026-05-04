@@ -361,7 +361,7 @@ export function Services() {
   
   const getCategoryColorStyles = (category: string) => {
     switch (category) {
-      case 'Banks': return 'bg-blue-100 text-blue-700';
+      case 'Banks': return 'bg-amber-100 text-amber-700';
       case 'SIM Cards': return 'bg-emerald-100 text-emerald-700';
       case 'Medical': return 'bg-rose-100 text-rose-700';
       case 'Housing': return 'bg-amber-100 text-amber-700';
@@ -374,7 +374,7 @@ export function Services() {
 
   const getTagColor = (tag: string) => {
     if (tag === 'Accepts student visa holders') return 'bg-green-50 text-green-700';
-    if (tag === 'Walk-in available') return 'bg-blue-50 text-blue-700';
+    if (tag === 'Walk-in available') return 'bg-amber-50 text-amber-700';
     if (tag === 'Online application') return 'bg-purple-50 text-purple-700';
     if (tag === 'Arabic + English support') return 'bg-amber-50 text-amber-700';
     if (tag.startsWith('Near')) return 'bg-teal-50 text-teal-700';
@@ -383,7 +383,7 @@ export function Services() {
 
   const getTagDotColor = (tag: string) => {
     if (tag === 'Accepts student visa holders') return 'bg-green-500';
-    if (tag === 'Walk-in available') return 'bg-blue-500';
+    if (tag === 'Walk-in available') return 'bg-amber-500';
     if (tag === 'Online application') return 'bg-purple-500';
     if (tag === 'Arabic + English support') return 'bg-amber-500';
     if (tag.startsWith('Near')) return 'bg-teal-500';
@@ -449,9 +449,9 @@ export function Services() {
             Student-relevant services in Dubai — verified information, no sponsored listings
           </p>
 
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-5 md:p-6 flex items-start gap-4">
-            <Info className="w-6 h-6 text-blue-500 shrink-0 mt-0.5" />
-            <p className="text-sm md:text-base text-blue-900 leading-relaxed font-medium">
+          <div className="bg-amber-50 border border-amber-100 rounded-2xl p-5 md:p-6 flex items-start gap-4">
+            <Info className="w-6 h-6 text-amber-500 shrink-0 mt-0.5" />
+            <p className="text-sm md:text-base text-amber-900 leading-relaxed font-medium">
               Landed provides this directory for informational purposes only. We have no commercial agreements with any listed service. Information is based on publicly available data and student community feedback. Always verify details directly with the provider before making decisions.
             </p>
           </div>
@@ -466,7 +466,7 @@ export function Services() {
               onClick={() => setActiveCategory("All")}
               className={cn(
                 "px-6 h-10 rounded-full font-bold text-sm whitespace-nowrap transition-colors",
-                activeCategory === "All" ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                activeCategory === "All" ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
               )}
             >
               All
@@ -477,7 +477,7 @@ export function Services() {
                 onClick={() => setActiveCategory(cat.id)}
                 className={cn(
                   "px-6 h-10 rounded-full font-bold text-sm whitespace-nowrap transition-colors flex items-center gap-2",
-                  activeCategory === cat.id ? "bg-blue-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  activeCategory === cat.id ? "bg-amber-600 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                 )}
               >
                 {cat.id}
@@ -490,7 +490,7 @@ export function Services() {
               <div 
                 className={cn(
                   "w-10 h-6 rounded-full p-1 transition-colors relative",
-                  nearMe ? "bg-blue-600" : "bg-slate-300"
+                  nearMe ? "bg-amber-600" : "bg-slate-300"
                 )}
                 onClick={() => setNearMe(!nearMe)}
               >
@@ -527,7 +527,7 @@ export function Services() {
             const categoryColors = getCategoryColorStyles(service.category);
             
             return (
-              <Card key={service.id} className="bg-white border-y border-r border-slate-200 border-l-4 border-l-blue-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 rounded-[28px] overflow-hidden flex flex-col">
+              <Card key={service.id} className="bg-white border-y border-r border-slate-200 border-l-4 border-l-amber-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-150 rounded-[28px] overflow-hidden flex flex-col">
                  <div className="p-6 md:p-7 flex-1 flex flex-col">
                     
                     {/* Top Row */}
@@ -587,7 +587,7 @@ export function Services() {
                       <Button 
                         variant="default"
                         asChild
-                        className="flex-1 bg-blue-600 text-white hover:bg-blue-700 font-bold h-11 transition-colors"
+                        className="flex-1 bg-amber-600 text-white hover:bg-amber-700 font-bold h-11 transition-colors"
                       >
                         <a href={service.website} target="_blank" rel="noopener noreferrer">
                           Visit website <ExternalLink className="w-4 h-4 ml-2 shrink-0" />

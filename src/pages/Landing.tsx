@@ -27,29 +27,28 @@ import { DubaiSkyline } from "@/components/ui/DubaiSkyline";
 import { WaitlistSection } from "@/components/ui/WaitlistSection";
 import { cn } from "@/lib/utils";
 import { motion, useScroll, useTransform, AnimatePresence } from "motion/react";
+import { useOnboarding } from "@/context/OnboardingContext";
+import { PageTransition } from "@/components/ui/PageTransition";
 
 export function Landing() {
   const navigate = useNavigate();
+  const { state } = useOnboarding();
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
   const [showTransition, setShowTransition] = useState(false);
-  const [transitionStage, setTransitionStage] = useState(0);
 
   const handleStartClick = (e: React.MouseEvent) => {
     e.preventDefault();
-
     setShowTransition(true);
-    setTransitionStage(0);
+  };
 
-    try {
-      setTimeout(() => setTransitionStage(1), 200);
-      setTimeout(() => setTransitionStage(2), 600);
-      setTimeout(() => setTransitionStage(3), 1000);
-      setTimeout(() => {
-        navigate('/onboarding');
-      }, 1800);
-    } catch (err) {
+  const handleTransitionComplete = () => {
+    if (!state.authMethod) {
+      navigate('/auth');
+    } else if (state.hasCompletedOnboarding) {
+      navigate('/dashboard');
+    } else {
       navigate('/onboarding');
     }
   };
@@ -268,9 +267,9 @@ export function Landing() {
                  title: "Connect Data", 
                  desc: "Input your university, arrival date, and nationality. Our engine maps your legal path instantly.", 
                  icon: Globe,
-                 color: "text-blue-400",
-                 bgColor: "group-hover:bg-blue-500/10",
-                 borderColor: "group-hover:border-blue-500/30"
+                 color: "text-amber-400",
+                 bgColor: "group-hover:bg-amber-500/10",
+                 borderColor: "group-hover:border-amber-500/30"
                },
                { 
                  title: "Generate Roadmap", 
@@ -519,61 +518,7 @@ export function Landing() {
          <p className="text-neutral-500 font-normal text-sm tracking-wide">© 2026 Landed Tech. Built for the modern ecosystem.</p>
       </footer>
 
-      {showTransition && createPortal(
-        <div 
-          className={cn(
-            "fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-300 bg-black",
-            transitionStage >= 4 ? "opacity-0 pointer-events-none" : "opacity-100 pointer-events-auto"
-          )}
-        >
-          {/* Subtle radial gradient */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#1a1000_0%,#000000_70%)]" />
-          
-          <div className="relative z-10 flex flex-col items-center justify-center w-full max-w-[300px]">
-            {/* Logo */}
-            <div 
-              style={{ transitionDuration: '400ms' }}
-              className={cn(
-                "font-bold text-[28px] text-white transition-opacity ease-in-out flex items-center tracking-tighter lowercase font-heading",
-                transitionStage >= 1 ? "opacity-100" : "opacity-0"
-              )}
-            >
-              landed.
-              <span className="w-[0.3em] h-[0.3em] bg-[#F59E0B] rounded-full ml-[0.05em] mb-[0.05em]"></span>
-            </div>
-
-            {/* Tagline */}
-            <div 
-              style={{ transitionDuration: '400ms' }}
-              className={cn(
-                "mt-2 text-[16px] text-[#94A3B8] tracking-[0.05em] transition-opacity ease-in-out font-medium",
-                transitionStage >= 2 ? "opacity-100" : "opacity-0"
-              )}
-            >
-              Let's get you landed. 🇦🇪
-            </div>
-
-            {/* Progress bar container */}
-            <div 
-              className={cn(
-                "mt-8 w-[200px] h-[2px] bg-[#1a1a1a] rounded-full overflow-hidden transition-opacity duration-400 ease-in-out",
-                transitionStage >= 3 ? "opacity-100" : "opacity-0"
-              )}
-            >
-               <div 
-                 className="h-full rounded-full bg-gradient-to-r from-[#F59E0B] to-[#ffffff]"
-                 style={{ 
-                   width: transitionStage >= 3 ? '100%' : '0%',
-                   transitionProperty: 'width',
-                   transitionDuration: '700ms',
-                   transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)'
-                 }}
-               />
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      <PageTransition show={showTransition} onComplete={handleTransitionComplete} />
     </div>
   );
 }

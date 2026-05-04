@@ -48,7 +48,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "FIRST",
         badge: "For Indian students",
-        badgeColor: "blue",
+        badgeColor: "amber",
         source: "UAE GDRFA requirement for South Asian nationalities"
       },
       {
@@ -58,7 +58,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1 week",
         priority: "HIGH",
         badge: "For Indian students",
-        badgeColor: "blue",
+        badgeColor: "amber",
         source: "UAE GDRFA requirement"
       },
       {
@@ -68,7 +68,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "HIGH",
         badge: "For Indian students",
-        badgeColor: "blue",
+        badgeColor: "amber",
         source: "UAE Embassy India — official requirement"
       }
     ],
@@ -90,7 +90,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "FIRST",
         badge: "For Pakistani students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       },
       {
         id: "attestation_mofa_pak",
@@ -99,7 +99,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1 week",
         priority: "HIGH",
         badge: "For Pakistani students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       },
       {
         id: "attestation_uae_embassy_pak",
@@ -108,7 +108,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "HIGH",
         badge: "For Pakistani students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       }
     ],
     timelineWarning: "Add 4–6 weeks pre-arrival for attestation",
@@ -128,7 +128,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "FIRST",
         badge: "For Bangladeshi students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       },
       {
         id: "attestation_bd_mofa",
@@ -136,7 +136,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1 week",
         priority: "HIGH",
         badge: "For Bangladeshi students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       },
       {
         id: "attestation_uae_embassy_bd",
@@ -144,7 +144,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "HIGH",
         badge: "For Bangladeshi students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       }
     ],
     verificationSource: "UAE GDRFA"
@@ -164,7 +164,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–3 weeks",
         priority: "FIRST",
         badge: "For Filipino students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       },
       {
         id: "attestation_uae_embassy_ph",
@@ -172,7 +172,7 @@ export const NATIONALITY_CONFIG: Record<string, any> = {
         timeline: "Allow 1–2 weeks",
         priority: "HIGH",
         badge: "For Filipino students",
-        badgeColor: "blue"
+        badgeColor: "amber"
       }
     ],
     verificationSource: "UAE GDRFA, DFA Philippines"

@@ -67,7 +67,7 @@ export function AIChatWidget() {
         )}
       >
         <div className="absolute inset-0 rounded-full bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-blue-400 to-indigo-400 opacity-20 blur-md group-hover:opacity-40 transition-opacity animate-pulse" />
+        <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-amber-400 to-indigo-400 opacity-20 blur-md group-hover:opacity-40 transition-opacity animate-pulse" />
         <Sparkles className="w-10 h-10 fill-white relative z-10 drop-shadow-[0_2px_10px_rgba(255,255,255,0.5)]" />
       </button>
 
@@ -79,12 +79,12 @@ export function AIChatWidget() {
       >
         <div className="bg-slate-900 text-white p-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-900/50">
+            <div className="w-10 h-10 bg-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-900/50">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div>
               <h3 className="font-black text-sm uppercase tracking-widest">Landed AI</h3>
-              <p className="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">Student Onboarding Guide</p>
+              <p className="text-[10px] font-bold text-amber-400 uppercase tracking-tighter">Student Onboarding Guide</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -100,7 +100,7 @@ export function AIChatWidget() {
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50 flex flex-col gap-4">
           {chatHistory.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center space-y-6">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mb-2 shadow-inner">
+              <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mb-2 shadow-inner">
                 <MessageSquare className="w-8 h-8" />
               </div>
               <div>
@@ -114,7 +114,7 @@ export function AIChatWidget() {
                   <button
                     key={i}
                     onClick={() => sendMessage(q)}
-                    className="text-[10px] font-black uppercase tracking-widest bg-white border border-slate-200 text-slate-600 p-3 rounded-xl hover:border-blue-400 hover:text-blue-600 transition-all text-center leading-tight shadow-sm"
+                    className="text-[10px] font-black uppercase tracking-widest bg-white border border-slate-200 text-slate-600 p-3 rounded-xl hover:border-amber-400 hover:text-amber-600 transition-all text-center leading-tight shadow-sm"
                   >
                     {q}
                   </button>
@@ -129,7 +129,7 @@ export function AIChatWidget() {
                   className={cn(
                     "max-w-[90%] rounded-2xl px-5 py-3 text-sm font-medium leading-relaxed shadow-sm",
                     msg.role === "user"
-                      ? "bg-blue-600 text-white self-end rounded-tr-sm"
+                      ? "bg-amber-600 text-white self-end rounded-tr-sm"
                       : "bg-white border border-slate-100 text-slate-700 self-start rounded-tl-sm markdown-body"
                   )}
                 >
@@ -138,9 +138,9 @@ export function AIChatWidget() {
               ))}
               {isTyping && (
                 <div className="bg-white border border-slate-100 text-slate-700 self-start rounded-2xl rounded-tl-sm px-5 py-4 shadow-sm flex gap-1.5 items-center">
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                 </div>
               )}
               <div ref={messagesEndRef} />
@@ -155,13 +155,13 @@ export function AIChatWidget() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask anything..."
-              className="flex-1 h-14 px-5 text-sm bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-blue-300 focus:ring-4 focus:ring-blue-50 outline-none transition-all font-medium"
+              className="flex-1 h-14 px-5 text-sm bg-slate-50 border-transparent rounded-2xl focus:bg-white focus:border-amber-300 focus:ring-4 focus:ring-amber-50 outline-none transition-all font-medium"
               disabled={isTyping}
             />
             <button
               type="submit"
               disabled={!input.trim() || isTyping}
-              className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center disabled:opacity-50 hover:bg-blue-600 transition-all shrink-0 shadow-lg shadow-slate-200"
+              className="w-14 h-14 bg-slate-900 text-white rounded-2xl flex items-center justify-center disabled:opacity-50 hover:bg-amber-600 transition-all shrink-0 shadow-lg shadow-slate-200"
             >
               <Send className="w-5 h-5" />
             </button>

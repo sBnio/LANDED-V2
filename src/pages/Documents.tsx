@@ -66,21 +66,21 @@ export function Documents() {
           <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
           <div className="relative z-10 flex flex-col md:flex-row gap-12">
             <div className="flex-1">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-blue-200 text-xs font-black uppercase tracking-widest mb-6 border border-white/10">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 text-amber-200 text-xs font-black uppercase tracking-widest mb-6 border border-white/10">
                 <Printer className="w-3.5 h-3.5" /> High Priority
               </div>
               <h2 className="text-4xl font-black mb-4">Carry-on Day 1</h2>
-              <p className="text-blue-100/70 text-lg mb-8 max-w-sm">Items you MUST keep in your hand luggage for airport immigration and university check-in.</p>
+              <p className="text-amber-100/70 text-lg mb-8 max-w-sm">Items you MUST keep in your hand luggage for airport immigration and university check-in.</p>
               <Button className="rounded-full bg-white text-navy-900 hover:bg-white/90 font-black px-8 h-14">
                 PRINT CARD
               </Button>
             </div>
             <div className="flex-1 bg-white/10 backdrop-blur-xl rounded-3xl p-8 border border-white/10">
-              <h3 className="font-bold text-blue-200 uppercase tracking-widest text-xs mb-6">Physical Checklist</h3>
+              <h3 className="font-bold text-amber-200 uppercase tracking-widest text-xs mb-6">Physical Checklist</h3>
               <ul className="space-y-4">
                 {day1Checklist.map((item, i) => (
                   <li key={i} className="flex items-center gap-4 text-white font-medium">
-                    <div className="w-2 h-2 rounded-full bg-blue-400" />
+                    <div className="w-2 h-2 rounded-full bg-amber-400" />
                     {item}
                   </li>
                 ))}
@@ -98,7 +98,7 @@ export function Documents() {
               </h2>
               <div className="grid gap-4">
                 {groupedDocs.missing.map((doc) => (
-                  <Card key={doc.id} className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl hover:border-blue-300 transition-all group overflow-hidden">
+                  <Card key={doc.id} className="p-6 bg-white border-slate-200 shadow-sm rounded-2xl hover:border-amber-300 transition-all group overflow-hidden">
                     <div className="flex flex-col md:flex-row gap-6 md:items-center">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">

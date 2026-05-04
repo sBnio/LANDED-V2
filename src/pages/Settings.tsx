@@ -54,8 +54,8 @@ function Toggle({ checked, onChange, disabled = false }: { checked: boolean, onC
       type="button"
       onClick={() => !disabled && onChange(!checked)}
       className={cn(
-        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2",
-        checked ? "bg-blue-600" : "bg-slate-200",
+        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-amber-600 focus:ring-offset-2",
+        checked ? "bg-amber-600" : "bg-slate-200",
         disabled && "opacity-50 cursor-not-allowed"
       )}
     >
@@ -209,11 +209,11 @@ export default function Settings() {
                 className={cn(
                   "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 text-left font-bold",
                   activeSection === section.id 
-                    ? "bg-blue-50 text-blue-700" 
+                    ? "bg-amber-50 text-amber-700" 
                     : "text-slate-500 hover:bg-white hover:text-slate-900"
                 )}
               >
-                <section.icon className={cn("w-5 h-5", activeSection === section.id ? "text-blue-600" : "text-slate-400")} />
+                <section.icon className={cn("w-5 h-5", activeSection === section.id ? "text-amber-600" : "text-slate-400")} />
                 {section.title}
               </button>
             ))}
@@ -229,8 +229,8 @@ export default function Settings() {
           <div id="profile" className="block">
              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
                <div className="flex items-center gap-3 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                   <User className="w-5 h-5 text-blue-600" />
+                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                   <User className="w-5 h-5 text-amber-600" />
                  </div>
                  <h2 className="text-xl font-bold tracking-tight text-slate-900">My Profile</h2>
                </div>
@@ -281,7 +281,7 @@ export default function Settings() {
                    <Button 
                      onClick={handleProfileSaveClick} 
                      disabled={isSaving}
-                     className="bg-blue-600 hover:bg-blue-700 text-white font-bold w-full md:w-auto min-w-[140px]"
+                     className="bg-amber-600 hover:bg-amber-700 text-white font-bold w-full md:w-auto min-w-[140px]"
                    >
                      {isSaving ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : null}
                      {isSaving ? "Saving..." : "Save Changes"}
@@ -295,8 +295,8 @@ export default function Settings() {
           <div id="account" className="block">
              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
                <div className="flex items-center gap-3 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                   <Lock className="w-5 h-5 text-blue-600" />
+                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                   <Lock className="w-5 h-5 text-amber-600" />
                  </div>
                  <h2 className="text-xl font-bold tracking-tight text-slate-900">Account & Security</h2>
                </div>
@@ -352,8 +352,8 @@ export default function Settings() {
           <div id="preferences" className="block">
              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
                <div className="flex items-center gap-3 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                   <Sliders className="w-5 h-5 text-blue-600" />
+                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                   <Sliders className="w-5 h-5 text-amber-600" />
                  </div>
                  <h2 className="text-xl font-bold tracking-tight text-slate-900">Preferences</h2>
                </div>
@@ -376,7 +376,7 @@ export default function Settings() {
                  <div className="space-y-2 pt-4">
                    <Label>Language</Label>
                    <div className="grid grid-cols-2 gap-3">
-                     <div className="flex items-center justify-center py-3 border-2 border-blue-600 bg-blue-50 text-blue-700 font-bold rounded-xl">
+                     <div className="flex items-center justify-center py-3 border-2 border-amber-600 bg-amber-50 text-amber-700 font-bold rounded-xl">
                        English
                      </div>
                      <div className="flex items-center justify-center py-3 border border-slate-200 bg-slate-50 text-slate-400 font-medium rounded-xl cursor-not-allowed opacity-70 relative">
@@ -393,8 +393,8 @@ export default function Settings() {
           <div id="privacy" className="block">
              <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
                <div className="flex items-center gap-3 mb-6">
-                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center">
-                   <Shield className="w-5 h-5 text-blue-600" />
+                 <div className="w-10 h-10 rounded-full bg-amber-50 flex items-center justify-center">
+                   <Shield className="w-5 h-5 text-amber-600" />
                  </div>
                  <h2 className="text-xl font-bold tracking-tight text-slate-900">My Data</h2>
                </div>
@@ -442,13 +442,13 @@ export default function Settings() {
           {/* Settings Footer */}
           <div className="pt-8 text-center pb-24 md:pb-12">
             <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm font-bold text-slate-500 mb-4">
-              <a href="#" className="hover:text-blue-600">Help Center</a>
+              <a href="#" className="hover:text-amber-600">Help Center</a>
               <span>&middot;</span>
-              <a href="#" className="hover:text-blue-600">Contact Support</a>
+              <a href="#" className="hover:text-amber-600">Contact Support</a>
               <span>&middot;</span>
-              <a href="#" className="hover:text-blue-600">Terms</a>
+              <a href="#" className="hover:text-amber-600">Terms</a>
               <span>&middot;</span>
-              <a href="#" className="hover:text-blue-600">Privacy</a>
+              <a href="#" className="hover:text-amber-600">Privacy</a>
             </div>
             <p className="text-xs text-slate-400">
               Landed &middot; Beta v0.1
@@ -475,7 +475,7 @@ export default function Settings() {
           </p>
           <div className="flex gap-3 justify-end pt-4">
             <Button variant="outline" onClick={() => setShowProfileConfirm(false)}>Cancel</Button>
-            <Button onClick={executeProfileSave} className="bg-blue-600 hover:bg-blue-700 text-white font-bold min-w-[100px]">
+            <Button onClick={executeProfileSave} className="bg-amber-600 hover:bg-amber-700 text-white font-bold min-w-[100px]">
               {isSaving ? <Loader2 className="w-5 h-5 animate-spin" /> : "Continue"}
             </Button>
           </div>
@@ -490,7 +490,7 @@ export default function Settings() {
           </p>
           <div className="flex gap-3 justify-end pt-4">
             <Button variant="outline" onClick={() => setShowSignout(false)}>Cancel</Button>
-            <Button onClick={() => setShowSignout(false)} className="bg-blue-600 hover:bg-blue-700 text-white font-bold">
+            <Button onClick={() => setShowSignout(false)} className="bg-amber-600 hover:bg-amber-700 text-white font-bold">
                Continue
             </Button>
           </div>

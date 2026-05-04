@@ -87,8 +87,8 @@ Return a JSON object with an array of 'slots', each containing:
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-          <Calendar className="w-5 h-5 text-blue-600" />
+        <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+          <Calendar className="w-5 h-5 text-amber-600" />
         </div>
         <div>
           <h3 className="font-bold text-navy-900">Appointment Finder</h3>
@@ -103,7 +103,7 @@ Return a JSON object with an array of 'slots', each containing:
             <select 
               value={selectedService}
               onChange={(e) => setSelectedService(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
             >
               <option value="medical">Medical Fitness Test</option>
               <option value="emirates_id">Emirates ID Biometrics</option>
@@ -115,7 +115,7 @@ Return a JSON object with an array of 'slots', each containing:
             <select 
               value={selectedEmirate}
               onChange={(e) => setSelectedEmirate(e.target.value)}
-              className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full h-10 px-3 rounded-xl border border-slate-200 bg-white text-sm focus:ring-2 focus:ring-amber-500 outline-none"
             >
               <option value="Dubai">Dubai</option>
               <option value="Abu Dhabi">Abu Dhabi</option>
@@ -128,7 +128,7 @@ Return a JSON object with an array of 'slots', each containing:
         <Button 
           onClick={handleSearch} 
           disabled={isSearching}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+          className="w-full bg-amber-600 hover:bg-amber-700 text-white"
         >
           {isSearching ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -146,7 +146,7 @@ Return a JSON object with an array of 'slots', each containing:
             AI Found {slots.length} Slots
           </h4>
           {slots.map((slot, i) => (
-            <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-blue-50 hover:border-blue-200 transition-colors cursor-pointer group">
+            <div key={i} className="flex items-center justify-between p-3 rounded-xl border border-slate-100 bg-slate-50 hover:bg-amber-50 hover:border-amber-200 transition-colors cursor-pointer group">
               <div>
                 <p className="font-bold text-navy-900 text-sm">{slot.centerName}</p>
                 <div className="flex items-center gap-3 mt-1 text-xs text-slate-500">
@@ -154,7 +154,7 @@ Return a JSON object with an array of 'slots', each containing:
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {slot.date}, {slot.time}</span>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" />
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-amber-600 transition-colors" />
             </div>
           ))}
           {/* TODO: Integrate with actual booking API or web scraper */}

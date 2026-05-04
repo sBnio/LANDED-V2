@@ -41,12 +41,12 @@ export function ChatMobile() {
       <div className="bg-white border-b border-slate-100 p-6 flex flex-col gap-4 shrink-0 shadow-sm z-10">
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-100">
+                <div className="w-12 h-12 bg-amber-600 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-100">
                 <Sparkles className="h-6 w-6 text-white" />
                 </div>
                 <div>
                 <h1 className="font-black text-xl text-slate-900 tracking-tight uppercase">Landed Assistant</h1>
-                <p className="text-blue-600 font-bold text-[10px] uppercase tracking-widest">
+                <p className="text-amber-600 font-bold text-[10px] uppercase tracking-widest">
                     Verified UAE Student Guide
                 </p>
                 </div>
@@ -60,7 +60,7 @@ export function ChatMobile() {
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         {chatHistory.length === 0 && (
           <div className="bg-white border border-slate-200 rounded-[32px] p-8 shadow-sm max-w-md mx-auto mt-4 text-center">
-            <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
+            <div className="w-16 h-16 bg-amber-50 text-amber-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner">
                 <MessageCircle className="h-8 w-8" />
             </div>
             <h2 className="text-2xl font-black text-slate-900 mb-2 tracking-tight uppercase leading-none">Welcome, {state.name.split(' ')[0]}</h2>
@@ -72,7 +72,7 @@ export function ChatMobile() {
                 <button
                   key={ask}
                   onClick={() => sendMessage(ask)}
-                  className="text-[10px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-100 rounded-xl p-4 hover:border-blue-400 hover:text-blue-600 transition-all text-center leading-tight shadow-sm"
+                  className="text-[10px] font-black uppercase tracking-widest bg-slate-50 text-slate-600 border border-slate-100 rounded-xl p-4 hover:border-amber-400 hover:text-amber-600 transition-all text-center leading-tight shadow-sm"
                 >
                   {ask}
                 </button>
@@ -93,7 +93,7 @@ export function ChatMobile() {
               className={cn(
                 "max-w-[90%] md:max-w-[70%] rounded-2xl px-5 py-4 text-[15px] leading-relaxed font-medium shadow-sm",
                 msg.role === "user"
-                  ? "bg-blue-600 text-white rounded-br-sm"
+                  ? "bg-amber-600 text-white rounded-br-sm"
                   : "bg-white border border-slate-100 text-slate-800 rounded-bl-sm markdown-body",
               )}
             >
@@ -105,9 +105,9 @@ export function ChatMobile() {
         {isTyping && (
           <div className="flex justify-start">
             <div className="bg-white border border-slate-100 rounded-2xl rounded-bl-sm px-6 py-5 shadow-sm flex gap-2">
-              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-              <div className="w-1.5 h-1.5 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
+              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-1.5 h-1.5 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
             </div>
           </div>
         )}
@@ -123,14 +123,14 @@ export function ChatMobile() {
             placeholder="Type your question..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="h-16 rounded-2xl bg-slate-50 border-transparent focus-visible:ring-blue-500 text-base px-6 font-medium shadow-inner"
+            className="h-16 rounded-2xl bg-slate-50 border-transparent focus-visible:ring-amber-500 text-base px-6 font-medium shadow-inner"
             disabled={isTyping}
           />
           <Button
             type="submit"
             size="icon"
             disabled={!input.trim() || isTyping}
-            className="h-16 w-16 rounded-2xl shrink-0 bg-slate-900 hover:bg-blue-600 shadow-xl shadow-slate-200 transition-all active:scale-95"
+            className="h-16 w-16 rounded-2xl shrink-0 bg-slate-900 hover:bg-amber-600 shadow-xl shadow-slate-200 transition-all active:scale-95"
           >
             <Send className="h-6 w-6" />
           </Button>

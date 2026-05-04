@@ -128,10 +128,10 @@ export function CompletionScreen({
   };
 
   return (
-    <div className="bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-blue-500/30">
+    <div className="bg-slate-950 min-h-screen text-slate-100 font-sans selection:bg-amber-500/30">
       {/* Dynamic Background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-blue-600/20 blur-[120px] rounded-full mix-blend-screen" />
+        <div className="absolute -top-1/4 -right-1/4 w-1/2 h-1/2 bg-amber-600/20 blur-[120px] rounded-full mix-blend-screen" />
         <div className="absolute -bottom-1/4 -left-1/4 w-3/4 h-3/4 bg-amber-500/10 blur-[150px] rounded-full mix-blend-screen" />
       </div>
 
@@ -177,7 +177,7 @@ export function CompletionScreen({
             <div className="flex items-center justify-center gap-2 text-amber-400 font-bold tracking-widest uppercase text-sm mb-4">
               <Award className="w-4 h-4" /> Mission Accomplished
             </div>
-            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-blue-100 to-slate-400 tracking-tight leading-tight">
+            <h1 className="text-5xl md:text-7xl font-black text-transparent bg-clip-text bg-gradient-to-br from-white via-amber-100 to-slate-400 tracking-tight leading-tight">
               You're Fully Landed.
             </h1>
             <p className="text-xl md:text-2xl text-slate-400 font-medium max-w-2xl mx-auto mt-4 leading-relaxed">
@@ -212,14 +212,14 @@ export function CompletionScreen({
             >
               <div className="space-y-2">
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight">The Journey</h2>
-                <p className="text-blue-400 font-medium text-lg">From arrival to fully settled.</p>
+                <p className="text-amber-400 font-medium text-lg">From arrival to fully settled.</p>
               </div>
 
               <div className="space-y-6">
                 <p className="text-lg text-slate-300 leading-relaxed">
                   You navigated your student visa, Emirates ID, medical fitness test, bank account, SIM card, and health insurance — in a country you'd never lived in before.
                 </p>
-                <div className="pl-4 border-l-2 border-blue-600/50">
+                <div className="pl-4 border-l-2 border-amber-600/50">
                   <p className="text-xl font-medium text-white italic">
                     "That's not nothing. That's everything."
                   </p>
@@ -233,7 +233,7 @@ export function CompletionScreen({
                   <div className="text-sm text-slate-400 font-medium">Tasks Conquered</div>
                 </div>
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-4 backdrop-blur-sm">
-                  <div className="text-blue-400 mb-2"><Calendar className="w-6 h-6" /></div>
+                  <div className="text-amber-400 mb-2"><Calendar className="w-6 h-6" /></div>
                   <div className="text-2xl font-bold text-white mb-1">{daysPassed}</div>
                   <div className="text-sm text-slate-400 font-medium">Days Taken</div>
                 </div>
@@ -253,12 +253,12 @@ export function CompletionScreen({
                 className="w-full max-w-[380px] bg-white rounded-[2rem] p-8 shadow-2xl relative overflow-hidden ring-1 ring-black/5 text-slate-900"
               >
                 {/* Graphics */}
-                <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute top-0 right-0 w-48 h-48 bg-amber-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-32 h-32 bg-amber-50 rounded-full blur-2xl translate-y-1/4 -translate-x-1/4" />
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-10">
-                    <div className="font-black text-2xl tracking-tighter text-blue-600">landed.</div>
+                    <div className="font-black text-2xl tracking-tighter text-amber-600">landed.</div>
                     <div className="filter drop-shadow hover:scale-110 transition-transform">
                       <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-10 h-auto rounded-[2px] shadow-sm" />
                     </div>
@@ -294,7 +294,7 @@ export function CompletionScreen({
                   
                   <div className="mt-10 pt-6 border-t border-slate-200 border-dashed flex justify-between items-center text-xs text-slate-400 font-medium">
                     <span>landed-v2.vercel.app</span>
-                    <span className="font-bold text-blue-600">#LandedUAE</span>
+                    <span className="font-bold text-amber-600">#LandedUAE</span>
                   </div>
                 </div>
               </div>
@@ -311,7 +311,7 @@ export function CompletionScreen({
                 </button>
                 <button 
                   onClick={copyLink}
-                  className="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-blue-900/50 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95"
+                  className="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 px-6 rounded-2xl transition-all shadow-lg shadow-amber-900/50 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95"
                 >
                   <LinkIcon className="w-5 h-5" /> 
                   Copy Link

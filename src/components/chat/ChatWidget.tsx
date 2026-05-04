@@ -131,19 +131,19 @@ IMPORTANT RULES:
     <div className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-50">
       {isOpen ? (
         <div className="bg-white border border-slate-200 shadow-xl rounded-2xl w-[calc(100vw-32px)] md:w-[400px] h-[500px] max-h-[80vh] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
-          <div className="bg-blue-600 text-white p-4 flex items-center justify-between shrink-0">
+          <div className="bg-amber-600 text-white p-4 flex items-center justify-between shrink-0">
             <div>
               <h3 className="font-semibold flex items-center gap-2">
                 LANDED AI Assistant 🤖
               </h3>
-              <p className="text-blue-100 text-xs mt-1">
+              <p className="text-amber-100 text-xs mt-1">
                 Ask me anything about settling in the UAE
               </p>
             </div>
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-blue-700 hover:text-white rounded-full"
+              className="text-white hover:bg-amber-700 hover:text-white rounded-full"
               onClick={() => setIsOpen(false)}
             >
               <X className="h-5 w-5" />
@@ -177,7 +177,7 @@ IMPORTANT RULES:
                     <button
                       key={ask}
                       onClick={() => handleSend(ask)}
-                      className="text-xs bg-blue-50 text-blue-700 border border-blue-100 rounded-full px-3 py-1.5 hover:bg-blue-100 transition-colors text-left"
+                      className="text-xs bg-amber-50 text-amber-700 border border-amber-100 rounded-full px-3 py-1.5 hover:bg-amber-100 transition-colors text-left"
                     >
                       {ask}
                     </button>
@@ -198,7 +198,7 @@ IMPORTANT RULES:
                   className={cn(
                     "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm",
                     msg.role === "user"
-                      ? "bg-blue-600 text-white rounded-br-sm"
+                      ? "bg-amber-600 text-white rounded-br-sm"
                       : "bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm",
                   )}
                 >
@@ -215,7 +215,7 @@ IMPORTANT RULES:
             {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
-                  <Loader2 className="h-4 w-4 animate-spin text-blue-600" />
+                  <Loader2 className="h-4 w-4 animate-spin text-amber-600" />
                 </div>
               </div>
             )}
@@ -234,14 +234,14 @@ IMPORTANT RULES:
                 placeholder="e.g., What documents do I need for Emirates ID?"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="rounded-full bg-slate-50 border-slate-200 focus-visible:ring-blue-500"
+                className="rounded-full bg-slate-50 border-slate-200 focus-visible:ring-amber-500"
                 disabled={isLoading}
               />
               <Button
                 type="submit"
                 size="icon"
                 disabled={!input.trim() || isLoading}
-                className="rounded-full shrink-0 bg-blue-600 hover:bg-blue-700"
+                className="rounded-full shrink-0 bg-amber-600 hover:bg-amber-700"
               >
                 <Send className="h-4 w-4" />
               </Button>
@@ -251,7 +251,7 @@ IMPORTANT RULES:
       ) : (
         <Button
           onClick={() => setIsOpen(true)}
-          className="h-14 w-14 rounded-full shadow-lg bg-blue-600 hover:bg-blue-700 flex items-center justify-center animate-in zoom-in duration-300"
+          className="h-14 w-14 rounded-full shadow-lg bg-amber-600 hover:bg-amber-700 flex items-center justify-center animate-in zoom-in duration-300"
         >
           <MessageCircle className="h-6 w-6 text-white" />
         </Button>

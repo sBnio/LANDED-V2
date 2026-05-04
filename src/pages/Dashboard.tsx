@@ -144,7 +144,7 @@ export function Dashboard() {
         <div className="max-w-4xl mx-auto px-6 py-12 md:py-16">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
             <div>
-              <div className="flex items-center gap-2 mb-2 text-blue-600 font-bold text-sm uppercase tracking-widest">
+              <div className="flex items-center gap-2 mb-2 text-amber-600 font-bold text-sm uppercase tracking-widest">
                 <MapPin className="w-4 h-4" /> {state.emirate || "UAE"} • {state.university || "Student"}
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight">
@@ -159,7 +159,7 @@ export function Dashboard() {
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Status</p>
                   <p className="text-xl font-bold text-slate-900 leading-none">Ready to Land</p>
                </div>
-               <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+               <div className="w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600">
                   <Check className="w-7 h-7" />
                </div>
             </div>
@@ -167,17 +167,17 @@ export function Dashboard() {
 
           {/* Arriving Soon Banner */}
           {daysUntilArrival !== null && daysUntilArrival > 0 && daysUntilArrival < 30 && (
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white mb-10 shadow-xl relative overflow-hidden group">
+            <div className="bg-gradient-to-r from-amber-600 to-indigo-700 rounded-3xl p-6 md:p-8 text-white mb-10 shadow-xl relative overflow-hidden group">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 group-hover:scale-110 transition-transform duration-700" />
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="w-5 h-5 text-blue-200" />
-                  <span className="font-bold text-blue-100 uppercase tracking-widest text-sm">Arriving Soon</span>
+                  <Calendar className="w-5 h-5 text-amber-200" />
+                  <span className="font-bold text-amber-100 uppercase tracking-widest text-sm">Arriving Soon</span>
                 </div>
                 <h2 className="text-3xl font-bold mb-4">You're landing in {daysUntilArrival} days! ✈️</h2>
                 <div className="flex flex-col md:flex-row items-center gap-6">
                   <div className="flex-1">
-                    <p className="text-blue-100 text-lg leading-relaxed">
+                    <p className="text-amber-100 text-lg leading-relaxed">
                       Time to wrap up your top priorities. We recommend focusing on your 
                       <span className="font-bold text-white"> Emirates ID paperwork</span> this week.
                     </p>
@@ -185,7 +185,7 @@ export function Dashboard() {
                   <div className="flex gap-2">
                      {urgentTasks.map(t => (
                        <div key={t.id} className="bg-white/20 backdrop-blur-md rounded-xl p-3 border border-white/20 min-w-[120px]">
-                          <p className="text-[10px] font-bold text-blue-200 uppercase mb-1">Priority</p>
+                          <p className="text-[10px] font-bold text-amber-200 uppercase mb-1">Priority</p>
                           <p className="text-sm font-bold truncate">{t.title}</p>
                        </div>
                      ))}
@@ -198,20 +198,20 @@ export function Dashboard() {
           {/* Alerts Section */}
           <div className="space-y-4 mb-10">
             {studentConfig.primaryAlert && !dismissedAlerts.includes('primary_alert') && (
-              <div className="relative bg-blue-50 border-l-4 border-blue-500 rounded-lg p-5 pr-12 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
+              <div className="relative bg-amber-50 border-l-4 border-amber-500 rounded-lg p-5 pr-12 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500">
                 <button
                   onClick={() => dismissAlert('primary_alert')}
-                  className="absolute top-4 right-4 text-blue-400 hover:text-blue-600 transition-colors"
+                  className="absolute top-4 right-4 text-amber-400 hover:text-amber-600 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
                 <div className="flex gap-4">
                   <div className="mt-0.5">
-                    <Info className="w-6 h-6 text-blue-500" />
+                    <Info className="w-6 h-6 text-amber-500" />
                   </div>
                   <div>
-                    <h3 className="text-blue-900 font-bold mb-1">{studentConfig.primaryAlert.title}</h3>
-                    <p className="text-blue-800 text-sm leading-relaxed">{studentConfig.primaryAlert.body}</p>
+                    <h3 className="text-amber-900 font-bold mb-1">{studentConfig.primaryAlert.title}</h3>
+                    <p className="text-amber-800 text-sm leading-relaxed">{studentConfig.primaryAlert.body}</p>
                   </div>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export function Dashboard() {
                 className={cn(
                   "relative border-l-4 rounded-lg p-5 pr-12 shadow-sm animate-in fade-in slide-in-from-top-4 duration-500",
                   studentConfig.secondaryAlert.type === 'warning' && "bg-amber-50 border-amber-500",
-                  studentConfig.secondaryAlert.type === 'info' && "bg-blue-50 border-blue-500",
+                  studentConfig.secondaryAlert.type === 'info' && "bg-amber-50 border-amber-500",
                   studentConfig.secondaryAlert.type === 'success' && "bg-emerald-50 border-emerald-500"
                 )}
               >
@@ -231,7 +231,7 @@ export function Dashboard() {
                   className={cn(
                     "absolute top-4 right-4 transition-colors",
                     studentConfig.secondaryAlert.type === 'warning' && "text-amber-400 hover:text-amber-600",
-                    studentConfig.secondaryAlert.type === 'info' && "text-blue-400 hover:text-blue-600",
+                    studentConfig.secondaryAlert.type === 'info' && "text-amber-400 hover:text-amber-600",
                     studentConfig.secondaryAlert.type === 'success' && "text-emerald-400 hover:text-emerald-600"
                   )}
                 >
@@ -240,7 +240,7 @@ export function Dashboard() {
                 <div className="flex gap-4">
                   <div className="mt-0.5">
                     {studentConfig.secondaryAlert.type === 'warning' && <AlertTriangle className="w-6 h-6 text-amber-500" />}
-                    {studentConfig.secondaryAlert.type === 'info' && <Info className="w-6 h-6 text-blue-500" />}
+                    {studentConfig.secondaryAlert.type === 'info' && <Info className="w-6 h-6 text-amber-500" />}
                     {studentConfig.secondaryAlert.type === 'success' && <CheckCircle2 className="w-6 h-6 text-emerald-500" />}
                   </div>
                   <div>
@@ -248,7 +248,7 @@ export function Dashboard() {
                       <h3 className={cn(
                         "font-bold",
                         studentConfig.secondaryAlert.type === 'warning' && "text-amber-900",
-                        studentConfig.secondaryAlert.type === 'info' && "text-blue-900",
+                        studentConfig.secondaryAlert.type === 'info' && "text-amber-900",
                         studentConfig.secondaryAlert.type === 'success' && "text-emerald-900"
                       )}>
                         {studentConfig.secondaryAlert.title}
@@ -262,7 +262,7 @@ export function Dashboard() {
                     <p className={cn(
                       "text-sm leading-relaxed",
                       studentConfig.secondaryAlert.type === 'warning' && "text-amber-800",
-                      studentConfig.secondaryAlert.type === 'info' && "text-blue-800",
+                      studentConfig.secondaryAlert.type === 'info' && "text-amber-800",
                       studentConfig.secondaryAlert.type === 'success' && "text-emerald-800"
                     )}>
                       {studentConfig.secondaryAlert.body}
@@ -283,13 +283,13 @@ export function Dashboard() {
                 </p>
               </div>
               <div className="text-right">
-                <p className="text-4xl font-black text-blue-600 leading-none">{progressPercent}%</p>
+                <p className="text-4xl font-black text-amber-600 leading-none">{progressPercent}%</p>
                 <p className="text-xs font-bold text-slate-400 mt-1">Completion</p>
               </div>
             </div>
             <div className="w-full h-4 bg-slate-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-blue-600 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(37,99,235,0.4)]"
+                className="h-full bg-amber-600 transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(37,99,235,0.4)]"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -297,7 +297,7 @@ export function Dashboard() {
               <div className="mt-6 flex justify-center animate-in fade-in duration-500">
                 <button
                   onClick={() => setShowCompletion(true)}
-                  className="bg-blue-50 text-blue-600 hover:bg-blue-100 font-bold py-2.5 px-6 rounded-full transition-colors text-sm flex items-center gap-2"
+                  className="bg-amber-50 text-amber-600 hover:bg-amber-100 font-bold py-2.5 px-6 rounded-full transition-colors text-sm flex items-center gap-2"
                 >
                   <Sparkles className="w-4 h-4" /> 
                   View Your Completion Summary
@@ -360,7 +360,7 @@ export function Dashboard() {
                 className="w-full flex items-center justify-between p-8 bg-white hover:bg-slate-50 transition-colors text-left"
               >
                 <div className="flex items-center gap-5">
-                  <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-inner">
                     <category.icon className="h-7 w-7" />
                   </div>
                   <div>
@@ -371,7 +371,7 @@ export function Dashboard() {
                       </span>
                       <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-blue-600 transition-all duration-500"
+                          className="h-full bg-amber-600 transition-all duration-500"
                           style={{ width: `${(completedInCategory.length / totalInCategory) * 100}%` }}
                         />
                       </div>
@@ -403,7 +403,7 @@ export function Dashboard() {
                               onClick={() => !autoCompletedLabel && handleToggleStep(step.id)}
                               className={cn(
                                 "shrink-0 w-7 h-7 rounded-lg border-2 flex items-center justify-center transition-all cursor-pointer mt-1",
-                                isCompleted ? "bg-green-600 border-green-600 text-white" : "border-slate-200 hover:border-blue-400"
+                                isCompleted ? "bg-green-600 border-green-600 text-white" : "border-slate-200 hover:border-amber-400"
                               )}
                            >
                               {isCompleted && <Check className="w-4 h-4 stroke-[3px]" />}
@@ -424,7 +424,7 @@ export function Dashboard() {
                                       {step.badge && (
                                         <span className={cn(
                                           "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border",
-                                          step.badgeColor === 'blue' ? "bg-blue-50 text-blue-700 border-blue-100" : "bg-slate-50 text-slate-700 border-slate-200"
+                                          step.badgeColor === 'amber' ? "bg-amber-50 text-amber-700 border-amber-100" : "bg-slate-50 text-slate-700 border-slate-200"
                                         )}>
                                           {step.badge}
                                         </span>
@@ -455,9 +455,9 @@ export function Dashboard() {
 
                               {isStepExpanded && (
                                 <div className="mt-8 pt-8 border-t border-slate-100 animate-in slide-in-from-top-4 fade-in duration-300">
-                                  <div className="mb-8 p-6 bg-blue-50/50 rounded-2xl border border-blue-100">
-                                    <h4 className="font-black text-blue-900 text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
-                                       <Sparkles className="w-4 h-4 text-blue-600" />
+                                  <div className="mb-8 p-6 bg-amber-50/50 rounded-2xl border border-amber-100">
+                                    <h4 className="font-black text-amber-900 text-sm uppercase tracking-widest mb-3 flex items-center gap-2">
+                                       <Sparkles className="w-4 h-4 text-amber-600" />
                                        Why it matters
                                     </h4>
                                     <p className="text-slate-700 leading-relaxed font-medium">
@@ -474,7 +474,7 @@ export function Dashboard() {
                                           <ul className="space-y-3">
                                             {step.details.documentsNeeded.map((doc: any, i: number) => (
                                               <li key={i} className="flex gap-3 text-sm text-slate-600 font-medium">
-                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-blue-400 shrink-0" />
+                                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0" />
                                                 {doc}
                                               </li>
                                             ))}
@@ -487,7 +487,7 @@ export function Dashboard() {
                                           <div className="space-y-4">
                                             {step.details.process.map((p: any, i: number) => (
                                               <div key={i} className="flex gap-4 items-start p-4 bg-white rounded-2xl border border-slate-100 shadow-sm">
-                                                 <span className="text-blue-600 font-black text-lg">{i + 1}</span>
+                                                 <span className="text-amber-600 font-black text-lg">{i + 1}</span>
                                                  <p className="text-sm text-slate-700 leading-relaxed font-medium">{p.replace(/^\d+\.\s*/, '')}</p>
                                               </div>
                                             ))}
@@ -498,7 +498,7 @@ export function Dashboard() {
 
                                   <div className="flex flex-col sm:flex-row gap-4 pt-4 border-t border-slate-100">
                                      <button 
-                                        className="flex-1 h-14 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+                                        className="flex-1 h-14 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-amber-200 flex items-center justify-center gap-2"
                                         onClick={() => handleToggleStep(step.id)}
                                       >
                                         {isCompleted ? "MARK INCOMPLETE" : "MARK AS DONE"}

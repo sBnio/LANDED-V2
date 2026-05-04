@@ -7,14 +7,22 @@ import { useOnboarding } from "@/context/OnboardingContext";
 
 export function Auth() {
   const navigate = useNavigate();
-  const { updateState } = useOnboarding();
+  const { state, updateState } = useOnboarding();
   const [step, setStep] = useState<"choose" | "email" | "verify">("choose");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
 
+  const handleAuthenticated = (method: "google" | "email") => {
+    updateState({ authMethod: method });
+    if (state.hasCompletedOnboarding) {
+      navigate("/dashboard");
+    } else {
+      navigate("/onboarding");
+    }
+  };
+
   const handleGoogleAuth = () => {
-    updateState({ authMethod: "google" });
-    navigate("/onboarding");
+    handleAuthenticated("google");
   };
 
   const handleEmailSubmit = (e: React.FormEvent) => {
@@ -25,8 +33,7 @@ export function Auth() {
   const handleVerifySubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (code.trim()) {
-      updateState({ authMethod: "email" });
-      navigate("/onboarding");
+      handleAuthenticated("email");
     }
   };
 
@@ -70,7 +77,7 @@ export function Auth() {
 
                 <button
                   onClick={() => setStep("email")}
-                  className="w-full flex items-center justify-center gap-3 bg-blue-50 border border-blue-100 px-4 py-4 rounded-2xl text-blue-700 font-bold hover:bg-blue-100 transition-all shadow-sm"
+                  className="w-full flex items-center justify-center gap-3 bg-amber-50 border border-amber-100 px-4 py-4 rounded-2xl text-amber-700 font-bold hover:bg-amber-100 transition-all shadow-sm"
                 >
                   <Mail className="w-5 h-5" />
                   Continue with Email
@@ -100,10 +107,10 @@ export function Auth() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="student@university.ac.ae"
-                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all text-slate-900 font-medium placeholder:text-slate-400"
+                    className="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-600 focus:bg-white transition-all text-slate-900 font-medium placeholder:text-slate-400"
                   />
                 </div>
-                <Button type="submit" className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-200 transition-all">
+                <Button type="submit" className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-amber-200 transition-all">
                   Send Code
                 </Button>
               </form>
@@ -133,10 +140,10 @@ export function Auth() {
                     value={code}
                     onChange={(e) => setCode(e.target.value)}
                     placeholder="000000"
-                    className="w-full px-5 py-4 text-center tracking-[0.5em] text-2xl bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-600 focus:bg-white transition-all text-slate-900 font-black placeholder:text-slate-300"
+                    className="w-full px-5 py-4 text-center tracking-[0.5em] text-2xl bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-600 focus:bg-white transition-all text-slate-900 font-black placeholder:text-slate-300"
                   />
                 </div>
-                <Button type="submit" className="w-full h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-200 transition-all">
+                <Button type="submit" className="w-full h-14 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-amber-200 transition-all">
                   Verify & Continue
                 </Button>
               </form>
