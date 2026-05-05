@@ -60,6 +60,30 @@ const STUDY_BUDDIES = [
 export function Community() {
   const [activeTab, setActiveTab] = useState<"Forum" | "Study Buddy">("Forum");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [posts, setPosts] = useState(FORUM_POSTS);
+  const [newQuestionTopic, setNewQuestionTopic] = useState("Visa/ID");
+  const [newQuestionText, setNewQuestionText] = useState("");
+
+  const handlePostQuestion = () => {
+    if (!newQuestionText.trim()) return;
+    
+    const newPost = {
+      id: Date.now(),
+      author: "Current User",
+      university: "My University",
+      title: newQuestionText,
+      content: "Waiting for responses...",
+      tags: [newQuestionTopic],
+      likes: 0,
+      replies: 0,
+      avatar: "https://picsum.photos/seed/currentuser/100/100"
+    };
+
+    setPosts([newPost, ...posts]);
+    setNewQuestionText("");
+    setIsModalOpen(false);
+  };
+
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 md:pb-12 text-slate-900">
@@ -112,7 +136,7 @@ export function Community() {
           <div className="lg:col-span-2 space-y-8">
             {activeTab === "Forum" ? (
                <div className="space-y-6">
-                  {FORUM_POSTS.map(post => (
+                  {posts.map(post => (
                     <Card key={post.id} className="bg-white border-slate-100 rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_45px_rgb(0,0,0,0.08)] transition-all group overflow-hidden border-t-2 border-t-transparent hover:border-t-amber-500/30">
                        <div className="flex items-center gap-4 mb-6">
                           <img src={post.avatar} className="w-12 h-12 rounded-2xl border-2 border-slate-50 object-cover shadow-sm" />
@@ -244,18 +268,24 @@ export function Community() {
                     <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 block">Topic</label>
                     <div className="grid grid-cols-2 gap-3">
                        {["Visa/ID", "Banking", "Housing", "Social"].map(t => (
-                         <button key={t} className="h-12 border-2 border-slate-100 rounded-xl font-bold text-slate-600 hover:border-amber-600 hover:text-amber-600 transition-all">{t}</button>
+                         <button key={t} onClick={() => setNewQuestionTopic(t)} className={cn("h-12 border-2 rounded-xl font-bold transition-all", newQuestionTopic === t ? "border-amber-600 text-amber-600" : "border-slate-100 text-slate-600 hover:border-amber-600 hover:text-amber-600")}>{t}</button>
                        ))}
                     </div>
                  </div>
                  <div>
                     <label className="text-xs font-black text-slate-400 uppercase tracking-widest mb-3 block">Your Question</label>
                     <textarea 
+                      value={newQuestionText}
+                      onChange={(e) => setNewQuestionText(e.target.value)}
                       placeholder="e.g. Where is the best place to get a student ID in Dubai?"
                       className="w-full h-32 p-4 border-2 border-slate-100 rounded-2xl focus:border-amber-600 outline-none font-medium text-slate-700"
                     />
                  </div>
-                 <Button className="w-full h-16 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-2xl tracking-widest uppercase">
+                 <Button 
+                   onClick={handlePostQuestion}
+                   disabled={!newQuestionText.trim()}
+                   className="w-full h-16 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-black rounded-2xl tracking-widest uppercase"
+                 >
                     POST QUESTION
                  </Button>
               </div>
