@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
@@ -14,6 +15,20 @@ import {
   Briefcase
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useOnboarding } from "@/context/OnboardingContext";
+
+const getTimeAgo = (timestamp: number) => {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return "Just now";
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+};
+
+const INITIAL_TIME = Date.now();
 
 const FORUM_POSTS = [
   {
@@ -25,7 +40,8 @@ const FORUM_POSTS = [
     tags: ["Medical Test", "Al Ain"],
     likes: 12,
     replies: 4,
-    avatar: "https://picsum.photos/seed/fatima/100/100"
+    avatar: "https://picsum.photos/seed/fatima/100/100",
+    timestamp: INITIAL_TIME - 2 * 60 * 60 * 1000, // 2h ago
   },
   {
     id: 2,
@@ -36,7 +52,8 @@ const FORUM_POSTS = [
     tags: ["SIM Card", "Telecom"],
     likes: 24,
     replies: 15,
-    avatar: "https://picsum.photos/seed/rahul/100/100"
+    avatar: "https://picsum.photos/seed/rahul/100/100",
+    timestamp: INITIAL_TIME - 5 * 60 * 60 * 1000, // 5h ago
   },
   {
     id: 3,
@@ -47,7 +64,8 @@ const FORUM_POSTS = [
     tags: ["Banking", "Documents"],
     likes: 45,
     replies: 12,
-    avatar: "https://picsum.photos/seed/ziad/100/100"
+    avatar: "https://picsum.photos/seed/ziad/100/100",
+    timestamp: INITIAL_TIME - 24 * 60 * 60 * 1000, // 1d ago
   }
 ];
 
@@ -58,30 +76,92 @@ const STUDY_BUDDIES = [
 ];
 
 export function Community() {
-  const [activeTab, setActiveTab] = useState<"Forum" | "Study Buddy">("Forum");
+  const { state: globalState } = useOnboarding();
+  const [activeTab, setActiveTab] = useState<"Forum" | "Study Buddy" | "Bookmarks">("Forum");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [posts, setPosts] = useState(FORUM_POSTS);
-  const [newQuestionTopic, setNewQuestionTopic] = useState("Visa/ID");
+  const [posts, setPosts] = useState(FORUM_POSTS.map(p => ({
+    ...p,
+    isLiked: false,
+    isBookmarked: false,
+    comments: [] as {id: number, author: string, content: string, timestamp: number}[],
+    showComments: false,
+    newComment: ""
+  })));
+  const [newQuestionTopic, setNewQuestionTopic] = useState("Housing");
   const [newQuestionText, setNewQuestionText] = useState("");
+  const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
+
+  const [currentTime, setCurrentTime] = useState(Date.now());
+
+  useEffect(() => {
+    const timer = setInterval(() => setCurrentTime(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
 
   const handlePostQuestion = () => {
     if (!newQuestionText.trim()) return;
     
     const newPost = {
       id: Date.now(),
-      author: "Current User",
-      university: "My University",
+      author: globalState.name || "New Student",
+      university: globalState.university || "My University",
       title: newQuestionText,
       content: "Waiting for responses...",
       tags: [newQuestionTopic],
       likes: 0,
       replies: 0,
-      avatar: "https://picsum.photos/seed/currentuser/100/100"
+      avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
+      timestamp: Date.now(),
+      isLiked: false,
+      isBookmarked: false,
+      comments: [],
+      showComments: false,
+      newComment: ""
     };
 
     setPosts([newPost, ...posts]);
     setNewQuestionText("");
     setIsModalOpen(false);
+  };
+
+  const filteredPosts = activeTab === "Bookmarks" 
+    ? posts.filter(post => post.isBookmarked) 
+    : (selectedTopic ? posts.filter(post => post.tags.includes(selectedTopic)) : posts);
+
+  const handleLike = (id: number) => {
+    setPosts(posts.map(p => {
+      if (p.id === id) {
+        return p.isLiked 
+          ? { ...p, isLiked: false, likes: p.likes - 1 }
+          : { ...p, isLiked: true, likes: p.likes + 1 };
+      }
+      return p;
+    }));
+  };
+
+  const handleBookmark = (id: number) => {
+    setPosts(posts.map(p => p.id === id ? { ...p, isBookmarked: !p.isBookmarked } : p));
+  };
+
+  const handleShare = (id: number) => {
+    navigator.clipboard.writeText(`${window.location.origin}/community#post-${id}`);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const toggleComments = (id: number) => {
+    setPosts(posts.map(p => p.id === id ? { ...p, showComments: !p.showComments } : p));
+  };
+
+  const handleCommentSubmit = (id: number) => {
+    setPosts(posts.map(p => {
+      if (p.id === id && p.newComment?.trim()) {
+        const comment = { id: Date.now(), author: globalState.name || "Student", content: p.newComment, timestamp: Date.now() };
+        return { ...p, comments: [...(p.comments || []), comment], replies: p.replies + 1, newComment: "" };
+      }
+      return p;
+    }));
   };
 
 
@@ -94,7 +174,7 @@ export function Community() {
             <div className="max-w-3xl">
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-4 uppercase italic leading-[0.8] drop-shadow-sm">STUDENT <span className="text-amber-500">HUB</span></h1>
               <p className="text-amber-100/70 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
-                The unofficial network of 12,000+ international students in the UAE.
+                The unofficial network of international students in the UAE.
               </p>
             </div>
             <div className="flex gap-4">
@@ -109,7 +189,7 @@ export function Community() {
 
           <div className="flex justify-start md:justify-center">
             <div className="inline-flex p-1.5 bg-white/5 backdrop-blur-xl rounded-[28px] mt-16 border border-white/10 shadow-2xl">
-              {(["Forum", "Study Buddy"] as const).map(tab => (
+              {(["Forum", "Study Buddy", "Bookmarks"] as const).map(tab => (
                  <button 
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -134,10 +214,17 @@ export function Community() {
       <div className="max-w-6xl mx-auto px-6 mt-12 mb-12">
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
-            {activeTab === "Forum" ? (
-               <div className="space-y-6">
-                  {posts.map(post => (
-                    <Card key={post.id} className="bg-white border-slate-100 rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_45px_rgb(0,0,0,0.08)] transition-all group overflow-hidden border-t-2 border-t-transparent hover:border-t-amber-500/30">
+            {activeTab === "Forum" || activeTab === "Bookmarks" ? (
+               <div className="space-y-6 animate-in slide-in-from-bottom-6 duration-700 ease-out">
+                  {activeTab === "Bookmarks" && filteredPosts.length === 0 && (
+                     <div className="text-center py-20 px-6 border-2 border-dashed border-slate-200 rounded-[32px] bg-slate-50/50">
+                        <Bookmark className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                        <h3 className="text-xl font-black text-slate-800 tracking-tight mb-2">No bookmarks yet</h3>
+                        <p className="text-slate-500 font-medium">Save helpful posts by clicking the bookmark icon so you can easily find them later.</p>
+                     </div>
+                  )}
+                  {filteredPosts.map(post => (
+                    <Card id={`post-${post.id}`} key={post.id} className="bg-white border-slate-100 rounded-[32px] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_15px_45px_rgb(0,0,0,0.08)] transition-all group overflow-hidden border-2 border-transparent hover:border-amber-500/20">
                        <div className="flex items-center gap-4 mb-6">
                           <img src={post.avatar} className="w-12 h-12 rounded-2xl border-2 border-slate-50 object-cover shadow-sm" />
                           <div className="flex-1">
@@ -146,12 +233,25 @@ export function Community() {
                                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-amber-50 text-amber-600 text-[9px] font-black uppercase tracking-widest border border-amber-100">
                                    <GraduationCap className="w-3 h-3" /> {post.university}
                                 </span>
-                                <span className="text-[10px] font-bold text-slate-400">• 2h ago</span>
+                                <span className="text-[10px] font-bold text-slate-400">• {getTimeAgo(post.timestamp)}</span>
                              </div>
                           </div>
                           <div className="flex gap-2">
-                             <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"><Bookmark className="w-4.5 h-4.5" /></button>
-                             <button className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all"><Share2 className="w-4.5 h-4.5" /></button>
+                             <button 
+                               onClick={() => handleBookmark(post.id)}
+                               className={cn(
+                                 "w-10 h-10 rounded-xl flex items-center justify-center transition-all",
+                                 post.isBookmarked ? "bg-amber-100 text-amber-600 shadow-inner" : "bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-amber-50"
+                               )}
+                             >
+                                <Bookmark className={cn("w-4.5 h-4.5", post.isBookmarked && "fill-current")} />
+                             </button>
+                             <button 
+                               onClick={() => handleShare(post.id)}
+                               className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all font-black text-[10px]"
+                             >
+                                {copiedId === post.id ? <span className="text-[9px] text-amber-600">COPIED</span> : <Share2 className="w-4.5 h-4.5" />}
+                             </button>
                           </div>
                        </div>
                        
@@ -171,26 +271,80 @@ export function Community() {
                        </div>
                        
                        <div className="flex items-center gap-4 pt-6 border-t border-slate-100">
-                          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all font-black text-xs uppercase tracking-widest">
-                             <Heart className="w-4 h-4" /> {post.likes}
+                          <button 
+                            onClick={() => handleLike(post.id)}
+                            className={cn(
+                              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-black text-xs uppercase tracking-widest",
+                              post.isLiked ? "bg-red-50 text-red-500 ring-2 ring-red-100" : "bg-slate-50 text-slate-400 hover:text-red-500 hover:bg-red-50"
+                            )}>
+                             <Heart className={cn("w-4 h-4", post.isLiked && "fill-current")} /> {post.likes}
                           </button>
-                          <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-amber-50 transition-all font-black text-xs uppercase tracking-widest">
-                             <MessageSquare className="w-4 h-4" /> {post.replies}
+                          <button 
+                            onClick={() => toggleComments(post.id)}
+                            className={cn(
+                              "flex items-center gap-2 px-4 py-2 rounded-xl transition-all font-black text-xs uppercase tracking-widest",
+                              post.showComments ? "bg-amber-50 text-amber-600 ring-2 ring-amber-100" : "bg-slate-50 text-slate-400 hover:text-amber-600 hover:bg-amber-50"
+                            )}>
+                             <MessageSquare className={cn("w-4 h-4", post.showComments && "fill-current")} /> {post.replies}
                           </button>
                           <div className="ml-auto flex -space-x-2">
                              {[1, 2, 3].map(i => (
                                <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 overflow-hidden shadow-sm">
-                                  <img src={`https://picsum.photos/seed/user${i}/50/50`} alt="" />
+                                  <img src={`https://picsum.photos/seed/user${i + post.id}/50/50`} alt="" />
                                </div>
                              ))}
                              <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-900 flex items-center justify-center text-[8px] font-bold text-white shadow-sm">+9</div>
                           </div>
                        </div>
+                       {post.showComments && (
+                         <div className="mt-6 pt-6 border-t border-slate-100 animate-in slide-in-from-top-4 duration-300">
+                           {post.comments && post.comments.length > 0 ? (
+                             <div className="space-y-4 mb-6">
+                               {post.comments.map(comment => (
+                                 <div key={comment.id} className="flex gap-4">
+                                   <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-100 to-amber-200 flex items-center justify-center flex-shrink-0 text-[10px] font-black text-amber-700 uppercase shadow-sm">
+                                     {comment.author.substring(0,2)}
+                                   </div>
+                                   <div className="flex-1 bg-slate-50 p-4 rounded-2xl rounded-tl-none border border-slate-100/50">
+                                     <div className="flex items-baseline justify-between mb-1">
+                                       <span className="font-bold text-slate-900 text-xs">{comment.author}</span>
+                                       <span className="text-[10px] font-bold text-slate-400">{getTimeAgo(comment.timestamp)}</span>
+                                     </div>
+                                     <p className="text-slate-600 text-sm font-medium">{comment.content}</p>
+                                   </div>
+                                 </div>
+                               ))}
+                             </div>
+                           ) : (
+                             <div className="text-center py-6 text-slate-400 font-medium text-sm">
+                               No comments yet. Be the first to start the discussion!
+                             </div>
+                           )}
+                           <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-100 shadow-inner">
+                             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(globalState.name || "Student")}&background=random`} className="w-10 h-10 rounded-xl" />
+                             <input 
+                               type="text" 
+                               placeholder="Add a comment..." 
+                               value={post.newComment}
+                               onChange={(e) => setPosts(posts.map(p => p.id === post.id ? { ...p, newComment: e.target.value } : p))}
+                               onKeyDown={(e) => e.key === 'Enter' && handleCommentSubmit(post.id)}
+                               className="flex-1 bg-transparent border-none px-3 py-2 text-sm font-medium focus:outline-none focus:ring-0 text-slate-700 placeholder:text-slate-400"
+                             />
+                             <Button 
+                               onClick={() => handleCommentSubmit(post.id)}
+                               disabled={!post.newComment?.trim()}
+                               className="rounded-xl px-6 bg-slate-900 text-white hover:bg-amber-600 font-bold tracking-widest text-[10px] uppercase h-10 shadow-md transition-all active:scale-95 disabled:opacity-50 disabled:bg-slate-300 disabled:text-slate-500"
+                             >
+                               Post
+                             </Button>
+                           </div>
+                         </div>
+                       )}
                     </Card>
                   ))}
                </div>
             ) : (
-                <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid sm:grid-cols-2 gap-6 animate-in slide-in-from-bottom-6 duration-700 ease-out">
                   {STUDY_BUDDIES.map(buddy => (
                     <Card key={buddy.id} className="bg-white border-slate-100 rounded-[32px] p-8 text-center hover:shadow-xl hover:scale-[1.02] transition-all shadow-sm group">
                        <div className="relative inline-block mb-6">
@@ -223,11 +377,18 @@ export function Community() {
             <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm overflow-hidden relative group">
                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-100/50 transition-colors" />
                <h3 className="text-[11px] font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative z-10 flex items-center gap-2">
-                  <Search className="w-4 h-4" /> Trending Topics
+                  <Search className="w-4 h-4" /> Filter Topics
                </h3>
                <div className="flex flex-wrap gap-2 relative z-10">
-                  {["Visa Process", "Abu Dhabi", "Rental Agreements", "Grocery Hacks", "Metro Tips", "Study Spaces"].map(tag => (
-                    <button key={tag} className="px-4 py-2 bg-slate-50 hover:bg-white border border-slate-100 hover:border-amber-500/30 rounded-xl text-[11px] font-bold text-slate-600 hover:text-amber-600 shadow-sm hover:shadow-md transition-all">
+                  {["Visa/ID", "Banking", "Housing", "Social", "Medical Test", "SIM Card"].map(tag => (
+                    <button 
+                      key={tag} 
+                      onClick={() => setSelectedTopic(selectedTopic === tag ? null : tag)}
+                      className={cn(
+                        "px-4 py-2 hover:bg-white border hover:border-amber-500/30 rounded-xl text-[11px] font-bold shadow-sm hover:shadow-md transition-all",
+                        selectedTopic === tag ? "bg-amber-50 border-amber-500/30 text-amber-600" : "bg-slate-50 border-slate-100 text-slate-600 hover:text-amber-600"
+                      )}
+                    >
                        {tag}
                     </button>
                   ))}
@@ -251,9 +412,9 @@ export function Community() {
         </div>
       </div>
 
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-navy-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-           <Card className="w-full max-w-xl bg-white rounded-[40px] shadow-2xl p-10 overflow-hidden relative">
+      {isModalOpen && createPortal(
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
+           <Card className="w-full max-w-xl bg-white rounded-[40px] shadow-2xl p-10 overflow-hidden relative" onClick={e => e.stopPropagation()}>
               <button 
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-8 right-8 text-slate-400 hover:text-slate-900 transition-colors"
@@ -290,7 +451,8 @@ export function Community() {
                  </Button>
               </div>
            </Card>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
