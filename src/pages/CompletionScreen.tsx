@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { ArrowLeft, Download, Link as LinkIcon, Award, Calendar, CheckCircle2, ChevronDown } from "lucide-react";
 import confetti from "canvas-confetti";
 import html2canvas from "html2canvas";
+import { Logo } from "@/components/ui/Logo";
 
 export function CompletionScreen({ 
   onBack, 
@@ -149,8 +150,8 @@ export function CompletionScreen({
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> 
             Back to Dashboard
           </button>
-          <div className="font-black text-xl tracking-tighter text-white">
-            landed.
+          <div className="text-xl">
+            <Logo light />
           </div>
         </div>
       </motion.div>
@@ -258,7 +259,7 @@ export function CompletionScreen({
                 
                 <div className="relative z-10">
                   <div className="flex justify-between items-start mb-10">
-                    <div className="font-black text-2xl tracking-tighter text-amber-600">landed.</div>
+                    <div className="text-3xl text-amber-600"><Logo/></div>
                     <div className="filter drop-shadow hover:scale-110 transition-transform">
                       <img src="https://flagcdn.com/ae.svg" alt="UAE Flag" className="w-10 h-auto rounded-[2px] shadow-sm" />
                     </div>
