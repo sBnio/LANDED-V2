@@ -70,14 +70,18 @@ const FORUM_POSTS = [
 ];
 
 const STUDY_BUDDIES = [
-  { id: 1, name: "Chloe", major: "Computer Science", uni: "NYU Abu Dhabi", interest: "AI Ethics", avatar: "https://picsum.photos/seed/chloe/100/100" },
-  { id: 2, name: "Omar", major: "Mechanical Engineering", uni: "Khalifa University", interest: "Robotics", avatar: "https://picsum.photos/seed/omar/100/100" },
-  { id: 3, name: "Sara", major: "Business Admin", uni: "AUS", interest: "Entrepreneurship", avatar: "https://picsum.photos/seed/sara/100/100" },
+  { id: 1, name: "Chloe", major: "Computer Science", uni: "NYU Abu Dhabi", interest: "AI Ethics", avatar: "https://picsum.photos/seed/chloe/100/100", lookingFor: "Hackathon Teammate", languages: ["English", "French"] },
+  { id: 2, name: "Omar", major: "Mechanical Engineering", uni: "Khalifa University", interest: "Robotics", avatar: "https://picsum.photos/seed/omar/100/100", lookingFor: "Study Partner", languages: ["Arabic", "English"] },
+  { id: 3, name: "Sara", major: "Business Admin", uni: "AUS", interest: "Entrepreneurship", avatar: "https://picsum.photos/seed/sara/100/100", lookingFor: "Startup Co-founder", languages: ["English"] },
+  { id: 4, name: "James", major: "Design", uni: "Zayed University", interest: "UI/UX", avatar: "https://picsum.photos/seed/james/100/100", lookingFor: "Mock Interviews", languages: ["English"] },
+  { id: 5, name: "Aisha", major: "Medicine", uni: "UAEU", interest: "Neuroscience", avatar: "https://picsum.photos/seed/aisha/100/100", lookingFor: "Study Partner", languages: ["Arabic", "English", "Urdu"] },
+  { id: 6, name: "Liam", major: "Finance", uni: "Heriot-Watt", interest: "Fintech", avatar: "https://picsum.photos/seed/liam/100/100", lookingFor: "Networking", languages: ["English", "German"] },
 ];
 
 export function Community() {
   const { state: globalState } = useOnboarding();
-  const [activeTab, setActiveTab] = useState<"Forum" | "Study Buddy" | "Bookmarks">("Forum");
+  const [activeTab, setActiveTab] = useState<"Forum" | "Study Buddy">("Forum");
+  const [showBookmarks, setShowBookmarks] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [posts, setPosts] = useState(FORUM_POSTS.map(p => ({
     ...p,
@@ -91,6 +95,10 @@ export function Community() {
   const [newQuestionText, setNewQuestionText] = useState("");
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<number | null>(null);
+
+  const [buddies, setBuddies] = useState(STUDY_BUDDIES.map(b => ({ ...b, inviteSent: false })));
+  const [buddySearch, setBuddySearch] = useState("");
+  const [buddyMajorFilter, setBuddyMajorFilter] = useState<string | null>(null);
 
   const [currentTime, setCurrentTime] = useState(Date.now());
 
@@ -111,7 +119,7 @@ export function Community() {
       tags: [newQuestionTopic],
       likes: 0,
       replies: 0,
-      avatar: `https://picsum.photos/seed/${Date.now()}/100/100`,
+      avatar: `https://picsum.photos/seed/${globalState.name || Date.now()}/100/100`,
       timestamp: Date.now(),
       isLiked: false,
       isBookmarked: false,
@@ -125,7 +133,7 @@ export function Community() {
     setIsModalOpen(false);
   };
 
-  const filteredPosts = activeTab === "Bookmarks" 
+  const filteredPosts = showBookmarks 
     ? posts.filter(post => post.isBookmarked) 
     : (selectedTopic ? posts.filter(post => post.tags.includes(selectedTopic)) : posts);
 
@@ -164,6 +172,15 @@ export function Community() {
     }));
   };
 
+  const handleInvite = (id: number) => {
+    setBuddies(buddies.map(b => b.id === id ? { ...b, inviteSent: true } : b));
+  };
+
+  const filteredBuddies = buddies
+    .filter(b => b.name.toLowerCase().includes(buddySearch.toLowerCase()) || b.uni.toLowerCase().includes(buddySearch.toLowerCase()))
+    .filter(b => buddyMajorFilter ? b.major.toLowerCase().includes(buddyMajorFilter.toLowerCase()) : true);
+
+
 
   return (
     <div className="min-h-screen bg-slate-50 pb-24 md:pb-12 text-slate-900">
@@ -189,10 +206,10 @@ export function Community() {
 
           <div className="flex justify-start md:justify-center">
             <div className="inline-flex p-1.5 bg-white/5 backdrop-blur-xl rounded-[28px] mt-16 border border-white/10 shadow-2xl">
-              {(["Forum", "Study Buddy", "Bookmarks"] as const).map(tab => (
+              {(["Forum", "Study Buddy"] as const).map(tab => (
                  <button 
                     key={tab}
-                    onClick={() => setActiveTab(tab)}
+                    onClick={() => { setActiveTab(tab); setShowBookmarks(false); }}
                     className={cn(
                       "px-10 h-14 rounded-[22px] font-black text-xs uppercase tracking-[0.15em] transition-all duration-500 relative overflow-hidden group",
                       activeTab === tab 
@@ -214,9 +231,9 @@ export function Community() {
       <div className="max-w-6xl mx-auto px-6 mt-12 mb-12">
         <div className="grid lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
-            {activeTab === "Forum" || activeTab === "Bookmarks" ? (
+            {activeTab === "Forum" ? (
                <div className="space-y-6 animate-in slide-in-from-bottom-6 duration-700 ease-out">
-                  {activeTab === "Bookmarks" && filteredPosts.length === 0 && (
+                  {showBookmarks && filteredPosts.length === 0 && (
                      <div className="text-center py-20 px-6 border-2 border-dashed border-slate-200 rounded-[32px] bg-slate-50/50">
                         <Bookmark className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                         <h3 className="text-xl font-black text-slate-800 tracking-tight mb-2">No bookmarks yet</h3>
@@ -321,7 +338,7 @@ export function Community() {
                              </div>
                            )}
                            <div className="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-100 shadow-inner">
-                             <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(globalState.name || "Student")}&background=random`} className="w-10 h-10 rounded-xl" />
+                             <img src={`https://picsum.photos/seed/${globalState.name || "Current"}/100/100`} className="w-10 h-10 rounded-xl" />
                              <input 
                                type="text" 
                                placeholder="Add a comment..." 
@@ -344,36 +361,131 @@ export function Community() {
                   ))}
                </div>
             ) : (
-                <div className="grid sm:grid-cols-2 gap-6 animate-in slide-in-from-bottom-6 duration-700 ease-out">
-                  {STUDY_BUDDIES.map(buddy => (
-                    <Card key={buddy.id} className="bg-white border-slate-100 rounded-[32px] p-8 text-center hover:shadow-xl hover:scale-[1.02] transition-all shadow-sm group">
-                       <div className="relative inline-block mb-6">
-                          <img src={buddy.avatar} className="w-20 h-20 rounded-3xl mx-auto border-4 border-slate-50 object-cover shadow-md" />
-                          <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
-                             <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                          </div>
-                       </div>
-                       <h3 className="text-2xl font-black text-slate-900 mb-1 leading-tight tracking-tight">{buddy.name}</h3>
-                       <p className="text-amber-600 font-black text-[10px] uppercase tracking-widest mb-6">{buddy.uni}</p>
-                       
-                       <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 mb-6">
-                          <div className="flex items-center justify-center gap-2 mb-2">
-                             <Briefcase className="w-3.5 h-3.5 text-slate-400" />
-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Majoring in</p>
-                          </div>
-                          <p className="text-sm font-bold text-slate-800">{buddy.major}</p>
-                       </div>
-                       
-                       <Button className="w-full h-14 rounded-2xl bg-slate-900 hover:bg-amber-600 text-white font-black tracking-widest uppercase text-xs transition-all shadow-lg shadow-slate-200">
-                          SEND INVITE
-                       </Button>
-                    </Card>
-                  ))}
+                <div className="space-y-8 animate-in slide-in-from-bottom-6 duration-700 ease-out">
+                  
+                  <div className="bg-white rounded-[32px] p-6 shadow-sm border border-slate-100 flex flex-col md:flex-row gap-4 items-center">
+                    <div className="relative flex-1 w-full">
+                       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                       <input 
+                         type="text" 
+                         value={buddySearch}
+                         onChange={(e) => setBuddySearch(e.target.value)}
+                         placeholder="Search by name or university..." 
+                         className="w-full pl-12 pr-4 h-14 rounded-2xl bg-slate-50 border-none outline-none font-medium text-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-amber-500/20"
+                       />
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto pb-2 md:pb-0 w-full md:w-auto scrollbar-hide">
+                       {["Computer Science", "Engineering", "Business", "Design", "Requirements"].map(major => (
+                         <button 
+                           key={major}
+                           onClick={() => setBuddyMajorFilter(buddyMajorFilter === major ? null : major)}
+                           className={cn(
+                             "whitespace-nowrap px-6 py-3 rounded-xl text-xs font-bold transition-all flex-shrink-0",
+                             buddyMajorFilter === major ? "bg-amber-100 text-amber-700 shadow-inner" : "bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-700"
+                           )}
+                         >
+                           {major}
+                         </button>
+                       ))}
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-6">
+                    {filteredBuddies.map(buddy => (
+                      <Card key={buddy.id} className="bg-white border-slate-100 rounded-[32px] p-8 text-center hover:shadow-xl hover:scale-[1.02] transition-all shadow-sm group overflow-hidden relative">
+                         <div className="relative inline-block mb-4 mt-2">
+                            <div className="absolute inset-0 bg-amber-500/20 blur-xl rounded-full translate-y-2 scale-110 group-hover:bg-amber-500/30 transition-colors" />
+                            <img src={buddy.avatar} className="relative w-24 h-24 rounded-3xl mx-auto border-[6px] border-white object-cover shadow-lg" />
+                            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center shadow-sm">
+                               <div className="w-2.5 h-2.5 bg-white rounded-full animate-pulse" />
+                            </div>
+                         </div>
+                         <h3 className="text-2xl font-black text-slate-900 mb-1 leading-tight tracking-tight">{buddy.name}</h3>
+                         <p className="text-amber-600 font-black text-[10px] uppercase tracking-[0.2em] mb-6">{buddy.uni}</p>
+                         
+                         <div className="grid grid-cols-2 gap-3 mb-6 content-baseline">
+                            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-left">
+                               <div className="flex items-center gap-1.5 mb-1 text-slate-400">
+                                  <Briefcase className="w-3.5 h-3.5" />
+                                  <p className="text-[9px] font-black uppercase tracking-widest">Major</p>
+                               </div>
+                               <p className="text-xs font-bold text-slate-800 line-clamp-1" title={buddy.major}>{buddy.major}</p>
+                            </div>
+                            <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-left relative overflow-hidden">
+                               <div className="absolute top-0 right-0 w-16 h-16 bg-blue-100 rounded-full blur-xl -translate-y-1/2 translate-x-1/2" />
+                               <div className="relative z-10">
+                                 <div className="flex items-center gap-1.5 mb-1 text-blue-400">
+                                    <Search className="w-3.5 h-3.5" />
+                                    <p className="text-[9px] font-black uppercase tracking-widest">Looking For</p>
+                                 </div>
+                                 <p className="text-xs font-bold text-slate-800 line-clamp-1" title={buddy.lookingFor}>{buddy.lookingFor}</p>
+                               </div>
+                            </div>
+                         </div>
+                         
+                         <div className="flex flex-wrap gap-1.5 justify-center mb-8">
+                            {buddy.languages.map(lang => (
+                               <span key={lang} className="px-2 py-1 bg-slate-100 text-slate-500 rounded-lg text-[9px] font-bold uppercase tracking-widest">
+                                 {lang}
+                               </span>
+                            ))}
+                         </div>
+                         
+                         <Button 
+                           onClick={() => handleInvite(buddy.id)}
+                           disabled={buddy.inviteSent}
+                           className={cn(
+                             "w-full h-14 rounded-2xl font-black tracking-widest uppercase text-xs transition-all shadow-lg",
+                             buddy.inviteSent 
+                               ? "bg-green-50 text-green-600 shadow-none hover:bg-green-50" 
+                               : "bg-slate-900 hover:bg-amber-600 text-white shadow-slate-200"
+                           )}
+                         >
+                            {buddy.inviteSent ? "INVITE SENT ✓" : "SEND INVITE"}
+                         </Button>
+                      </Card>
+                    ))}
+                  </div>
+                  {filteredBuddies.length === 0 && (
+                    <div className="text-center py-20 px-6 border-2 border-dashed border-slate-200 rounded-[32px] bg-white">
+                      <Users className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+                      <h3 className="text-xl font-black text-slate-800 tracking-tight mb-2">No buddies found</h3>
+                      <p className="text-slate-500 font-medium">Try adjusting your search criteria</p>
+                    </div>
+                  )}
                </div>
             )}
           </div>
 
           <aside className="space-y-8">
+            {activeTab === "Forum" && (
+              <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm transition-all hover:shadow-md">
+                 <h3 className="text-[11px] font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative z-10 flex items-center gap-2">
+                    <Bookmark className="w-4 h-4" /> Your Library
+                 </h3>
+                 <button 
+                   onClick={() => setShowBookmarks(!showBookmarks)}
+                   className={cn(
+                     "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all font-bold group",
+                     showBookmarks 
+                       ? "bg-amber-50 border-amber-500/30 text-amber-700 shadow-sm" 
+                       : "bg-slate-50 border-transparent hover:border-slate-200 text-slate-700 hover:bg-slate-100"
+                   )}
+                 >
+                   <span className="flex items-center gap-2">
+                     <Bookmark className={cn("w-4.5 h-4.5 transition-colors", showBookmarks ? "fill-current" : "text-slate-400 group-hover:text-amber-500")} />
+                     Saved Posts
+                   </span>
+                   <span className={cn(
+                     "px-3 py-1 rounded-xl text-xs font-black shadow-sm transition-all",
+                     showBookmarks ? "bg-amber-500 text-white" : "bg-white text-slate-500 border border-slate-100 group-hover:border-amber-200 group-hover:text-amber-600"
+                   )}>
+                     {posts.filter(p => p.isBookmarked).length}
+                   </span>
+                 </button>
+              </div>
+            )}
+
             <div className="bg-white rounded-[32px] p-8 border border-slate-100 shadow-sm overflow-hidden relative group">
                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-amber-100/50 transition-colors" />
                <h3 className="text-[11px] font-black text-slate-400 mb-6 uppercase tracking-[0.2em] relative z-10 flex items-center gap-2">
@@ -413,16 +525,16 @@ export function Community() {
       </div>
 
       {isModalOpen && createPortal(
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-           <Card className="w-full max-w-xl bg-white rounded-[40px] shadow-2xl p-10 overflow-hidden relative" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300">
+           <Card className="w-full max-w-xl max-h-[90vh] overflow-y-auto bg-white rounded-[40px] shadow-2xl p-6 sm:p-10 relative scrollbar-hide" onClick={e => e.stopPropagation()}>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-8 right-8 text-slate-400 hover:text-slate-900 transition-colors"
+                className="absolute top-6 right-6 sm:top-8 sm:right-8 text-slate-400 hover:text-slate-900 transition-colors"
               >
                 <Plus className="w-8 h-8 rotate-45" />
               </button>
-              <h2 className="text-3xl font-black text-slate-900 tracking-tight mb-2 uppercase italic">Ask a Question</h2>
-              <p className="text-slate-500 mb-8 font-medium">Your question will be visible to students from your university first.</p>
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-2 uppercase italic pr-12">Ask a Question</h2>
+              <p className="text-slate-500 text-sm sm:text-base mb-8 font-medium">Your question will be visible to students from your university first.</p>
               
               <div className="space-y-6">
                  <div>
