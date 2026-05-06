@@ -235,7 +235,7 @@ export function Landing() {
                  title: "Connect Data", 
                  desc: "Input your university, arrival date, and nationality. Our engine maps your legal path instantly.", 
                  icon: Globe,
-                 color: "text-blue-400",
+                 iconGlow: "bg-blue-400 text-blue-400 group-hover:text-blue-400",
                  bgColor: "group-hover:bg-blue-500/10",
                  borderColor: "group-hover:border-blue-500/30"
                },
@@ -243,15 +243,15 @@ export function Landing() {
                  title: "Generate Roadmap", 
                  desc: "Receive a prioritized checklist (Visa, ID, SIM, Bank) ordered perfectly for minimum delays.", 
                  icon: Zap,
-                 color: "text-amber-400",
-                 bgColor: "group-hover:bg-amber-500/10",
-                 borderColor: "group-hover:border-amber-500/30"
+                 iconGlow: "bg-red-400 text-red-400 group-hover:text-red-400",
+                 bgColor: "group-hover:bg-red-500/10",
+                 borderColor: "group-hover:border-red-500/30"
                },
                { 
                  title: "Take Action", 
                  desc: "Action items as you go and use our AI to handle document verification and fast-tracking.", 
                  icon: CheckCircle2,
-                 color: "text-emerald-400",
+                 iconGlow: "bg-emerald-400 text-emerald-400 group-hover:text-emerald-400",
                  bgColor: "group-hover:bg-emerald-500/10",
                  borderColor: "group-hover:border-emerald-500/30"
                }
@@ -263,13 +263,13 @@ export function Landing() {
                  transition={{ delay: i * 0.2, duration: 0.8, type: "spring", bounce: 0.4 }}
                  whileHover={{ y: -8, scale: 1.02 }}
                  key={i} 
-                 className={`relative p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl group transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden ${step.borderColor}`}
+                 className={cn("relative p-10 rounded-[2.5rem] border border-white/5 bg-white/[0.02] backdrop-blur-2xl group transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05),0_10px_40px_rgba(0,0,0,0.5)] overflow-hidden", step.borderColor)}
                >
                   <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none" />
-                  <div className={`absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] opacity-0 group-hover:opacity-20 transition-opacity duration-500 ${step.color.replace('text-', 'bg-')}`} />
+                  <div className={cn("absolute top-0 right-0 w-32 h-32 rounded-full blur-[50px] opacity-0 group-hover:opacity-20 transition-opacity duration-500", step.iconGlow.split(" ")[0])} />
                   
-                  <div className={`w-14 h-14 rounded-full border border-white/10 bg-[#0f0f0f] flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(255,255,255,0.03)] group-hover:scale-110 transition-all duration-300 relative z-10 ${step.bgColor}`}>
-                     <step.icon className={`w-6 h-6 text-white transition-colors duration-300 ${step.color.replace('text-', 'group-hover:text-')}`} />
+                  <div className={cn("w-14 h-14 rounded-full border border-white/10 bg-[#0f0f0f] flex items-center justify-center mb-8 shadow-[0_0_30px_rgba(255,255,255,0.03)] group-hover:scale-110 transition-all duration-300 relative z-10", step.bgColor)}>
+                     <step.icon className={cn("w-6 h-6 text-white transition-colors duration-300", step.iconGlow.split(" ")[2])} />
                   </div>
                   <h4 className="text-2xl font-medium text-white mb-4 relative z-10">{step.title}</h4>
                   <p className="text-neutral-400 font-normal leading-relaxed text-sm md:text-base relative z-10">{step.desc}</p>
