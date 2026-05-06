@@ -57,7 +57,7 @@ export function Landing() {
   const faqs = [
     { q: "Do I need an Emirates ID to open a bank account?", a: "Generally yes, but some digital banks like Liv. or Mashreq Neo allow you to start the process with your passport and visa. Landed shows you exactly which ones." },
     { q: "How long does the whole process take?", a: "Your core setup (Visa, ID, Bank, SIM) usually takes 15-20 days. Our roadmap optimizes the order so you don't waste time." },
-    { q: "Is Landed a government tool for student?", a: "No, we are an independent platform built by former international student to simplify the complex government and private processes in the UAE." },
+    { q: "Is Landed officially affiliated with the government?", a: "No, we are an independent platform built by former international student to simplify the complex government and private processes in the UAE." },
     { q: "Does Landed cost anything?", a: "The core personalized roadmap and community are free. We may recommend verified third-party services that have their own fees." }
   ];
 
@@ -235,9 +235,9 @@ export function Landing() {
                  title: "Connect Data", 
                  desc: "Input your university, arrival date, and nationality. Our engine maps your legal path instantly.", 
                  icon: Globe,
-                 color: "text-amber-400",
-                 bgColor: "group-hover:bg-amber-500/10",
-                 borderColor: "group-hover:border-amber-500/30"
+                 color: "text-blue-400",
+                 bgColor: "group-hover:bg-blue-500/10",
+                 borderColor: "group-hover:border-blue-500/30"
                },
                { 
                  title: "Generate Roadmap", 
