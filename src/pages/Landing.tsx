@@ -57,7 +57,7 @@ export function Landing() {
   const faqs = [
     { q: "Do I need an Emirates ID to open a bank account?", a: "Generally yes, but some digital banks like Liv. or Mashreq Neo allow you to start the process with your passport and visa. Landed shows you exactly which ones." },
     { q: "How long does the whole process take?", a: "Your core setup (Visa, ID, Bank, SIM) usually takes 15-20 days. Our roadmap optimizes the order so you don't waste time." },
-    { q: "Is Landed officially affiliated with the government?", a: "No, we are an independent platform built by former international students to simplify the complex government and private processes in the UAE." },
+    { q: "Is Landed a government tool for student?", a: "No, we are an independent platform built by former international student to simplify the complex government and private processes in the UAE." },
     { q: "Does Landed cost anything?", a: "The core personalized roadmap and community are free. We may recommend verified third-party services that have their own fees." }
   ];
 
@@ -221,7 +221,7 @@ export function Landing() {
                Process
              </div>
              <h3 className="text-4xl md:text-5xl font-medium text-white tracking-tight leading-tight max-w-2xl">
-               Our simple, smart, and scalable process.
+               Our simple, step-by-step process.
              </h3>
           </div>
           
@@ -248,7 +248,7 @@ export function Landing() {
                  borderColor: "group-hover:border-amber-500/30"
                },
                { 
-                 title: "Automate Execution", 
+                 title: "Take Action", 
                  desc: "Action items as you go and use our AI to handle document verification and fast-tracking.", 
                  icon: CheckCircle2,
                  color: "text-emerald-400",
@@ -304,7 +304,7 @@ export function Landing() {
             >
               <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.03),transparent)] pointer-events-none group-hover:scale-110 transition-transform duration-700" />
               <Map className="w-10 h-10 text-white mb-8 opacity-80 group-hover:text-red-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)] group-hover:drop-shadow-[0_0_20px_rgba(248,113,113,0.4)]" />
-              <h3 className="text-3xl font-medium text-white mb-4">Smart Logic Engine</h3>
+              <h3 className="text-3xl font-medium text-white mb-4">Personalized Roadmap</h3>
               <p className="text-neutral-400 text-base md:text-lg max-w-lg leading-relaxed">
                 Our inference engine pre-calculates prerequisites. You'll never attempt to open a bank account before your Emirates ID is actively being processed.
               </p>
@@ -336,9 +336,9 @@ export function Landing() {
               className="md:col-span-2 bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group hover:border-white/10 transition-all duration-500 cursor-default shadow-[inset_0_1px_1px_rgba(255,255,255,0.05)] backdrop-blur-xl"
             >
               <FileCheck className="w-8 h-8 text-white mb-8 opacity-80 group-hover:text-emerald-400 group-hover:rotate-12 group-hover:scale-110 transition-all duration-300 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" />
-              <h3 className="text-2xl font-medium text-white mb-3">Doc Verifier</h3>
+              <h3 className="text-2xl font-medium text-white mb-3">Document Checklist</h3>
               <p className="text-neutral-400 text-sm md:text-base leading-relaxed">
-                Check exact dimensions, formats, and attestations required before entering any center.
+                Know exactly what to bring and what format is required before visiting any centre.
               </p>
             </motion.div>
 
